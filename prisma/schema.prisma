@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model UserTable {
   id    String @id
   email String @unique
 
@@ -24,13 +24,14 @@ model User {
 
   status String @default("ACTIVE") // ACTIVE || INACTIVE
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  PollTable PollTable[] @relation(name: "FK_Poll_User")
 
   @@index([status])
 }
 
-model RefreshTokenTable {
+model RefreshTokenTableTable {
   id        String   @id
   familyId  String
   userId    String
@@ -41,4 +42,41 @@ model RefreshTokenTable {
 
   @@index([familyId])
   @@map("RefreshTokens")
+}
+
+model PollTable {
+  id     String @id
+  userId String
+
+  name      String
+  createdAt DateTime
+  expiresAt DateTime
+
+  status String @default("ACTIVE") // ACTIVE || INACTIVE
+
+  User          UserTable           @relation(name: "FK_Poll_User", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  PollQuestions PollQuestionTable[] @relation(name: "FK_PollQuestion_Poll")
+
+  @@unique([userId, id])
+}
+
+model PollQuestionTable {
+  id     String @id
+  userId String
+  pollId String
+
+  name String
+
+  Poll                PollTable                 @relation(name: "FK_PollQuestion_Poll", fields: [userId, pollId], references: [userId, id], onDelete: NoAction, onUpdate: NoAction)
+  PollQuestionAnswers PollQuestionAnswerTable[] @relation(name: "FK_PollQuestionAnswer_PollQuestion")
+
+  @@unique([userId, id])
+}
+
+model PollQuestionAnswerTable {
+  id             String @id
+  pollQuestionId String
+  macAddress     String
+
+  PollQuestion PollQuestionTable @relation(name: "FK_PollQuestionAnswer_PollQuestion", fields: [pollQuestionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
