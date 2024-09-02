@@ -79,4 +79,6 @@ model PollQuestionAnswerTable {
   macAddress     String
 
   PollQuestion PollQuestionTable @relation(name: "FK_PollQuestionAnswer_PollQuestion", fields: [pollQuestionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([macAddress])
 }

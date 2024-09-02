@@ -1,6 +1,12 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json, useLoaderData } from "@remix-run/react";
+import {
+  json,
+  Outlet,
+  useLoaderData,
+  useRouteLoaderData,
+} from "@remix-run/react";
 import React from "react";
+import { Modal } from "~/components/Modal";
 import { db } from "~/utils/db";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -8,9 +14,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   // check if admin is logged in
 
-  const users = await db.user.findMany({ where: { status: "INACTIVE" } });
+  // const users = await db.userTable.findMany({ where: { status: "ACTIVE" } });
 
-  return json(users);
+  return json({});
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -23,11 +29,9 @@ export default function Index() {
   const data = useLoaderData<typeof loader>();
 
   return (
-    <div className="flex flex-col">
-      {data.map((e) => (
-        <div>{e.name}</div>
-      ))}
-    </div>
+    <Modal title="Novi korisnik/organizacija">
+      <div>Nekakva forma za registraciju</div>
+    </Modal>
   );
 }
 
