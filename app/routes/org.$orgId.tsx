@@ -3,13 +3,9 @@ import { json, Outlet, redirect } from "@remix-run/react";
 import { db } from "~/utils/db";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  // const token = decode
-
-  // check if admin is logged in
-
   const user = await db.user.findUniqueOrThrow({ where: { id: "1" } });
 
-  if (user.role !== "ADMIN") {
+  if (user.role !== "ORG") {
     redirect("/", {});
   }
 
@@ -23,9 +19,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 export default function Index() {
   return (
     <div className="flex flex-col">
-      <div>header...</div>
       <div className="flex">
-        <div>sidebar...</div>
+        <div>sidebar</div>
         <Outlet />
       </div>
     </div>

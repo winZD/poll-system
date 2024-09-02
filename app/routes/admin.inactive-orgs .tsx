@@ -1,5 +1,6 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json, Outlet, redirect } from "@remix-run/react";
+import { json, useLoaderData } from "@remix-run/react";
+import React from "react";
 import { db } from "~/utils/db";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -7,13 +8,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   // check if admin is logged in
 
-  const user = await db.user.findUniqueOrThrow({ where: { id: "1" } });
+  const users = await db.user.findMany({ where: { status: "INACTIVE" } });
 
-  if (user.role !== "ADMIN") {
-    redirect("/", {});
-  }
-
-  return json({});
+  return json(users);
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -21,13 +18,25 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
+  React.useEffect(() => {}, []);
+
+  const data = useLoaderData<typeof loader>();
+
   return (
     <div className="flex flex-col">
-      <div>header...</div>
-      <div className="flex">
-        <div>sidebar...</div>
-        <Outlet />
-      </div>
+      {data.map((e) => (
+        <div>{e.name}</div>
+      ))}
     </div>
   );
+}
+
+{
+  /**
+  
+  
+  - firme
+  - neaktivne firme
+
+  */
 }
