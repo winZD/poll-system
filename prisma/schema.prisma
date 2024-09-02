@@ -25,20 +25,20 @@ model UserTable {
   status String @default("ACTIVE") // ACTIVE || INACTIVE
 
   createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  PollTable PollTable[] @relation(name: "FK_Poll_User")
+  updatedAt DateTime?
+  Polls     PollTable[] @relation(name: "FK_Poll_User")
 
   @@index([status])
 }
 
-model RefreshTokenTableTable {
+model RefreshTokenTable {
   id        String   @id
   familyId  String
   userId    String
   token     String
   createdAt DateTime
   expiresAt DateTime
-  status    String   @default("GRANTED") // GRANTED || REJECTED
+  status    String   @default("GRANTED") // GRANTED || REVOKED
 
   @@index([familyId])
   @@map("RefreshTokens")
