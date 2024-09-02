@@ -39,7 +39,7 @@ export default function Index() {
             Neaktivni korisnici
           </NavLink>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 px-4">
           <Outlet />
         </div>
       </div>
