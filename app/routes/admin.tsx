@@ -1,19 +1,22 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { json, NavLink, Outlet, redirect } from '@remix-run/react';
+import { decodeTokenFromRequest } from '~/utils';
 import { db } from '~/utils/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // const token = decode
 
-  // check if admin is logged in
+  const ctx = await decodeTokenFromRequest(request);
 
-  // const user = await db.userTable.findUniqueOrThrow({ where: { id: "1" } });
+  if (!ctx) return redirect('/login');
 
-  // if (user.role !== "ADMIN") {
-  //   redirect("/", {});
-  // }
+  if (ctx.userRole !== 'ADMIN') {
+    return redirect(`/org/${ctx.userId}`);
+  }
 
-  return json({});
+  return json(null, {
+    ...(ctx.headers ? { headers: ctx.headers } : {}),
+  });
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {

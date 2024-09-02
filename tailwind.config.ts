@@ -8,9 +8,9 @@ export default {
         2: '2px',
         4: '4px',
       },
-      fontFamily: {
-        sans: ['Noto Sans'],
-      },
+      // fontFamily: {
+      //   sans: ['Noto Sans'],
+      // },
       fontSize: {
         base: '16px',
         xxs: '11px',
