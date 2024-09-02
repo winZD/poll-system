@@ -1,12 +1,12 @@
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json, Outlet, redirect } from "@remix-run/react";
-import { db } from "~/utils/db";
+import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
+import { json, Outlet, redirect } from '@remix-run/react';
+import { db } from '~/utils/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const user = await db.user.findUniqueOrThrow({ where: { id: "1" } });
+  const user = await db.userTable.findUniqueOrThrow({ where: { id: '1' } });
 
-  if (user.role !== "ORG") {
-    redirect("/", {});
+  if (user.role !== 'ORG') {
+    redirect('/', {});
   }
 
   return json({});
