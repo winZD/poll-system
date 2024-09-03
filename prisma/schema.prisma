@@ -8,15 +8,16 @@ datasource db {
 }
 
 model UserTable {
-  id        String      @id
-  email     String      @unique
-  name      String
-  password  String
-  role      String      @default("ORG")
-  status    String      @default("ACTIVE")
-  createdAt DateTime    @default(now())
-  updatedAt DateTime?
-  Polls     PollTable[] @relation("FK_Poll_User")
+  id          String        @id
+  email       String        @unique
+  name        String
+  password    String
+  role        String        @default("ORG")
+  status      String        @default("ACTIVE")
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime?
+  Polls       PollTable[]   @relation("FK_Poll_User")
+  IframeTable IframeTable[] @relation("FK_Iframe_User")
 
   @@index([status])
 }
@@ -65,4 +66,12 @@ model PollQuestionAnswerTable {
   PollQuestion   PollQuestionTable @relation("FK_PollQuestionAnswer_PollQuestion", fields: [pollQuestionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([macAddress])
+}
+
+model IframeTable {
+  id     String    @id
+  title  String
+  src    String
+  userId String
+  User   UserTable @relation("FK_Iframe_User", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
