@@ -56,7 +56,7 @@ export const HookForm = <TData extends FieldValues = any>(
         method="POST"
         autoComplete="new-password"
         autoCorrect="off"
-        className={`relative flex flex-1 flex-col overflow-x-hidden ${
+        className={`relative flex flex-col overflow-x-hidden ${
           className || ''
         }`}
       >

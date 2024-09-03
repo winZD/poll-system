@@ -1,12 +1,5 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import {
-  json,
-  Outlet,
-  redirect,
-  useLoaderData,
-  useRouteLoaderData,
-} from '@remix-run/react';
-import React from 'react';
+import { json, useLoaderData } from '@remix-run/react';
 import { db } from '~/utils/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {

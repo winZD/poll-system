@@ -116,12 +116,12 @@ export default function Login() {
   const actionData = useActionData<{ error: string }>();
 
   return (
-    <div className="flex h-full w-full justify-center">
+    <div className="flex h-full w-full items-center justify-center">
       <HookForm
         formMethods={formMethods}
         onSubmit={handleSubmit}
         method="POST"
-        className="flex w-96 flex-col gap-4 p-4"
+        className="flex flex-col gap-4 rounded border p-8 shadow"
       >
         <InputField label="Email" name="email" />
         <InputField label="Lozinka" name="password" />
