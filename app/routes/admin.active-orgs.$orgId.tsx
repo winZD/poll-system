@@ -7,8 +7,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const { orgId } = params;
 
-  const data = await db.userTable.findUniqueOrThrow({ where: { id: orgId } });
-  return json(data);
+  const org = await db.orgTable.findUniqueOrThrow({ where: { id: orgId } });
+  return json(org);
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -16,9 +16,16 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
-  const data = useLoaderData<typeof loader>();
+  const org = useLoaderData<typeof loader>();
 
-  return <div>{`${data.name} ${data.email}`}</div>;
+  return (
+    <div className="flex flex-col p-4">
+      <div className="flex gap-8">
+        <div>{`Korisnik: ${org.name} `}</div>
+        <div>{`Email: ${org.email} `}</div>
+      </div>
+    </div>
+  );
 }
 
 {

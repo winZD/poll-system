@@ -14,11 +14,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   // check if admin is logged in
 
-  const users = await db.userTable.findMany({
+  const activeOrgs = await db.orgTable.findMany({
     where: { status: 'ACTIVE', role: 'ORG' },
   });
 
-  return json(users);
+  return json(activeOrgs);
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -28,33 +28,35 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 export default function Index() {
   React.useEffect(() => {}, []);
 
-  const data = useLoaderData<typeof loader>();
+  const orgs = useLoaderData<typeof loader>();
 
   return (
-    <div className="flex flex-col gap-2">
-      <NavLink
-        to="register"
-        className="self-start rounded-lg bg-blue-500 p-2 text-white"
-      >
-        + Dodaj korisnika
-      </NavLink>
+    <>
+      <div className="flex flex-col gap-2 border-r">
+        <NavLink
+          to="register"
+          className="m-2 self-start rounded-lg bg-blue-500 p-2 text-white"
+        >
+          + Dodaj korisnika
+        </NavLink>
 
-      <div>Lista aktivnih korisnika</div>
-
-      <div className="flex max-w-2xl flex-col">
-        {data?.map((e) => (
-          <NavLink
-            to={`../org/${e.id}`}
-            className="flex items-center bg-zinc-200 p-2"
-          >
-            <div className="flex-1">{e.name}</div>
-            <div className="flex-1">{e.email}</div>
-          </NavLink>
-        ))}
+        <div className="flex flex-col">
+          {orgs?.map((org) => (
+            <NavLink
+              to={`${org.id}`}
+              className={({ isActive }) =>
+                `flex items-center p-2 hover:bg-blue-200 ${isActive ? 'bg-blue-100' : ''}`
+              }
+            >
+              {org.name}
+            </NavLink>
+          ))}
+        </div>
       </div>
-
-      <Outlet />
-    </div>
+      <div className="flex flex-1 flex-col">
+        <Outlet />
+      </div>
+    </>
   );
 }
 
