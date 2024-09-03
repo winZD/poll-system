@@ -37,13 +37,13 @@ export default function Index() {
           to="register"
           className="m-2 self-start rounded-lg bg-blue-500 p-2 text-white"
         >
-          + Dodaj korisnika
+          + Dodaj organizaciju
         </NavLink>
 
         <div className="flex flex-col">
           {orgs?.map((org) => (
             <NavLink
-              to={`${org.id}`}
+              to={`${org.id}?tab=korisnici`}
               className={({ isActive }) =>
                 `flex items-center p-2 hover:bg-blue-200 ${isActive ? 'bg-blue-100' : ''}`
               }

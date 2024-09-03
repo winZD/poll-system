@@ -48,7 +48,7 @@ export default function Index() {
             <NavLink
               to={'active-orgs'}
               className={({ isActive }) =>
-                `p-4 ${isActive ? 'bg-zinc-400' : ''}`
+                `p-4 hover:bg-blue-200 ${isActive ? 'bg-blue-100' : ''}`
               }
             >
               Aktivni korisnici
@@ -56,7 +56,7 @@ export default function Index() {
             <NavLink
               to={'inactive-orgs'}
               className={({ isActive }) =>
-                `p-4 ${isActive ? 'bg-zinc-400' : ''}`
+                `p-4 hover:bg-blue-200 ${isActive ? 'bg-blue-100' : ''}`
               }
             >
               Neaktivni korisnici
