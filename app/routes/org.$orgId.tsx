@@ -16,7 +16,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await db.userTable.findUniqueOrThrow({
     where: { id: ctx?.userId },
   });
-  console.log(ctx);
+
   if (!ctx) return redirect('/login');
 
   if (user.role !== 'ORG') {
