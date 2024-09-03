@@ -1,14 +1,23 @@
-import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  redirect,
+} from '@remix-run/node';
 import { Form, json, useLoaderData } from '@remix-run/react';
 import React from 'react';
 import { getValidatedFormData, useRemixForm } from 'remix-hook-form';
 import { Modal } from '~/components/Modal';
 import * as zod from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { HookForm } from '~/components/Form/Form';
+import InputField from '~/components/Form/FormInput';
+import { db } from '~/utils/db';
+import { ulid } from 'ulid';
+import { hashPassword } from '~/utils';
 
 const schema = zod.object({
   name: zod.string().min(1),
-  email: zod.string().email().min(1),
+  email: zod.string().email('Neispravan email').min(1),
   password: zod.string().min(1),
 });
 
@@ -37,62 +46,47 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return json({ errors, defaultValues });
   }
 
+  const password = await hashPassword(data.password);
+
+  await db.userTable.create({
+    data: {
+      id: ulid(),
+      email: data.email,
+      name: data.name,
+      password,
+      role: 'ORG',
+    },
+  });
+
   // Do something with the data
-  return json(data);
+  return redirect(`..`);
 };
 export default function Index() {
   React.useEffect(() => {}, []);
 
   const data = useLoaderData<typeof loader>();
 
-  const {
-    handleSubmit,
-    formState: { errors },
-    register,
-  } = useRemixForm<FormData>({
+  const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     resolver,
   });
 
   return (
-    <Modal title="Novi korisnik/organizacija">
-      <Form
-        onSubmit={handleSubmit}
+    <Modal title="Novi korisnik">
+      <HookForm
+        formMethods={formMethods}
+        onSubmit={formMethods.handleSubmit}
         method="POST"
         className="flex w-96 flex-col gap-4 p-4"
       >
-        <label className="flex justify-between gap-2">
-          Naziv:
-          <input
-            autoComplete="off"
-            className="rounded outline-none"
-            type="text"
-            {...register('name')}
-          />
-          {errors.name && <p>{errors.name.message}</p>}
-        </label>
-        <label className="flex justify-between gap-2">
-          Email:
-          <input
-            autoComplete="off"
-            type="text"
-            className="rounded outline-none"
-            {...register('email')}
-          />
-          {errors.email && <p>{errors.email.message}</p>}
-        </label>
-        <label className="flex justify-between gap-2">
-          Lozinka:
-          <input
-            autoComplete="off"
-            className="rounded outline-none"
-            type="text"
-            {...register('email')}
-          />
-          {errors.password && <p>{errors.password.message}</p>}
-        </label>
-        <button type="submit">Submit</button>
-      </Form>
+        <InputField label="Email" name="email" />
+        <InputField label="Naziv" name="name" />
+        <InputField label="Inicijalna lozinka" name="password" />
+
+        <button type="submit" className="rounded bg-zinc-200 p-2">
+          Registriraj novog korisnika
+        </button>
+      </HookForm>
     </Modal>
   );
 }

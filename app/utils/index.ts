@@ -4,22 +4,22 @@ import jwt from 'jsonwebtoken';
 import { ulid } from 'ulid';
 import { serialize } from 'cookie';
 import { db } from './db';
+import bcrypt from 'bcryptjs';
 
-export const generateAccessToken = (data: {
+type TToken = {
   tokenId: string;
   userId: string;
   userRole: string;
-}) =>
+  userName: string;
+};
+
+export const generateAccessToken = (data: TToken) =>
   jwt.sign(data, process.env.COOKIE_JWT_SECRET, {
     // expiresIn: "5s",
     expiresIn: '30min',
   });
 
-export const generateRefreshToken = (data: {
-  tokenId: string;
-  userId: string;
-  userRole: string;
-}) =>
+export const generateRefreshToken = (data: TToken) =>
   jwt.sign(data, process.env.COOKIE_JWT_SECRET, {
     expiresIn: '30d',
   });
@@ -29,6 +29,7 @@ export const decodeTokenFromRequest = async (
 ): Promise<{
   userId: string;
   userRole: string;
+  userName: string;
   iat: number;
   exp: number;
   tokenId: string;
@@ -56,8 +57,6 @@ export const decodeTokenFromRequest = async (
       //
     }
 
-    console.log({ decoded });
-
     if (decoded) {
       const oldRT = await db.refreshTokenTable.findUnique({
         where: { id: decoded.tokenId, status: 'GRANTED' },
@@ -79,11 +78,13 @@ export const decodeTokenFromRequest = async (
         tokenId,
         userId: decoded.userId,
         userRole: user.role,
+        userName: user.name,
       });
       const refreshToken = generateRefreshToken({
         tokenId,
         userId: decoded.userId,
         userRole: user.role,
+        userName: user.name,
       });
       await db.refreshTokenTable.create({
         data: {
@@ -124,3 +125,14 @@ export const decodeTokenFromRequest = async (
     }
   }
 };
+
+export async function hashPassword(password) {
+  const saltRounds = 10;
+  try {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    return hashedPassword;
+  } catch (error) {
+    console.error('Error hashing password:', error);
+    throw new Error('Hashing failed');
+  }
+}

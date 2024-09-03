@@ -1,5 +1,5 @@
-import { NavLink } from "@remix-run/react";
-import React, { ReactNode } from "react";
+import { NavLink } from '@remix-run/react';
+import React, { ReactNode } from 'react';
 
 interface ModalProps {
   title: string;
@@ -9,11 +9,11 @@ interface ModalProps {
 
 export const Modal: React.FC<ModalProps> = ({ title, children, onClose }) => {
   return (
-    <div className="flex flex-col inset-0 absolute items-center justify-center backdrop-brightness-50">
-      <div className="flex flex-col">
-        <div className="bg-zinc-200 flex justify-between gap-8 p-2">
+    <div className="absolute inset-0 flex flex-col items-center justify-center backdrop-brightness-50">
+      <div className="flex flex-col overflow-hidden rounded-lg">
+        <div className="flex justify-between gap-8 bg-blue-200 px-4 py-2 font-bold">
           <div>{title}</div>
-          <NavLink to={".."} onClick={() => onClose?.()} className="font-bold">
+          <NavLink to={'..'} onClick={() => onClose?.()} className="font-bold">
             ✕
           </NavLink>
         </div>

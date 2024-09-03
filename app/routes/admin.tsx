@@ -1,5 +1,12 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { json, NavLink, Outlet, redirect } from '@remix-run/react';
+import {
+  json,
+  NavLink,
+  Outlet,
+  redirect,
+  useLoaderData,
+} from '@remix-run/react';
+import { MdOutlineLogout } from 'react-icons/md';
 import { decodeTokenFromRequest } from '~/utils';
 import { db } from '~/utils/db';
 
@@ -11,12 +18,17 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!ctx) return redirect('/login');
 
   if (ctx.userRole !== 'ADMIN') {
-    return redirect(`/org/${ctx.userId}`);
+    return redirect(`/org/${ctx.userId}`, {
+      ...(ctx.headers ? { headers: ctx.headers } : {}),
+    });
   }
 
-  return json(null, {
-    ...(ctx.headers ? { headers: ctx.headers } : {}),
-  });
+  return json(
+    { userName: ctx.userName },
+    {
+      ...(ctx.headers ? { headers: ctx.headers } : {}),
+    },
+  );
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -24,25 +36,45 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
+  const data = useLoaderData<typeof loader>();
+
   return (
     <div className="flex flex-1 flex-col">
-      <div className="p-4">HEADER</div>
+      <div className="flex items-center justify-center border p-4">
+        {`ADMIN: ${data.userName}`}
+      </div>
       <div className="flex flex-1">
-        <div className="flex flex-col gap-2 bg-zinc-200">
+        <div className="flex flex-col border bg-zinc-200">
+          <div className="flex flex-1 flex-col">
+            <NavLink
+              to={'active-orgs'}
+              className={({ isActive }) =>
+                `p-4 ${isActive ? 'bg-zinc-400' : ''}`
+              }
+            >
+              Aktivni korisnici
+            </NavLink>
+            <NavLink
+              to={'inactive-orgs'}
+              className={({ isActive }) =>
+                `p-4 ${isActive ? 'bg-zinc-400' : ''}`
+              }
+            >
+              Neaktivni korisnici
+            </NavLink>
+          </div>
+
           <NavLink
-            to={'active-orgs'}
-            className={({ isActive }) => `p-4 ${isActive ? 'bg-blue-200' : ''}`}
+            to={'/logout'}
+            className={
+              'flex items-center justify-center gap-2 p-2 font-bold text-red-500 hover:bg-red-100'
+            }
           >
-            Aktivni korisnici
-          </NavLink>
-          <NavLink
-            to={'inactive-orgs'}
-            className={({ isActive }) => `p-4 ${isActive ? 'bg-blue-200' : ''}`}
-          >
-            Neaktivni korisnici
+            <div>Odjava</div>
+            <MdOutlineLogout />
           </NavLink>
         </div>
-        <div className="flex-1 px-4">
+        <div className="flex-1 border p-4">
           <Outlet />
         </div>
       </div>

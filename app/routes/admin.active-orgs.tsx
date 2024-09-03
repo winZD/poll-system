@@ -14,9 +14,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   // check if admin is logged in
 
-  // const users = await db.userTable.findMany({ where: { status: "ACTIVE" } });
+  const users = await db.userTable.findMany({
+    where: { status: 'ACTIVE', role: 'ORG' },
+  });
 
-  return json({});
+  return json(users);
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -39,9 +41,18 @@ export default function Index() {
 
       <div>Lista aktivnih korisnika</div>
 
-      {/* {data?.map((e) => (
-        <div>{e.name}</div>
-      ))} */}
+      <div className="flex max-w-2xl flex-col">
+        {data?.map((e) => (
+          <NavLink
+            to={`../org/${e.id}`}
+            className="flex items-center bg-zinc-200 p-2"
+          >
+            <div className="flex-1">{e.name}</div>
+            <div className="flex-1">{e.email}</div>
+          </NavLink>
+        ))}
+      </div>
+
       <Outlet />
     </div>
   );

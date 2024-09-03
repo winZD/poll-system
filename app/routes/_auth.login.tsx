@@ -11,6 +11,9 @@ import { jsonWithError } from 'remix-toast';
 import { db } from '~/utils/db';
 import { addDays, addMinutes, addMonths } from 'date-fns';
 import { generateAccessToken, generateRefreshToken } from '~/utils';
+import InputField from '~/components/Form/FormInput';
+import { FormProvider } from 'react-hook-form';
+import { HookForm } from '~/components/Form/Form';
 
 const schema = zod.object({
   email: zod.string().min(1, 'Upišite ispravno korisničko ime'),
@@ -56,11 +59,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     tokenId,
     userId: user.id,
     userRole: user.role,
+    userName: user.name,
   });
   const refreshToken = generateRefreshToken({
     tokenId,
     userId: user.id,
     userRole: user.role,
+    userName: user.name,
   });
   await db.refreshTokenTable.create({
     data: {
@@ -106,46 +111,25 @@ export default function Login() {
     stringifyAllValues: true,
     resolver: resolver,
   });
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = formMethods;
+  const { handleSubmit } = formMethods;
 
   const actionData = useActionData<{ error: string }>();
 
   return (
     <div className="flex h-full w-full justify-center">
-      <Form
+      <HookForm
+        formMethods={formMethods}
         onSubmit={handleSubmit}
         method="POST"
         className="flex w-96 flex-col gap-4 p-4"
       >
-        <label className="flex justify-between gap-2">
-          Email:
-          <input
-            autoComplete="off"
-            className="rounded outline-none"
-            type="text"
-            {...register('email')}
-          />
-          {errors.email && <p>{errors.email.message}</p>}
-        </label>
-        <label className="flex justify-between gap-2">
-          Lozinka:
-          <input
-            autoComplete="off"
-            type="text"
-            className="rounded outline-none"
-            {...register('password')}
-          />
-          {errors.password && <p>{errors.password.message}</p>}
-        </label>
+        <InputField label="Email" name="email" />
+        <InputField label="Lozinka" name="password" />
 
         <button type="submit" className="rounded bg-zinc-200 p-4">
           Prijavi se
         </button>
-      </Form>
+      </HookForm>
     </div>
   );
 }
