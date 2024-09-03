@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,19 +8,15 @@ datasource db {
 }
 
 model UserTable {
-  id    String @id
-  email String @unique
-
-  name     String
-  password String
-
-  role String @default("ORG") // ADMIN || ORG
-
-  status String @default("ACTIVE") // ACTIVE || INACTIVE
-
+  id        String      @id
+  email     String      @unique
+  name      String
+  password  String
+  role      String      @default("ORG")
+  status    String      @default("ACTIVE")
   createdAt DateTime    @default(now())
   updatedAt DateTime?
-  Polls     PollTable[] @relation(name: "FK_Poll_User")
+  Polls     PollTable[] @relation("FK_Poll_User")
 
   @@index([status])
 }
@@ -38,47 +28,41 @@ model RefreshTokenTable {
   token     String
   createdAt DateTime
   expiresAt DateTime
-  status    String   @default("GRANTED") // GRANTED || REVOKED
+  status    String   @default("GRANTED")
 
   @@index([familyId])
   @@map("RefreshTokens")
 }
 
 model PollTable {
-  id     String @id
-  userId String
-
-  name      String
-  createdAt DateTime
-  expiresAt DateTime
-
-  status String @default("ACTIVE") // ACTIVE || INACTIVE
-
-  User          UserTable           @relation(name: "FK_Poll_User", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  PollQuestions PollQuestionTable[] @relation(name: "FK_PollQuestion_Poll")
+  id            String              @id
+  userId        String
+  name          String
+  createdAt     DateTime
+  expiresAt     DateTime
+  status        String              @default("ACTIVE")
+  PollQuestions PollQuestionTable[] @relation("FK_PollQuestion_Poll")
+  User          UserTable           @relation("FK_Poll_User", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([userId, id])
 }
 
 model PollQuestionTable {
-  id     String @id
-  userId String
-  pollId String
-
-  name String
-
-  Poll                PollTable                 @relation(name: "FK_PollQuestion_Poll", fields: [userId, pollId], references: [userId, id], onDelete: NoAction, onUpdate: NoAction)
-  PollQuestionAnswers PollQuestionAnswerTable[] @relation(name: "FK_PollQuestionAnswer_PollQuestion")
+  id                  String                    @id
+  userId              String
+  pollId              String
+  name                String
+  PollQuestionAnswers PollQuestionAnswerTable[] @relation("FK_PollQuestionAnswer_PollQuestion")
+  Poll                PollTable                 @relation("FK_PollQuestion_Poll", fields: [userId, pollId], references: [userId, id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([userId, id])
 }
 
 model PollQuestionAnswerTable {
-  id             String @id
+  id             String            @id
   pollQuestionId String
   macAddress     String
-
-  PollQuestion PollQuestionTable @relation(name: "FK_PollQuestionAnswer_PollQuestion", fields: [pollQuestionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  PollQuestion   PollQuestionTable @relation("FK_PollQuestionAnswer_PollQuestion", fields: [pollQuestionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([macAddress])
 }
