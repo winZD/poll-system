@@ -3,7 +3,9 @@ import { json, Outlet, redirect } from '@remix-run/react';
 import { db } from '~/utils/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const user = await db.userTable.findUniqueOrThrow({ where: { id: '1' } });
+  const user = await db.userTable.findUniqueOrThrow({
+    where: { id: '01J6VWEH7R9ENXX79PT5RB401F' },
+  });
 
   if (user.role !== 'ORG') {
     redirect('/', {});

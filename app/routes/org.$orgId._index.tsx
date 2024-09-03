@@ -1,5 +1,5 @@
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json, Outlet } from "@remix-run/react";
+import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
+import { json, Outlet } from '@remix-run/react';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   return json({});
@@ -10,12 +10,5 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
-  return (
-    <div className="flex flex-col">
-      <div className="flex">
-        <div>sidebar</div>
-        <Outlet />
-      </div>
-    </div>
-  );
+  return <div className="flex flex-col"></div>;
 }
