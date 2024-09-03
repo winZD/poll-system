@@ -40,10 +40,10 @@ export default function Index() {
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex items-center justify-center border p-4">
-        {`ADMIN: ${data.userName}`}
+        {`HEADER`}
       </div>
       <div className="flex flex-1">
-        <div className="flex flex-col border bg-zinc-200">
+        <div className="flex flex-col gap-8 border bg-zinc-200">
           <div className="flex flex-1 flex-col">
             <NavLink
               to={'active-orgs'}
@@ -62,6 +62,8 @@ export default function Index() {
               Neaktivni korisnici
             </NavLink>
           </div>
+
+          <div className="text-center">{data.userName}</div>
 
           <NavLink
             to={'/logout'}
