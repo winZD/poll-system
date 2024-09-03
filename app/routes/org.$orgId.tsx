@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     redirect('/', {});
   }
 
-  return json({ userName: ctx?.userName });
+  return json({ userName: ctx?.userName, orgId: ctx.userOrgId });
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -36,8 +36,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 export default function Index() {
   const data = useLoaderData<typeof loader>();
   const params = useParams();
+  console.log(params);
 
   const location = useLocation();
+  console.log(location);
   return (
     <div className="flex flex-1 flex-col text-white">
       <div className="flex items-center justify-center border bg-cyan-900 p-4">
@@ -47,9 +49,9 @@ export default function Index() {
         <div className="flex w-52 flex-col border bg-cyan-900">
           <div className="flex flex-1 flex-col">
             <NavLink
-              to={'/'}
+              to={`../org/${data.orgId}`}
               className={({ isActive }) =>
-                `p-4 ${isActive ? 'bg-cyan-700' : ''}`
+                `p-4 ${isActive && location.pathname === `/org/${data.orgId}` ? 'bg-cyan-700' : ''}`
               }
             >
               Organizacija
