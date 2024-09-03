@@ -49,9 +49,9 @@ export default function Index() {
         <div className="flex w-52 flex-col border bg-cyan-900">
           <div className="flex flex-1 flex-col">
             <NavLink
-              to={`../org/${data.orgId}`}
+              to={`../org/${params?.orgId}`}
               className={({ isActive }) =>
-                `p-4 ${isActive && location.pathname === `/org/${data.orgId}` ? 'bg-cyan-700' : ''}`
+                `p-4 ${isActive && location?.pathname === `/org/${params?.orgId}` ? 'bg-cyan-700' : ''}`
               }
             >
               Organizacija
