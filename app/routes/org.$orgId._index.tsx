@@ -10,5 +10,5 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
-  return <div className="flex flex-col">Organizacija</div>;
+  return <div className="flex flex-col text-cyan-900">Organizacija</div>;
 }

@@ -5,6 +5,8 @@ import {
   Outlet,
   redirect,
   useLoaderData,
+  useLocation,
+  useParams,
 } from '@remix-run/react';
 import { MdOutlineLogout } from 'react-icons/md';
 import { decodeTokenFromRequest } from '~/utils';
@@ -33,6 +35,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 export default function Index() {
   const data = useLoaderData<typeof loader>();
+  const params = useParams();
+
+  const location = useLocation();
   return (
     <div className="flex flex-1 flex-col text-white">
       <div className="flex items-center justify-center border bg-cyan-900 p-4">
