@@ -8,37 +8,33 @@ datasource db {
 }
 
 model OrgTable {
-  id    String @id
-  email String @unique
-  name  String
-  role  String @default("ORG") // ORG || ADMIN
-
-  status    String    @default("ACTIVE") // ACTIVE || INACTIVE
-  createdAt DateTime  @default(now())
+  id        String       @id
+  email     String       @unique
+  name      String
+  role      String       @default("ORG")
+  status    String       @default("ACTIVE")
+  createdAt DateTime     @default(now())
   updatedAt DateTime?
-
-  Polls PollTable[]  @relation(name: "FK_Poll_Org")
-  Users UserTable[]  @relation(name: "FK_User_Org")
-  Votes VotesTable[] @relation(name: "FK_Vote_Org")
+  Polls     PollTable[]  @relation("FK_Poll_Org")
+  Users     UserTable[]  @relation("FK_User_Org")
+  Votes     VotesTable[] @relation("FK_Vote_Org")
 
   @@index([status])
 }
 
 model UserTable {
-  id          String @id
+  id          String      @id
   orgId       String
-  email       String @unique
+  email       String      @unique
   name        String
   password    String
-  role        String @default("USER") // USER || ADMIN
-  permissions String @default("") //CRUD
-
-  status    String    @default("ACTIVE") // ACTIVE || INACTIVE
-  createdAt DateTime  @default(now())
-  updatedAt DateTime?
-
-  Org   OrgTable    @relation(name: "FK_User_Org", fields: [orgId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  Polls PollTable[] @relation(name: "FK_Poll_User")
+  role        String      @default("USER")
+  permissions String      @default("")
+  status      String      @default("ACTIVE")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime?
+  Polls       PollTable[] @relation("FK_Poll_User")
+  Org         OrgTable    @relation("FK_User_Org", fields: [orgId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([status])
 }
@@ -50,27 +46,25 @@ model RefreshTokenTable {
   token     String
   createdAt DateTime
   expiresAt DateTime
-  status    String   @default("GRANTED") //GRANTED || REVOKED
+  status    String   @default("GRANTED")
 
   @@index([familyId])
   @@map("RefreshTokens")
 }
 
 model PollTable {
-  id        String   @id
-  orgId     String
-  userId    String
-  name      String
-  createdAt DateTime
-  expiresAt DateTime
-  status    String   @default("ACTIVE")
-
-  iframeTitle String
-  iframeSrc   String
-
-  PollQuestions PollQuestionTable[] @relation(name: "FK_PollQuestion_Poll")
-  Org           OrgTable            @relation(name: "FK_Poll_Org", fields: [orgId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  User          UserTable           @relation(name: "FK_Poll_User", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id            String              @id
+  orgId         String
+  userId        String
+  name          String
+  createdAt     DateTime
+  expiresAt     DateTime
+  status        String              @default("ACTIVE")
+  iframeTitle   String
+  iframeSrc     String
+  PollQuestions PollQuestionTable[] @relation("FK_PollQuestion_Poll")
+  User          UserTable           @relation("FK_Poll_User", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Org           OrgTable            @relation("FK_Poll_Org", fields: [orgId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([orgId, id])
 }
@@ -80,20 +74,19 @@ model PollQuestionTable {
   orgId  String
   pollId String
   name   String
-  Votes  VotesTable[] @relation(name: "FK_PollQuestionAnswer_PollQuestion")
-  Poll   PollTable    @relation(name: "FK_PollQuestion_Poll", fields: [orgId, pollId], references: [orgId, id], onDelete: NoAction, onUpdate: NoAction)
+  Poll   PollTable    @relation("FK_PollQuestion_Poll", fields: [orgId, pollId], references: [orgId, id], onDelete: NoAction, onUpdate: NoAction)
+  Votes  VotesTable[] @relation("FK_PollQuestionAnswer_PollQuestion")
 
   @@unique([orgId, id])
 }
 
 model VotesTable {
-  id             String @id
+  id             String            @id
   orgId          String
   pollQuestionId String
   fingerPrint    String
-
-  PollQuestion PollQuestionTable @relation(name: "FK_PollQuestionAnswer_PollQuestion", fields: [pollQuestionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  Org          OrgTable          @relation(name: "FK_Vote_Org", fields: [orgId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Org            OrgTable          @relation("FK_Vote_Org", fields: [orgId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  PollQuestion   PollQuestionTable @relation("FK_PollQuestionAnswer_PollQuestion", fields: [pollQuestionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([orgId, fingerPrint])
 }

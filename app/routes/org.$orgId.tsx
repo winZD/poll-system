@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     redirect('/', {});
   }
 
-  return json({ userName: ctx?.userName, orgId: params?.id || '' });
+  return json({ userName: ctx?.userName });
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -47,12 +47,20 @@ export default function Index() {
         <div className="flex w-52 flex-col border bg-cyan-900">
           <div className="flex flex-1 flex-col">
             <NavLink
-              to={data?.orgId}
+              to={'/'}
               className={({ isActive }) =>
                 `p-4 ${isActive ? 'bg-cyan-700' : ''}`
               }
             >
               Organizacija
+            </NavLink>
+            <NavLink
+              to={'anketa/323636'}
+              className={({ isActive }) =>
+                `p-4 ${isActive ? 'bg-cyan-700' : ''}`
+              }
+            >
+              Anketa
             </NavLink>
           </div>
 
