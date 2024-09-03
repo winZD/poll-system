@@ -56,6 +56,8 @@ export const decodeTokenFromRequest = async (
       //
     }
 
+    console.log({ decoded });
+
     if (decoded) {
       const oldRT = await db.refreshTokenTable.findUnique({
         where: { id: decoded.tokenId, status: 'GRANTED' },
