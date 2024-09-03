@@ -55,7 +55,7 @@ export default function Index() {
               Organizacija
             </NavLink>
             <NavLink
-              to={'anketa/323636'}
+              to={'polls'}
               className={({ isActive }) =>
                 `p-4 ${isActive ? 'bg-cyan-700' : ''}`
               }
