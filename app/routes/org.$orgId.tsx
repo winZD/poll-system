@@ -12,7 +12,7 @@ import { db } from '~/utils/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const ctx = await decodeTokenFromRequest(request);
-  console.log(params);
+
   const user = await db.userTable.findUniqueOrThrow({
     where: { id: ctx?.userId },
   });
@@ -33,17 +33,17 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 export default function Index() {
   const data = useLoaderData<typeof loader>();
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="flex items-center justify-center border p-4">
+    <div className="flex flex-1 flex-col text-white">
+      <div className="flex items-center justify-center border bg-cyan-900 p-4">
         {`ORG: ${data.userName}`}
       </div>
       <div className="flex flex-1">
-        <div className="flex flex-col border bg-zinc-200">
+        <div className="flex w-52 flex-col border bg-cyan-900">
           <div className="flex flex-1 flex-col">
             <NavLink
               to={data?.orgId}
               className={({ isActive }) =>
-                `p-4 ${isActive ? 'bg-zinc-400' : ''}`
+                `p-4 ${isActive ? 'bg-cyan-700' : ''}`
               }
             >
               Organizacija
