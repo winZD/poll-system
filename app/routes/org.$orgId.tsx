@@ -1,11 +1,16 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { json, Outlet, redirect } from '@remix-run/react';
+import { decodeTokenFromRequest } from '~/utils';
 import { db } from '~/utils/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
+  const ctx = await decodeTokenFromRequest(request);
+  console.log(ctx);
   const user = await db.userTable.findUniqueOrThrow({
-    where: { id: '01J6VWEH7R9ENXX79PT5RB401F' },
+    where: { id: ctx?.userId },
   });
+
+  if (!ctx) return redirect('/login');
 
   if (user.role !== 'ORG') {
     redirect('/', {});
