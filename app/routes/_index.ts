@@ -8,13 +8,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   if (!ctx) return redirect('/login');
 
-  if (ctx.userRole === 'ORG') {
-    return redirect(`/org/${ctx.userId}`, {
+  if (ctx.userOrgRole === 'ORG') {
+    return redirect(`/org/${ctx.userOrgId}`, {
       ...(ctx.headers ? { headers: ctx.headers } : {}),
     });
   }
 
-  if (ctx.userRole === 'ADMIN') {
+  if (ctx.userOrgRole === 'ADMIN') {
     return redirect(`/admin`, {
       ...(ctx.headers ? { headers: ctx.headers } : {}),
     });

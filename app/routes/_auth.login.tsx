@@ -40,6 +40,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     where: {
       email: data.email,
     },
+    include: { Org: true },
   });
   // console.log({ user });
   if (!user) {
@@ -60,13 +61,20 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     userId: user.id,
     userRole: user.role,
     userName: user.name,
+    userPermissions: user.permissions,
+    userOrgRole: user.Org.role,
+    userOrgId: user.orgId,
   });
   const refreshToken = generateRefreshToken({
     tokenId,
     userId: user.id,
     userRole: user.role,
     userName: user.name,
+    userPermissions: user.permissions,
+    userOrgRole: user.Org.role,
+    userOrgId: user.orgId,
   });
+
   await db.refreshTokenTable.create({
     data: {
       id: tokenId,

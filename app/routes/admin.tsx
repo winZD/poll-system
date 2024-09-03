@@ -8,7 +8,6 @@ import {
 } from '@remix-run/react';
 import { MdOutlineLogout } from 'react-icons/md';
 import { decodeTokenFromRequest } from '~/utils';
-import { db } from '~/utils/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // const token = decode
@@ -17,8 +16,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   if (!ctx) return redirect('/login');
 
-  if (ctx.userRole !== 'ADMIN') {
-    return redirect(`/org/${ctx.userId}`, {
+  if (ctx.userOrgRole !== 'ADMIN') {
+    return redirect(`/org/${ctx.userOrgId}`, {
       ...(ctx.headers ? { headers: ctx.headers } : {}),
     });
   }

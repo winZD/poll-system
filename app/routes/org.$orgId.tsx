@@ -13,13 +13,14 @@ import { db } from '~/utils/db';
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const ctx = await decodeTokenFromRequest(request);
 
-  const user = await db.userTable.findUniqueOrThrow({
-    where: { id: ctx?.userId },
-  });
-
   if (!ctx) return redirect('/login');
 
-  if (user.role !== 'ORG') {
+  const user = await db.userTable.findUniqueOrThrow({
+    where: { id: ctx?.userId },
+    include: { Org: true },
+  });
+  const { orgId } = params;
+  if (user.Org.role !== 'ORG' || user.orgId !== orgId) {
     redirect('/', {});
   }
 

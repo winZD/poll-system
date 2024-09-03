@@ -48,13 +48,23 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   const password = await hashPassword(data.password);
 
-  await db.userTable.create({
+  const org = await db.orgTable.create({
     data: {
       id: ulid(),
       email: data.email,
       name: data.name,
-      password,
       role: 'ORG',
+    },
+  });
+  await db.userTable.create({
+    data: {
+      id: ulid(),
+      orgId: org.id,
+      email: data.email,
+      name: data.name,
+      role: 'ADMIN',
+      password,
+      permissions: 'CRUD',
     },
   });
 
@@ -62,10 +72,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   return redirect(`..`);
 };
 export default function Index() {
-  React.useEffect(() => {}, []);
-
-  const data = useLoaderData<typeof loader>();
-
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     resolver,

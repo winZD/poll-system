@@ -11,6 +11,9 @@ type TToken = {
   userId: string;
   userRole: string;
   userName: string;
+  userOrgId: string;
+  userPermissions: string;
+  userOrgRole: string;
 };
 
 export const generateAccessToken = (data: TToken) =>
@@ -26,15 +29,14 @@ export const generateRefreshToken = (data: TToken) =>
 
 export const decodeTokenFromRequest = async (
   request: Request,
-): Promise<{
-  userId: string;
-  userRole: string;
-  userName: string;
-  iat: number;
-  exp: number;
-  tokenId: string;
-  headers?: Headers;
-} | null> => {
+): Promise<
+  | (TToken & {
+      iat: number;
+      exp: number;
+      headers?: Headers;
+    })
+  | null
+> => {
   const cookies = parse(request.headers.get('Cookie') ?? '');
 
   let decoded;
@@ -71,6 +73,7 @@ export const decodeTokenFromRequest = async (
 
       const user = await db.userTable.findUniqueOrThrow({
         where: { id: decoded.userId },
+        include: { Org: true },
       });
 
       const tokenId = ulid();
@@ -79,12 +82,18 @@ export const decodeTokenFromRequest = async (
         userId: decoded.userId,
         userRole: user.role,
         userName: user.name,
+        userPermissions: user.permissions,
+        userOrgRole: user.Org.role,
+        userOrgId: user.orgId,
       });
       const refreshToken = generateRefreshToken({
         tokenId,
         userId: decoded.userId,
         userRole: user.role,
         userName: user.name,
+        userPermissions: user.permissions,
+        userOrgRole: user.Org.role,
+        userOrgId: user.orgId,
       });
       await db.refreshTokenTable.create({
         data: {
