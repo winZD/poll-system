@@ -15,8 +15,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   // check if admin is logged in
 
   const orgs = await db.orgTable.findMany({
-    where: { status: 'ACTIVE', role: 'ORG' },
-    orderBy: { name: 'asc' },
+    where: { role: 'ORG' },
+    orderBy: [{ status: 'asc' }, { name: 'asc' }],
   });
 
   return json(orgs);
@@ -31,9 +31,12 @@ export default function Index() {
 
   const orgs = useLoaderData<typeof loader>();
 
+  const activeOrgs = orgs.filter((org) => org.status === 'ACTIVE');
+  const inactiveOrgs = orgs.filter((org) => org.status === 'INACTIVE');
+
   return (
     <>
-      <div className="flex w-52 flex-col gap-2 border-r">
+      <div className="flex w-52 flex-col gap-8 border-r">
         <NavLink
           to="register"
           className="m-2 self-start rounded bg-blue-500 px-4 py-1 text-white"
@@ -42,11 +45,24 @@ export default function Index() {
         </NavLink>
 
         <div className="flex flex-col">
-          {orgs?.map((org) => (
+          {activeOrgs?.map((org) => (
             <NavLink
               to={`${org.id}`}
               className={({ isActive }) =>
                 `flex items-center truncate p-2 font-semibold hover:bg-blue-200 ${isActive ? 'bg-blue-100' : ''}`
+              }
+            >
+              {org.name}
+            </NavLink>
+          ))}
+        </div>
+
+        <div className="flex flex-col">
+          {inactiveOrgs?.map((org) => (
+            <NavLink
+              to={`${org.id}`}
+              className={({ isActive }) =>
+                `flex items-center truncate p-2 font-semibold text-red-500 hover:bg-red-200 ${isActive ? 'bg-red-100' : ''}`
               }
             >
               {org.name}
