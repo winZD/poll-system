@@ -107,7 +107,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }),
   );
 
-  return redirect(user.role === 'ADMIN' ? '/admin' : `/org/${user.id}`, {
+  return redirect(user.role === 'ADMIN' ? '/admin' : `/org/${user.orgId}`, {
     headers,
   });
 };

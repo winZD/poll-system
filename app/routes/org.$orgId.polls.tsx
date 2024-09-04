@@ -16,11 +16,12 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   if (!ctx) return redirect('/login');
   //TODO: fix fetch by db.orgTable
-  const polls = await db.pollTable.findMany({
-    where: { orgId: ctx?.userOrgId },
+  const orgs = await db.orgTable.findUniqueOrThrow({
+    where: { id: ctx.userOrgId },
+    include: { Polls: true },
   });
   console.log(ctx);
-  return json(polls);
+  return json(orgs);
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -30,8 +31,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 export default function Index() {
   const params = useParams();
   console.log(params);
-  const polls = useLoaderData<typeof loader>();
-  console.log(polls);
+  const orgs = useLoaderData<typeof loader>();
+  console.log(orgs);
   return (
     <>
       <div className="flex flex-1 flex-col p-5">
@@ -46,7 +47,7 @@ export default function Index() {
 
         <PollsTable />
 
-        {polls.map((poll) => (
+        {orgs.Polls.map((poll) => (
           <div
             key={poll.id}
             className="max-w-md rounded-lg bg-slate-100 text-slate-800 shadow-md"
@@ -66,9 +67,9 @@ export default function Index() {
   );
 }
 const PollsTable = () => {
-  const polls = useLoaderData<typeof loader>();
+  const orgs = useLoaderData<typeof loader>();
 
-  const columnDefs = React.useMemo<ColDef<(typeof polls)[0]>[]>(
+  const columnDefs = React.useMemo<ColDef<(typeof orgs.Polls)[0]>[]>(
     () => [
       {
         field: 'name',
@@ -96,5 +97,5 @@ const PollsTable = () => {
     [],
   );
 
-  return <AgGrid columnDefs={columnDefs} rowData={polls} />;
+  return <AgGrid columnDefs={columnDefs} rowData={orgs.Polls} />;
 };

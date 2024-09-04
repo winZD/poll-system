@@ -26,7 +26,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     redirect('/', {});
   }
 
-  return json({ userName: ctx?.userName, orgId: ctx.userOrgId });
+  return json({
+    userName: ctx?.userName,
+    orgId: ctx?.userOrgId,
+    orgName: user?.Org?.name,
+  });
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -41,7 +45,7 @@ export default function Index() {
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex items-center justify-end gap-8 border p-2">
-        <div>{`ORGANIZATION: ${data.userName}`}</div>
+        <div>{`ORGANIZATION: ${data.orgName}`}</div>
       </div>
       <div className="flex flex-1">
         <div className="flex w-52 flex-col border bg-slate-50">
