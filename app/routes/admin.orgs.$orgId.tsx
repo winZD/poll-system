@@ -25,6 +25,37 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   return json(org);
 }
 
+export const action = async ({ request, params }: ActionFunctionArgs) => {
+  const formData = await request.formData();
+
+  const action = formData.get('action')?.toString();
+  const orgId = formData.get('orgId')?.toString();
+
+  if (action === 'DEACTIVATE') {
+    await db.$transaction(async (tx) => {
+      await tx.orgTable.update({
+        where: { id: orgId },
+        data: { status: 'INACTIVE' },
+      });
+
+      await tx.pollTable.updateMany({
+        where: { orgId: orgId },
+        data: { status: 'INACTIVE' },
+      });
+    });
+    return jsonWithSuccess({}, 'Uspješno deaktivirana organizacija');
+  }
+  if (action === 'ACTIVATE') {
+    await db.$transaction(async (tx) => {
+      await tx.orgTable.update({
+        where: { id: orgId },
+        data: { status: 'ACTIVE' },
+      });
+    });
+    return jsonWithSuccess({}, 'Uspješno aktivirana organizacija');
+  }
+};
+
 export default function Index() {
   const org = useLoaderData<typeof loader>();
 
@@ -36,16 +67,23 @@ export default function Index() {
 
   return (
     <div className="flex flex-col items-start gap-8 p-4">
-      <Button
-        onClick={() =>
-          submit(
-            { action: 'ACTIVATE', orgId: org.id },
-            { method: 'post', action: '/admin' },
-          )
-        }
-      >
-        Aktiviraj
-      </Button>
+      {org.status === 'ACTIVE' ? (
+        <Button
+          onClick={() =>
+            submit({ action: 'DEACTIVATE', orgId: org.id }, { method: 'post' })
+          }
+        >
+          Deaktiviraj
+        </Button>
+      ) : (
+        <Button
+          onClick={() =>
+            submit({ action: 'ACTIVATE', orgId: org.id }, { method: 'post' })
+          }
+        >
+          Aktiviraj
+        </Button>
+      )}
       <div className="flex flex-col gap-2 font-semibold">
         <div>{`${org.name} `}</div>
         <div>{`${org.email} `}</div>
