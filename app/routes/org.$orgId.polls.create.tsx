@@ -11,12 +11,12 @@ enum StatusType {
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
 }
-
+//TODO: create post method
 const schema = zod.object({
   name: zod.string().min(1),
   status: zod.nativeEnum(StatusType),
-  /*   iframeTitle: zod.string().min(1),
-  iframeSrc: zod.string().min(1), */
+  iframeTitle: zod.string().min(1),
+  iframeSrc: zod.string().min(1),
 });
 
 type FormData = zod.infer<typeof schema>;
@@ -54,7 +54,6 @@ const Index = () => {
         method="POST"
         className="flex w-96 flex-col gap-4 p-4"
       >
-        <InputField label="Name" name="name" />
         <SelectField
           label="Status"
           name="status"
@@ -63,6 +62,9 @@ const Index = () => {
             value,
           }))}
         />
+        <InputField label="Name" name="name" />
+        <InputField label="Title" name="iframeTitle" />
+        <InputField label="Src" name="iframeSrc" />
 
         <button
           type="submit"

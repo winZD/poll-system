@@ -5,14 +5,17 @@ import {
   redirect,
 } from '@remix-run/node';
 import { NavLink, Outlet, useLoaderData, useParams } from '@remix-run/react';
+import React from 'react';
 import { decodeTokenFromRequest } from '~/utils';
+import { ColDef } from 'ag-grid-community';
+import { AgGrid } from '~/components/AgGrid';
 import { db } from '~/utils/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const ctx = await decodeTokenFromRequest(request);
 
   if (!ctx) return redirect('/login');
-
+  //TODO: fix fetch by db.orgTable
   const polls = await db.pollTable.findMany({
     where: { orgId: ctx?.userOrgId },
   });
@@ -31,7 +34,7 @@ export default function Index() {
   console.log(polls);
   return (
     <>
-      <div className="p-5">
+      <div className="flex flex-1 flex-col p-5">
         <div className="flex gap-2">
           <NavLink
             to="create"
@@ -40,6 +43,9 @@ export default function Index() {
             + Dodaj anketu
           </NavLink>
         </div>
+
+        <PollsTable />
+
         {polls.map((poll) => (
           <div
             key={poll.id}
@@ -53,8 +59,42 @@ export default function Index() {
             </div>
           </div>
         ))}
+
         <Outlet />
       </div>
     </>
   );
 }
+const PollsTable = () => {
+  const polls = useLoaderData<typeof loader>();
+
+  const columnDefs = React.useMemo<ColDef<(typeof polls)[0]>[]>(
+    () => [
+      {
+        field: 'name',
+        headerName: 'Ime',
+        width: 200,
+      },
+
+      {
+        field: 'status',
+        headerName: 'Status',
+        width: 120,
+      },
+
+      {
+        field: 'iframeTitle',
+        headerName: 'Created At',
+        width: 150,
+      },
+      {
+        field: 'iframeSrc',
+        headerName: 'Expires At',
+        width: 150,
+      },
+    ],
+    [],
+  );
+
+  return <AgGrid columnDefs={columnDefs} rowData={polls} />;
+};
