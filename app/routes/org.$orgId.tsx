@@ -40,8 +40,8 @@ export default function Index() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="flex items-center justify-center border p-4">
-        {`ORG: ${data.userName}`}
+      <div className="flex items-center justify-end gap-8 border p-2">
+        <div>{`ORGANIZATION: ${data.userName}`}</div>
       </div>
       <div className="flex flex-1">
         <div className="flex w-52 flex-col border bg-slate-50">
