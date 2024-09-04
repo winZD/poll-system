@@ -4,23 +4,20 @@ import {
   ActionFunctionArgs,
   redirect,
 } from '@remix-run/node';
+import { NavLink, useLoaderData } from '@remix-run/react';
 import { decodeTokenFromRequest } from '~/utils';
 import { db } from '~/utils/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  // TODO: decode token
-  console.log(request.headers);
   const ctx = await decodeTokenFromRequest(request);
 
   if (!ctx) return redirect('/login');
 
-  //TODO: check if admin is logged in
-
-  const activeOrgs = await db.pollTable.findMany({
-    where: { orgId: '', userId: '' },
+  const polls = await db.pollTable.findMany({
+    where: { orgId: ctx?.userOrgId },
   });
-
-  return json(activeOrgs);
+  console.log(ctx);
+  return json(polls);
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -28,5 +25,30 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
-  return <div className="text-red-700">Lista anketa</div>;
+  const polls = useLoaderData<typeof loader>();
+  console.log(polls);
+  return (
+    <>
+      <div>
+        <div className="flex gap-2 border-r">
+          <NavLink
+            to=""
+            className="m-2 self-start rounded bg-blue-500 px-4 py-1 text-white"
+          >
+            + Dodaj anketu
+          </NavLink>
+        </div>
+        {polls.map((poll) => (
+          <div className="max-w-md rounded-lg bg-slate-100 text-slate-800 shadow-md">
+            <div className="grid grid-flow-col grid-rows-2 gap-4 p-5">
+              <span>{poll.name}</span>
+              <span>{poll.status}</span>
+              <span>{poll.createdAt.toString()}</span>
+              <span>{poll.expiresAt.toString()}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
 }
