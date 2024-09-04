@@ -4,7 +4,7 @@ import {
   ActionFunctionArgs,
   redirect,
 } from '@remix-run/node';
-import { NavLink, useLoaderData } from '@remix-run/react';
+import { NavLink, Outlet, useLoaderData, useParams } from '@remix-run/react';
 import { decodeTokenFromRequest } from '~/utils';
 import { db } from '~/utils/db';
 
@@ -25,6 +25,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
+  const params = useParams();
+  console.log(params);
   const polls = useLoaderData<typeof loader>();
   console.log(polls);
   return (
@@ -51,6 +53,7 @@ export default function Index() {
             </div>
           </div>
         ))}
+        <Outlet />
       </div>
     </>
   );
