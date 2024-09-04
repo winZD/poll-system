@@ -2,6 +2,7 @@ import React from 'react';
 import { AgGridReact, AgGridReactProps } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 export const AgGrid: React.FC<AgGridReactProps> = ({
   rowData,
@@ -13,7 +14,7 @@ export const AgGrid: React.FC<AgGridReactProps> = ({
   ...props
 }) => {
   return (
-    <div className={`${props.className || ''} ag-theme-alpine flex-1`}>
+    <div className={`${props.className || ''} ag-theme-quartz flex-1`}>
       <AgGridReact
         rowData={rowData}
         columnDefs={columnDefs}
