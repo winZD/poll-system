@@ -37,9 +37,9 @@ export default function Index() {
   return (
     <div className="flex flex-col items-start gap-8 p-4">
       <Button
-        onClick={() => submit({ action: 'DEACTIVATE' }, { method: 'post' })}
+        onClick={() => submit({ action: 'ACTIVATE' }, { method: 'post' })}
       >
-        Deaktiviraj
+        Aktiviraj
       </Button>
       <div className="flex flex-col gap-2 font-semibold">
         <div>{`${org.name} `}</div>

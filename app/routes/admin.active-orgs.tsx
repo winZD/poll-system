@@ -14,11 +14,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   // check if admin is logged in
 
-  const activeOrgs = await db.orgTable.findMany({
+  const orgs = await db.orgTable.findMany({
     where: { status: 'ACTIVE', role: 'ORG' },
   });
 
-  return json(activeOrgs);
+  return json(orgs);
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -32,7 +32,7 @@ export default function Index() {
 
   return (
     <>
-      <div className="flex flex-col gap-2 border-r">
+      <div className="flex w-52 flex-col gap-2 border-r">
         <NavLink
           to="register"
           className="m-2 self-start rounded bg-blue-500 px-4 py-1 text-white"
@@ -45,7 +45,7 @@ export default function Index() {
             <NavLink
               to={`${org.id}`}
               className={({ isActive }) =>
-                `flex items-center p-2 hover:bg-blue-200 ${isActive ? 'bg-blue-100' : ''}`
+                `flex items-center truncate p-2 font-semibold hover:bg-blue-200 ${isActive ? 'bg-blue-100' : ''}`
               }
             >
               {org.name}

@@ -7,7 +7,9 @@ import {
   useLoaderData,
 } from '@remix-run/react';
 import { MdOutlineLogout } from 'react-icons/md';
+import { redirectWithSuccess } from 'remix-toast';
 import { decodeTokenFromRequest } from '~/utils';
+import { db } from '~/utils/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // const token = decode
@@ -31,7 +33,35 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
-  return json({});
+  const formData = await request.formData();
+
+  const action = formData.get('action')?.toString();
+
+  const orgId = params.orgId;
+
+  if (action === 'DEACTIVATE') {
+    await db.$transaction(async (tx) => {
+      await tx.orgTable.update({
+        where: { id: orgId },
+        data: { status: 'INACTIVE' },
+      });
+
+      await tx.pollTable.updateMany({
+        where: { orgId: orgId },
+        data: { status: 'INACTIVE' },
+      });
+    });
+    return redirectWithSuccess('..', 'Uspješno deaktivirana organizacija');
+  }
+  if (action === 'ACTIVATE') {
+    await db.$transaction(async (tx) => {
+      await tx.orgTable.update({
+        where: { id: orgId },
+        data: { status: 'ACTIVE' },
+      });
+    });
+    return redirectWithSuccess('..', 'Uspješno aktivirana organizacija');
+  }
 };
 
 export default function Index() {
@@ -57,7 +87,7 @@ export default function Index() {
             <NavLink
               to={'active-orgs'}
               className={({ isActive }) =>
-                `p-4 hover:bg-blue-200 ${isActive ? 'bg-blue-100' : ''}`
+                `px-4 py-6 font-bold hover:bg-blue-200 ${isActive ? 'bg-blue-100' : ''}`
               }
             >
               Aktivni korisnici
@@ -65,7 +95,7 @@ export default function Index() {
             <NavLink
               to={'inactive-orgs'}
               className={({ isActive }) =>
-                `p-4 hover:bg-blue-200 ${isActive ? 'bg-blue-100' : ''}`
+                `px-4 py-6 font-bold hover:bg-blue-200 ${isActive ? 'bg-blue-100' : ''}`
               }
             >
               Neaktivni korisnici
