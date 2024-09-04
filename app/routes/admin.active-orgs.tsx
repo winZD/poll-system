@@ -16,6 +16,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const orgs = await db.orgTable.findMany({
     where: { status: 'ACTIVE', role: 'ORG' },
+    orderBy: { name: 'asc' },
   });
 
   return json(orgs);

@@ -37,7 +37,12 @@ export default function Index() {
   return (
     <div className="flex flex-col items-start gap-8 p-4">
       <Button
-        onClick={() => submit({ action: 'ACTIVATE' }, { method: 'post' })}
+        onClick={() =>
+          submit(
+            { action: 'ACTIVATE', orgId: org.id },
+            { method: 'post', action: '/admin' },
+          )
+        }
       >
         Aktiviraj
       </Button>

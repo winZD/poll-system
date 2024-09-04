@@ -37,7 +37,12 @@ export default function Index() {
   return (
     <div className="flex flex-col items-start gap-8 p-4">
       <Button
-        onClick={() => submit({ action: 'DEACTIVATE' }, { method: 'post' })}
+        onClick={() =>
+          submit(
+            { action: 'DEACTIVATE', orgId: org.id },
+            { method: 'post', action: '/admin' },
+          )
+        }
       >
         Deaktiviraj
       </Button>

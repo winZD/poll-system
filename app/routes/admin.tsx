@@ -36,8 +36,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const formData = await request.formData();
 
   const action = formData.get('action')?.toString();
-
-  const orgId = params.orgId;
+  const orgId = formData.get('orgId')?.toString();
 
   if (action === 'DEACTIVATE') {
     await db.$transaction(async (tx) => {
@@ -51,7 +50,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         data: { status: 'INACTIVE' },
       });
     });
-    return redirectWithSuccess('..', 'Uspješno deaktivirana organizacija');
+    return redirectWithSuccess(
+      '/admin/active-orgs',
+      'Uspješno deaktivirana organizacija',
+    );
   }
   if (action === 'ACTIVATE') {
     await db.$transaction(async (tx) => {
@@ -60,7 +62,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         data: { status: 'ACTIVE' },
       });
     });
-    return redirectWithSuccess('..', 'Uspješno aktivirana organizacija');
+    return redirectWithSuccess(
+      '/admin/inactive-orgs',
+      'Uspješno aktivirana organizacija',
+    );
   }
 };
 
