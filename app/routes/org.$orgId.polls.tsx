@@ -32,14 +32,17 @@ export default function Index() {
       <div>
         <div className="flex gap-2 border-r">
           <NavLink
-            to=""
+            to="create"
             className="m-2 self-start rounded bg-blue-500 px-4 py-1 text-white"
           >
             + Dodaj anketu
           </NavLink>
         </div>
         {polls.map((poll) => (
-          <div className="max-w-md rounded-lg bg-slate-100 text-slate-800 shadow-md">
+          <div
+            key={poll.id}
+            className="max-w-md rounded-lg bg-slate-100 text-slate-800 shadow-md"
+          >
             <div className="grid grid-flow-col grid-rows-2 gap-4 p-5">
               <span>{poll.name}</span>
               <span>{poll.status}</span>
