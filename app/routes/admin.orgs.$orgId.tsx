@@ -1,17 +1,16 @@
-import {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  redirect,
-} from '@remix-run/node';
+import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import {
   json,
   useLoaderData,
   useSearchParams,
   useSubmit,
 } from '@remix-run/react';
-import { jsonWithSuccess, redirectWithSuccess } from 'remix-toast';
+import React from 'react';
+import { jsonWithSuccess } from 'remix-toast';
 import { Button } from '~/components/Button';
 import { db } from '~/utils/db';
+import { ColDef } from 'ag-grid-community';
+import { AgGrid } from '~/components/AgGrid';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // return redirect("active-orgs");
@@ -66,7 +65,7 @@ export default function Index() {
   const submit = useSubmit();
 
   return (
-    <div className="flex flex-col items-start gap-8 p-4">
+    <div className="flex flex-1 flex-col items-start gap-8 p-4">
       {org.status === 'ACTIVE' ? (
         <Button
           onClick={() =>
@@ -89,78 +88,97 @@ export default function Index() {
         <div>{`${org.email} `}</div>
       </div>
 
-      <div className="text-primary-900 flex border-b border-b-neutral-200 font-semibold">
-        <div
-          onClick={() => {
-            const params = new URLSearchParams();
-            params.set('tab', 'korisnici');
-            setSearchParams(params);
-          }}
-          className={`cursor-pointer rounded-t px-4 py-1 ${
-            selectedTab === 'korisnici' ? 'bg-neutral-200' : ''
-          }`}
-        >
-          Korisnici
+      <div className="flex flex-1 flex-col self-stretch">
+        <div className="text-primary-900 flex font-semibold">
+          <div
+            onClick={() => {
+              const params = new URLSearchParams();
+              params.set('tab', 'korisnici');
+              setSearchParams(params);
+            }}
+            className={`cursor-pointer rounded-t px-4 py-1 ${
+              selectedTab === 'korisnici' ? 'bg-slate-200' : ''
+            }`}
+          >
+            Korisnici
+          </div>
+          <div
+            onClick={() => {
+              const params = new URLSearchParams();
+              params.set('tab', 'ankete');
+              setSearchParams(params);
+            }}
+            className={`cursor-pointer rounded-t px-4 py-1 ${
+              selectedTab === 'ankete' ? 'bg-slate-200' : ''
+            }`}
+          >
+            Ankete
+          </div>
         </div>
-        <div
-          onClick={() => {
-            const params = new URLSearchParams();
-            params.set('tab', 'ankete');
-            setSearchParams(params);
-          }}
-          className={`cursor-pointer rounded-t px-4 py-1 ${
-            selectedTab === 'ankete' ? 'bg-neutral-200' : ''
-          }`}
-        >
-          Ankete
-        </div>
+
+        {selectedTab === 'korisnici' && <UsersTable />}
+        {selectedTab === 'ankete' && <PollsTable />}
       </div>
-
-      {selectedTab === 'korisnici' && (
-        <div className="flex flex-col self-start">
-          <div className="grid grid-cols-[200px_260px_120px_80px_100px] bg-slate-200 p-1 font-semibold">
-            <div>Ime</div>
-            <div>Email</div>
-            <div>Rola</div>
-            <div>Ovlasti</div>
-            <div>Status</div>
-          </div>
-          {org.Users.map((user) => (
-            <div className="grid grid-cols-[200px_260px_120px_80px_100px] p-1">
-              <div>{user.name}</div>
-              <div>{user.email}</div>
-              <div>{user.role}</div>
-              <div>{user.permissions}</div>
-              <div>{user.status}</div>
-            </div>
-          ))}
-        </div>
-      )}
-      {selectedTab === 'ankete' && (
-        <div className="flex flex-col self-start">
-          <div className="grid grid-cols-[300px_200px] bg-slate-200 p-1 font-semibold">
-            <div>Anketa</div>
-            <div>Status</div>
-          </div>
-
-          {org.Polls.map((poll) => (
-            <div className="grid grid-cols-[300px_200px] p-1">
-              <div>{poll.name}</div>
-              <div>{poll.status}</div>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
 
-{
-  /**
-  
-  
-  - firme
-  - neaktivne firme
+const UsersTable = (props) => {
+  const org = useLoaderData<typeof loader>();
 
-  */
-}
+  const columnDefs = React.useMemo<ColDef<(typeof org.Users)[0]>[]>(
+    () => [
+      {
+        field: 'name',
+        headerName: 'Ime',
+        width: 200,
+      },
+      {
+        field: 'email',
+        headerName: 'Email',
+        width: 300,
+      },
+      {
+        field: 'role',
+        headerName: 'Rola',
+        width: 120,
+      },
+      {
+        field: 'permissions',
+        headerName: 'Ovlasti',
+        width: 120,
+      },
+      {
+        field: 'status',
+        headerName: 'Status',
+        width: 120,
+      },
+    ],
+    [],
+  );
+
+  return <AgGrid columnDefs={columnDefs} rowData={org.Users} />;
+};
+
+const PollsTable = (props) => {
+  const org = useLoaderData<typeof loader>();
+
+  const columnDefs = React.useMemo<ColDef<(typeof org.Polls)[0]>[]>(
+    () => [
+      {
+        field: 'name',
+        headerName: 'Ime',
+        width: 200,
+      },
+
+      {
+        field: 'status',
+        headerName: 'Status',
+        width: 120,
+      },
+    ],
+    [],
+  );
+
+  return <AgGrid columnDefs={columnDefs} rowData={org.Users} />;
+};
