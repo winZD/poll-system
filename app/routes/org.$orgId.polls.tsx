@@ -31,8 +31,8 @@ export default function Index() {
   console.log(polls);
   return (
     <>
-      <div>
-        <div className="flex gap-2 border-r">
+      <div className="p-5">
+        <div className="flex gap-2">
           <NavLink
             to="create"
             className="m-2 self-start rounded bg-blue-500 px-4 py-1 text-white"

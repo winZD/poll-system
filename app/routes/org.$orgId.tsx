@@ -44,12 +44,12 @@ export default function Index() {
         {`ORG: ${data.userName}`}
       </div>
       <div className="flex flex-1">
-        <div className="flex w-52 flex-col border bg-cyan-900">
+        <div className="flex w-52 flex-col border bg-slate-50">
           <div className="flex flex-1 flex-col">
             <NavLink
               to={`../org/${params?.orgId}`}
               className={({ isActive }) =>
-                `p-4 ${isActive && location?.pathname === `/org/${params?.orgId}` ? 'bg-cyan-700' : ''}`
+                `p-4 hover:bg-blue-200 ${isActive && location?.pathname === `/org/${params?.orgId}` ? 'bg-blue-100' : ''}`
               }
             >
               Organizacija
@@ -57,7 +57,7 @@ export default function Index() {
             <NavLink
               to={'polls'}
               className={({ isActive }) =>
-                `p-4 ${isActive ? 'bg-cyan-700' : ''}`
+                `p-4 ${isActive ? 'bg-blue-100' : ''}`
               }
             >
               Anketa
@@ -74,7 +74,7 @@ export default function Index() {
             <MdOutlineLogout />
           </NavLink>
         </div>
-        <div className="flex-1 border p-4">
+        <div className="flex flex-1 bg-slate-50">
           <Outlet />
         </div>
       </div>
