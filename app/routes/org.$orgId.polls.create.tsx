@@ -5,14 +5,16 @@ import * as zod from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HookForm } from '~/components/Form/Form';
 import InputField from '~/components/Form/FormInput';
-enum Status {
+import SelectField from '~/components/Form/SelectForm';
+import React from 'react';
+enum StatusType {
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
 }
 
 const schema = zod.object({
   name: zod.string().min(1),
-  status: zod.nativeEnum(Status),
+  status: zod.nativeEnum(StatusType),
   /*   iframeTitle: zod.string().min(1),
   iframeSrc: zod.string().min(1), */
 });
@@ -39,7 +41,10 @@ const Index = () => {
     resolver,
   });
 
-  console.log('modal');
+  const { formState, watch } = formMethods;
+  React.useEffect(() => {
+    console.log('Current form values:', watch());
+  }, [watch, formState]);
 
   return (
     <Modal title="Nova anketa">
@@ -49,8 +54,15 @@ const Index = () => {
         method="POST"
         className="flex w-96 flex-col gap-4 p-4"
       >
-        <InputField label="Status" name="name" />
-        <InputField label="Status" name="status" />
+        <InputField label="Name" name="name" />
+        <SelectField
+          label="Status"
+          name="status"
+          data={Object.values(StatusType).map((value, index) => ({
+            id: index,
+            value,
+          }))}
+        />
 
         <button
           type="submit"
