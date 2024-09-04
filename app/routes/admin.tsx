@@ -43,7 +43,7 @@ export default function Index() {
         {`HEADER`}
       </div>
       <div className="flex flex-1">
-        <div className="flex flex-col gap-8 border-r bg-zinc-50">
+        <div className="flex flex-col gap-8 border-r bg-slate-50">
           <div className="flex flex-1 flex-col">
             <NavLink
               to={'active-orgs'}
@@ -75,7 +75,7 @@ export default function Index() {
             <MdOutlineLogout />
           </NavLink>
         </div>
-        <div className="flex flex-1 bg-zinc-50">
+        <div className="flex flex-1 bg-slate-50">
           <Outlet />
         </div>
       </div>

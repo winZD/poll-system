@@ -78,7 +78,7 @@ export default function Index() {
   });
 
   return (
-    <Modal title="Novi korisnik">
+    <Modal title="Nova organizacija">
       <HookForm
         formMethods={formMethods}
         onSubmit={formMethods.handleSubmit}
@@ -89,8 +89,11 @@ export default function Index() {
         <InputField label="Naziv" name="name" />
         <InputField label="Inicijalna lozinka" name="password" />
 
-        <button type="submit" className="rounded bg-zinc-200 p-2">
-          Registriraj novog korisnika
+        <button
+          type="submit"
+          className="rounded bg-slate-200 p-2 hover:bg-slate-300"
+        >
+          Registriraj novu organizaciju
         </button>
       </HookForm>
     </Modal>

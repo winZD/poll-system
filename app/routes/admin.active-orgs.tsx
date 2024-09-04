@@ -35,7 +35,7 @@ export default function Index() {
       <div className="flex flex-col gap-2 border-r">
         <NavLink
           to="register"
-          className="m-2 self-start rounded-lg bg-blue-500 p-2 text-white"
+          className="m-2 self-start rounded bg-blue-500 px-4 py-1 text-white"
         >
           + Dodaj organizaciju
         </NavLink>
@@ -43,7 +43,7 @@ export default function Index() {
         <div className="flex flex-col">
           {orgs?.map((org) => (
             <NavLink
-              to={`${org.id}?tab=korisnici`}
+              to={`${org.id}`}
               className={({ isActive }) =>
                 `flex items-center p-2 hover:bg-blue-200 ${isActive ? 'bg-blue-100' : ''}`
               }

@@ -1,5 +1,16 @@
-import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { json, useLoaderData, useSearchParams } from '@remix-run/react';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  redirect,
+} from '@remix-run/node';
+import {
+  json,
+  useLoaderData,
+  useSearchParams,
+  useSubmit,
+} from '@remix-run/react';
+import { jsonWithSuccess, redirectWithSuccess } from 'remix-toast';
+import { Button } from '~/components/Button';
 import { db } from '~/utils/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -15,7 +26,25 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
-  return json({});
+  const formData = await request.formData();
+  const deactivate = formData.get('action')?.toString() === 'DEACTIVATE';
+
+  const orgId = params.orgId;
+
+  if (deactivate) {
+    await db.$transaction(async (tx) => {
+      await tx.orgTable.update({
+        where: { id: orgId },
+        data: { status: 'INACTIVE' },
+      });
+
+      await tx.pollTable.updateMany({
+        where: { orgId: orgId },
+        data: { status: 'INACTIVE' },
+      });
+    });
+    return redirectWithSuccess('..', 'Uspješno deaktivirana organizacija');
+  }
 };
 
 export default function Index() {
@@ -23,13 +52,20 @@ export default function Index() {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const selectedTab = searchParams.get('tab');
+  const selectedTab = searchParams.get('tab') || 'korisnici';
+
+  const submit = useSubmit();
 
   return (
-    <div className="flex flex-col gap-8 p-4">
-      <div className="flex gap-8 font-bold">
-        <div>{`Organizacija: ${org.name} `}</div>
-        <div>{`Email: ${org.email} `}</div>
+    <div className="flex flex-col items-start gap-8 p-4">
+      <Button
+        onClick={() => submit({ action: 'DEACTIVATE' }, { method: 'post' })}
+      >
+        Deaktiviraj
+      </Button>
+      <div className="flex flex-col gap-2 font-semibold">
+        <div>{`${org.name} `}</div>
+        <div>{`${org.email} `}</div>
       </div>
 
       <div className="text-primary-900 flex border-b border-b-neutral-200 font-semibold">
@@ -39,8 +75,8 @@ export default function Index() {
             params.set('tab', 'korisnici');
             setSearchParams(params);
           }}
-          className={`cursor-pointer rounded-t-lg px-4 py-1 ${
-            searchParams.get('tab') === 'korisnici' ? 'bg-neutral-200' : ''
+          className={`cursor-pointer rounded-t px-4 py-1 ${
+            selectedTab === 'korisnici' ? 'bg-neutral-200' : ''
           }`}
         >
           Korisnici
@@ -51,30 +87,43 @@ export default function Index() {
             params.set('tab', 'ankete');
             setSearchParams(params);
           }}
-          className={`cursor-pointer rounded-t-lg px-4 py-1 ${
-            searchParams.get('tab') === 'ankete' ? 'bg-neutral-200' : ''
+          className={`cursor-pointer rounded-t px-4 py-1 ${
+            selectedTab === 'ankete' ? 'bg-neutral-200' : ''
           }`}
         >
           Ankete
         </div>
       </div>
 
-      {searchParams.get('tab') === 'korisnici' && (
-        <div className="flex flex-col">
+      {selectedTab === 'korisnici' && (
+        <div className="flex flex-col self-start">
+          <div className="grid grid-cols-[200px_260px_120px_80px_100px] bg-slate-200 p-1 font-semibold">
+            <div>Ime</div>
+            <div>Email</div>
+            <div>Rola</div>
+            <div>Ovlasti</div>
+            <div>Status</div>
+          </div>
           {org.Users.map((user) => (
-            <div className="flex gap-4">
+            <div className="grid grid-cols-[200px_260px_120px_80px_100px] p-1">
               <div>{user.name}</div>
               <div>{user.email}</div>
               <div>{user.role}</div>
               <div>{user.permissions}</div>
+              <div>{user.status}</div>
             </div>
           ))}
         </div>
       )}
-      {searchParams.get('tab') === 'ankete' && (
-        <div className="flex flex-col">
+      {selectedTab === 'ankete' && (
+        <div className="flex flex-col self-start">
+          <div className="grid grid-cols-[300px_200px] bg-slate-200 p-1 font-semibold">
+            <div>Anketa</div>
+            <div>Status</div>
+          </div>
+
           {org.Polls.map((poll) => (
-            <div className="flex gap-4">
+            <div className="grid grid-cols-[300px_200px] p-1">
               <div>{poll.name}</div>
               <div>{poll.status}</div>
             </div>

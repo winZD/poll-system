@@ -134,7 +134,7 @@ export default function Login() {
         <InputField label="Email" name="email" />
         <InputField label="Lozinka" name="password" />
 
-        <button type="submit" className="rounded bg-zinc-200 p-4">
+        <button type="submit" className="rounded bg-slate-200 p-4">
           Prijavi se
         </button>
       </HookForm>

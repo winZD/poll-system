@@ -19,7 +19,7 @@ const InputField: React.FC<InputProps> = ({ label, name, type = 'text' }) => {
       <input
         id={name}
         autoComplete="off"
-        className="rounded border-zinc-200 outline-none"
+        className="rounded border-slate-200 outline-none"
         type={type}
         {...register(name)}
       />
