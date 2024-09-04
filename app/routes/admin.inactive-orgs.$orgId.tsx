@@ -39,12 +39,12 @@ export default function Index() {
       <Button
         onClick={() =>
           submit(
-            { action: 'DEACTIVATE', orgId: org.id },
+            { action: 'ACTIVATE', orgId: org.id },
             { method: 'post', action: '/admin' },
           )
         }
       >
-        Deaktiviraj
+        Aktiviraj
       </Button>
       <div className="flex flex-col gap-2 font-semibold">
         <div>{`${org.name} `}</div>

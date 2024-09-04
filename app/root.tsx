@@ -8,7 +8,7 @@ import {
   useLoaderData,
 } from '@remix-run/react';
 import './tailwind.css';
-import { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
+import { LoaderFunctionArgs } from '@remix-run/node';
 import { getToast } from 'remix-toast';
 import React from 'react';
 import { ToastContainer, toast as notify } from 'react-toastify';
@@ -16,7 +16,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   // Extracts the toast from the request
-  const { toast, headers } = await getToast(request);
+  const { toast = null, headers } = await getToast(request);
   // Important to pass in the headers so the toast is cleared properly
   return json({ toast }, { headers });
 };
