@@ -14,6 +14,7 @@ import { generateAccessToken, generateRefreshToken } from '~/utils';
 import InputField from '~/components/Form/FormInput';
 import { FormProvider } from 'react-hook-form';
 import { HookForm } from '~/components/Form/Form';
+import bcrypt from 'bcryptjs';
 
 const schema = zod.object({
   email: zod.string().min(1, 'Upišite ispravno korisničko ime'),

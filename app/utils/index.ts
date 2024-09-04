@@ -1,10 +1,18 @@
 import { parse } from 'cookie';
-import { addDays, addMinutes, addMonths, addSeconds } from 'date-fns';
+import {
+  addDays,
+  addMinutes,
+  addMonths,
+  addSeconds,
+  format,
+  parseISO,
+} from 'date-fns';
 import jwt from 'jsonwebtoken';
 import { ulid } from 'ulid';
 import { serialize } from 'cookie';
 import { db } from './db';
 import bcrypt from 'bcryptjs';
+import numbro from 'numbro';
 
 type TToken = {
   tokenId: string;
@@ -145,3 +153,53 @@ export async function hashPassword(password) {
     throw new Error('Hashing failed');
   }
 }
+
+export const formatter = {
+  number: {
+    toAmount: (value: number | undefined | null) => {
+      if (value === undefined || value === null) return '';
+      return numbro(value).format({
+        thousandSeparated: true,
+        mantissa: 2, // number of decimals displayed
+      });
+    },
+  },
+  dateTime: {
+    toPrismaIsoDateOnlyString: (date?: Date | string | null) => {
+      if (!date) return '';
+      return format(new Date(date), 'yyyy-MM-dd') + 'T00:00:00.000Z';
+    },
+    toIsoDateString: (date?: Date | string | null) => {
+      if (!date) return '';
+      return format(new Date(date), 'yyyy-MM-dd');
+    },
+    toShortDateString: (date?: Date | string | null) => {
+      if (!date) return '';
+      let parsedDate = date instanceof Date ? date : parseISO(date);
+      return format(parsedDate, 'dd.MM.yyyy.');
+    },
+    toShortDayString: (date?: Date | string | null) => {
+      if (!date) return '';
+      let parsedDate = date instanceof Date ? date : parseISO(date);
+      return format(parsedDate, 'dd');
+    },
+    toFullDateTimeString: (date?: Date | string | null) => {
+      if (!date) return '';
+      let parsedDate = date instanceof Date ? date : parseISO(date);
+      return format(parsedDate, 'dd.MM.yyyy. HH:mm');
+    },
+    toIsoDateTimeString: (date: Date | string) => {
+      let parsedDate = date instanceof Date ? date : parseISO(date);
+      return parsedDate.toISOString();
+    },
+    getDayNameFromISODate(isoDate: string): string {
+      const date = new Date(isoDate);
+      const options: Intl.DateTimeFormatOptions = { weekday: 'short' };
+      const dayName = date.toLocaleDateString('hr-HR', options);
+      const capitalizedDayName = `${
+        dayName.charAt(0).toUpperCase() + dayName.slice(1)
+      }.`;
+      return capitalizedDayName;
+    },
+  },
+};

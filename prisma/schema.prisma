@@ -71,6 +71,7 @@ model PollTable {
   PollQuestions PollQuestionTable[] @relation(name: "FK_PollQuestion_Poll")
   Org           OrgTable            @relation(name: "FK_Poll_Org", fields: [orgId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   User          UserTable           @relation(name: "FK_Poll_User", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Votes         VotesTable[]        @relation(name: "FK_Vote_Poll")
 
   @@unique([orgId, id])
 }
@@ -89,9 +90,11 @@ model PollQuestionTable {
 model VotesTable {
   id             String @id
   orgId          String
+  pollId         String
   pollQuestionId String
   fingerPrint    String
 
+  Poll         PollTable         @relation(name: "FK_Vote_Poll", fields: [pollId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   PollQuestion PollQuestionTable @relation(name: "FK_PollQuestionAnswer_PollQuestion", fields: [pollQuestionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   Org          OrgTable          @relation(name: "FK_Vote_Org", fields: [orgId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 

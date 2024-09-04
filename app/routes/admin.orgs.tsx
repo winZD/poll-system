@@ -47,6 +47,7 @@ export default function Index() {
         <div className="flex flex-col">
           {activeOrgs?.map((org) => (
             <NavLink
+              key={org.id}
               to={`${org.id}`}
               className={({ isActive }) =>
                 `flex items-center truncate p-2 font-semibold hover:bg-blue-200 ${isActive ? 'bg-blue-100' : ''}`
@@ -60,6 +61,7 @@ export default function Index() {
         <div className="flex flex-col">
           {inactiveOrgs?.map((org) => (
             <NavLink
+              key={org.id}
               to={`${org.id}`}
               className={({ isActive }) =>
                 `flex items-center truncate p-2 font-semibold text-red-500 hover:bg-red-200 ${isActive ? 'bg-red-100' : ''}`
