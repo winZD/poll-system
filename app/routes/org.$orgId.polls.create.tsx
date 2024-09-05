@@ -1,5 +1,10 @@
-import { LoaderFunctionArgs, json, ActionFunctionArgs } from '@remix-run/node';
-import { useRemixForm } from 'remix-hook-form';
+import {
+  LoaderFunctionArgs,
+  json,
+  ActionFunctionArgs,
+  redirect,
+} from '@remix-run/node';
+import { getValidatedFormData, useRemixForm } from 'remix-hook-form';
 import { Modal } from '~/components/Modal';
 import * as zod from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,9 +12,12 @@ import { HookForm } from '~/components/Form/Form';
 import InputField from '~/components/Form/FormInput';
 import SelectField from '~/components/Form/SelectForm';
 import React from 'react';
+import { db } from '~/utils/db';
+import { ulid } from 'ulid';
+import { decodeTokenFromRequest } from '~/utils';
 enum StatusType {
-  ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
+  ACTIVE = 'ACTIVE',
 }
 //TODO: create post method
 const schema = zod.object({
@@ -33,7 +41,32 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   return json({});
 }
 
-export const action = async ({ request }: ActionFunctionArgs) => {};
+export const action = async ({ request, params }: ActionFunctionArgs) => {
+  const {
+    errors,
+    data,
+    receivedValues: defaultValues,
+  } = await getValidatedFormData<FormData>(request, resolver);
+
+  const ctx = await decodeTokenFromRequest(request);
+
+  await db.$transaction(async (tx) => {
+    await tx.pollTable.create({
+      data: {
+        id: ulid(),
+        orgId: params?.orgId || '',
+        userId: ctx?.userId || '',
+        name: data!.name,
+        createdAt: new Date(),
+        expiresAt: new Date(new Date().setDate(new Date().getDate() + 7)),
+        status: data?.status,
+        iframeTitle: data?.iframeTitle || '',
+        iframeSrc: `http://localhost:5173/poll/${data?.iframeSrc}`,
+      },
+    });
+  });
+  return redirect(`..`);
+};
 
 const Index = () => {
   const formMethods = useRemixForm<FormData>({
