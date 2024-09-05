@@ -58,6 +58,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     receivedValues: defaultValues,
   } = await getValidatedFormData<FormData>(request, resolver);
 
+  if (errors) {
+    // The keys "errors" and "defaultValues" are picked up automatically by useRemixForm
+    return json({ errors, defaultValues });
+  }
+
   const ctx = await decodeTokenFromRequest(request);
   const { orgId, pollId } = params;
   await db.$transaction(async (tx) => {

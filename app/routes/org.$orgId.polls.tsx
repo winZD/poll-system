@@ -1,4 +1,9 @@
-import { LoaderFunctionArgs, json, ActionFunctionArgs } from '@remix-run/node';
+import {
+  LoaderFunctionArgs,
+  json,
+  ActionFunctionArgs,
+  redirect,
+} from '@remix-run/node';
 import {
   NavLink,
   Outlet,
@@ -6,14 +11,21 @@ import {
   useLocation,
   useNavigate,
   useParams,
+  useSubmit,
 } from '@remix-run/react';
 import React from 'react';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
 import { db } from '~/utils/db';
 import { format } from 'date-fns';
+import { getValidatedFormData } from 'remix-hook-form';
+import { decodeTokenFromRequest } from '~/utils';
+import { jsonWithSuccess } from 'remix-toast';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
+  const ctx = await decodeTokenFromRequest(request);
+
+  if (!ctx) return redirect('/login');
   const { orgId } = params;
 
   //TODO: fix fetch by db.orgTable
@@ -25,19 +37,30 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
-  return json({});
+  const formData = await request.formData();
+
+  const id = formData.get('id')?.toString();
+  console.log(formData);
+  const { orgId, pollId } = params;
+
+  await db.pollTable.delete({
+    where: { id: id },
+  });
+
+  return jsonWithSuccess({}, 'Uspješno izbrisana anketa');
 };
 
 export default function Index() {
   const navigate = useNavigate();
 
+  const submit = useSubmit();
   const polls = useLoaderData<typeof loader>();
 
-  const columnDefs = React.useMemo<ColDef<(typeof polls)[0]>[]>(
+  const columnDefs = React.useMemo<ColDef[]>(
     () => [
       {
         field: 'name',
-        headerName: 'Naziv anketa',
+        headerName: 'Naziv ankete',
         width: 200,
       },
 
@@ -63,6 +86,28 @@ export default function Index() {
         width: 200,
         valueFormatter: ({ value }) => format(value, 'dd.MM.yyyy. HH:mm'),
       },
+
+      {
+        /* onCellClicked: (props) => console.log(props), */
+        cellRenderer: (props) => (
+          <div className="flex gap-x-3">
+            <button
+              className="rounded bg-blue-500 px-2 font-semibold text-white transition duration-300 ease-in-out hover:bg-blue-600"
+              onClick={() => navigate(`${props.data.id}`)}
+            >
+              Edit
+            </button>
+            <button
+              className="rounded bg-red-500 px-2 font-semibold text-white transition duration-300 ease-in-out hover:bg-red-700"
+              onClick={() =>
+                submit({ id: props.data.id }, { method: 'delete' })
+              }
+            >
+              Obriši
+            </button>
+          </div>
+        ),
+      },
     ],
     [],
   );
@@ -83,7 +128,8 @@ export default function Index() {
           rowClass={'cursor-pointer hover:bg-slate-100'}
           columnDefs={columnDefs}
           rowData={polls}
-          onRowClicked={({ data }) => navigate(`${data.id}`)}
+          /*  onRowClicked={({ data }) => navigate(`${data.id}`)} */
+
           /* onRowClicked={({ data }) => console.log(data)} */
         />
         <Outlet />
