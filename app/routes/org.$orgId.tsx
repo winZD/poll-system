@@ -9,6 +9,7 @@ import {
   useParams,
 } from '@remix-run/react';
 import { MdOutlineLogout } from 'react-icons/md';
+import { redirectWithError } from 'remix-toast';
 import { decodeTokenFromRequest } from '~/utils';
 import { db } from '~/utils/db';
 
@@ -17,13 +18,22 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   if (!ctx) return redirect('/login');
 
-  const user = await db.userTable.findUniqueOrThrow({
+  const user = await db.userTable.findUnique({
     where: { id: ctx?.userId },
     include: { Org: true },
   });
+
+  if (!user) {
+    return redirectWithError('/', { message: 'Nepostojeći korisnik' });
+  }
+
+  if (user.status !== 'ACTIVE') {
+    return redirectWithError('/', { message: 'Korisnik deaktiviran' });
+  }
+
   const { orgId } = params;
-  if (user.Org.role !== 'ORG' || user.orgId !== orgId) {
-    redirect('/', {});
+  if (user.orgId !== orgId) {
+    return redirectWithError('/', { message: 'Nemate ovlasti' });
   }
 
   return json({
@@ -51,7 +61,7 @@ export default function Index() {
         <div className="flex w-52 flex-col border bg-slate-50">
           <div className="flex flex-1 flex-col">
             <NavLink
-              to={`../org/${params?.orgId}`}
+              to={`/org/${params?.orgId}`}
               className={({ isActive }) =>
                 `p-4 hover:bg-blue-200 ${isActive && location?.pathname === `/org/${params?.orgId}` ? 'bg-blue-100' : ''}`
               }
@@ -64,7 +74,15 @@ export default function Index() {
                 `p-4 ${isActive ? 'bg-blue-100' : ''}`
               }
             >
-              Anketa
+              Ankete
+            </NavLink>
+            <NavLink
+              to={'users'}
+              className={({ isActive }) =>
+                `p-4 ${isActive ? 'bg-blue-100' : ''}`
+              }
+            >
+              Korisnici
             </NavLink>
           </div>
 

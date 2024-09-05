@@ -4,17 +4,15 @@ import React from 'react';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
 import { db } from '~/utils/db';
-import { format } from 'date-fns';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId } = params;
 
   //TODO: fix fetch by db.orgTable
-  const polls = await db.pollTable.findMany({
+  const users = await db.userTable.findMany({
     where: { orgId },
-    include: { Votes: { select: { id: true } }, User: true },
   });
-  return json(polls);
+  return json(users);
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -22,38 +20,34 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
-  const params = useParams();
-  const polls = useLoaderData<typeof loader>();
+  const users = useLoaderData<typeof loader>();
 
-  const columnDefs = React.useMemo<ColDef<(typeof polls)[0]>[]>(
+  const columnDefs = React.useMemo<ColDef<(typeof users)[0]>[]>(
     () => [
       {
         field: 'name',
-        headerName: 'Naziv anketa',
+        headerName: 'Ime',
         width: 200,
       },
-
+      {
+        field: 'email',
+        headerName: 'Email',
+        width: 300,
+      },
+      {
+        field: 'role',
+        headerName: 'Rola',
+        width: 120,
+      },
+      {
+        field: 'permissions',
+        headerName: 'Ovlasti',
+        width: 120,
+      },
       {
         field: 'status',
         headerName: 'Status',
         width: 120,
-      },
-      {
-        field: 'User.name',
-        headerName: 'Anketu kreirao',
-        width: 200,
-      },
-      {
-        field: 'createdAt',
-        headerName: 'Vrijeme kreiranja',
-        width: 200,
-        valueFormatter: ({ value }) => format(value, 'dd.MM.yyyy. HH:mm'),
-      },
-      {
-        field: 'expiresAt',
-        headerName: 'Vrijeme završetka',
-        width: 200,
-        valueFormatter: ({ value }) => format(value, 'dd.MM.yyyy. HH:mm'),
       },
     ],
     [],
@@ -67,11 +61,11 @@ export default function Index() {
             to="create"
             className="m-2 self-start rounded bg-blue-500 px-4 py-1 text-white"
           >
-            + Dodaj anketu
+            + Dodaj korisnika
           </NavLink>
         </div>
 
-        <AgGrid columnDefs={columnDefs} rowData={polls} />
+        <AgGrid columnDefs={columnDefs} rowData={users} />
         <Outlet />
       </div>
     </>

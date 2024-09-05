@@ -14,7 +14,6 @@ import { Button } from '~/components/Button';
 import { db } from '~/utils/db';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
-import { formatter } from '~/utils';
 import { format } from 'date-fns';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
