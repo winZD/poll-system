@@ -15,10 +15,7 @@ const SelectField: React.FC<SelectProps> = ({ label, name, data }) => {
   return (
     <div className="relative flex items-center justify-between gap-2">
       <label htmlFor={name}>{label}</label>
-      <select
-        className="w-full rounded border-slate-200 p-2 outline-none"
-        {...register(name)}
-      >
+      <select className="rounded border-slate-200" {...register(name)}>
         {data.map((option) => (
           <option key={option.id} value={option.value}>
             {option.value}

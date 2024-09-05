@@ -1,5 +1,12 @@
 import { LoaderFunctionArgs, json, ActionFunctionArgs } from '@remix-run/node';
-import { NavLink, Outlet, useLoaderData, useParams } from '@remix-run/react';
+import {
+  NavLink,
+  Outlet,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+  useParams,
+} from '@remix-run/react';
 import React from 'react';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
@@ -22,7 +29,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
-  const params = useParams();
+  const navigate = useNavigate();
+
   const polls = useLoaderData<typeof loader>();
 
   const columnDefs = React.useMemo<ColDef<(typeof polls)[0]>[]>(
@@ -71,7 +79,13 @@ export default function Index() {
           </NavLink>
         </div>
 
-        <AgGrid columnDefs={columnDefs} rowData={polls} />
+        <AgGrid
+          rowClass={'cursor-pointer hover:bg-slate-100'}
+          columnDefs={columnDefs}
+          rowData={polls}
+          onRowClicked={({ data }) => navigate(`${data.id}`)}
+          /* onRowClicked={({ data }) => console.log(data)} */
+        />
         <Outlet />
       </div>
     </>
