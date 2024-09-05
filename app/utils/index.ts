@@ -164,42 +164,13 @@ export const formatter = {
       });
     },
   },
-  dateTime: {
-    toPrismaIsoDateOnlyString: (date?: Date | string | null) => {
-      if (!date) return '';
-      return format(new Date(date), 'yyyy-MM-dd') + 'T00:00:00.000Z';
-    },
-    toIsoDateString: (date?: Date | string | null) => {
-      if (!date) return '';
-      return format(new Date(date), 'yyyy-MM-dd');
-    },
-    toShortDateString: (date?: Date | string | null) => {
-      if (!date) return '';
-      let parsedDate = date instanceof Date ? date : parseISO(date);
-      return format(parsedDate, 'dd.MM.yyyy.');
-    },
-    toShortDayString: (date?: Date | string | null) => {
-      if (!date) return '';
-      let parsedDate = date instanceof Date ? date : parseISO(date);
-      return format(parsedDate, 'dd');
-    },
-    toFullDateTimeString: (date?: Date | string | null) => {
-      if (!date) return '';
-      let parsedDate = date instanceof Date ? date : parseISO(date);
-      return format(parsedDate, 'dd.MM.yyyy. HH:mm');
-    },
-    toIsoDateTimeString: (date: Date | string) => {
-      let parsedDate = date instanceof Date ? date : parseISO(date);
-      return parsedDate.toISOString();
-    },
-    getDayNameFromISODate(isoDate: string): string {
-      const date = new Date(isoDate);
-      const options: Intl.DateTimeFormatOptions = { weekday: 'short' };
-      const dayName = date.toLocaleDateString('hr-HR', options);
-      const capitalizedDayName = `${
-        dayName.charAt(0).toUpperCase() + dayName.slice(1)
-      }.`;
-      return capitalizedDayName;
-    },
-  },
 };
+
+export function toHrDateString(date: any): string {
+  if (!date) return '';
+  // Ensure the date is a valid Date object
+
+  console.log('inside');
+
+  return format(date, 'dd.MM.yyyy. HH:mm');
+}

@@ -1,29 +1,17 @@
-import {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  redirect,
-} from '@remix-run/node';
-import { Form, json, useLoaderData } from '@remix-run/react';
-import React from 'react';
-import { getValidatedFormData, useRemixForm } from 'remix-hook-form';
+import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
+import { json, useLoaderData } from '@remix-run/react';
 import { Modal } from '~/components/Modal';
 import * as zod from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { HookForm } from '~/components/Form/Form';
-import InputField from '~/components/Form/FormInput';
 import { db } from '~/utils/db';
-import { ulid } from 'ulid';
-import { hashPassword } from '~/utils';
+import { toHrDateString } from '~/utils';
+import { format } from 'date-fns';
 
 const schema = zod.object({
   name: zod.string().min(1),
   email: zod.string().email('Neispravan email').min(1),
   password: zod.string().min(1),
 });
-
-type FormData = zod.infer<typeof schema>;
-
-const resolver = zodResolver(schema);
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId, pollId } = params;
@@ -32,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     where: { id: pollId, orgId: orgId },
     include: {
       User: true,
-      PollQuestions: true,
+      PollQuestions: { include: { Votes: { select: { id: true } } } },
       Votes: { select: { id: true } },
     },
   });
@@ -45,27 +33,49 @@ export const action = async ({ request }: ActionFunctionArgs) => {};
 export default function Index() {
   const poll = useLoaderData<typeof loader>();
 
+  const maxVotes = Math.max(...poll.PollQuestions.map((e) => e.Votes.length));
+
   return (
     <Modal title="Detalji ankete">
-      <div className="flex flex-col gap-4 p-8">
-        <div className="font-semibold">{poll.name}</div>
-        <div className="flex flex-col gap-1">
-          {poll.PollQuestions.map((e) => (
-            <div className="rounded bg-slate-100 p-2 px-4">{e.name}</div>
-          ))}
+      <div className="flex flex-col gap-8 p-8">
+        <div className="grid grid-cols-2 self-start">
+          <div className="">Naziv ankete</div>
+          <div className="font-semibold">{poll.name}</div>
+
+          <div className="">Status</div>
+          <div className="font-semibold">{poll.status}</div>
+
+          <div className="">Anketu kreirao</div>
+          <div className="font-semibold">{poll.User.name}</div>
+
+          <div className="">Vrijeme kreiranja</div>
+          <div className="font-semibold">
+            {format(poll.createdAt, 'dd.MM.yyyy. HH:mm')}
+          </div>
+
+          <div className="">Vrijeme završetka</div>
+          <div className="font-semibold">
+            {format(poll.createdAt, 'dd.MM.yyyy. HH:mm')}
+          </div>
         </div>
-        <div className="px-4 text-right font-semibold">{`Ukupan broj glasova ${poll.Votes.length}`}</div>
+
+        <div className="grid grid-cols-[auto_100px] items-center gap-x-2 gap-y-1 self-start">
+          {poll.PollQuestions.map((e) => (
+            <>
+              <div
+                className={`rounded p-2 px-4 ${e.Votes.length === maxVotes ? 'bg-green-100' : 'bg-slate-100'} `}
+              >
+                {e.name}
+              </div>
+              <div className="text-right">{e.Votes.length}</div>
+            </>
+          ))}
+          <div className="mt-4 px-4 text-right font-semibold">
+            Ukupan broj glasova
+          </div>
+          <div className="mt-4 text-right">{poll.Votes.length}</div>
+        </div>
       </div>
     </Modal>
   );
-}
-
-{
-  /**
-  
-  
-  - firme
-  - neaktivne firme
-
-  */
 }
