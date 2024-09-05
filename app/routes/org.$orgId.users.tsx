@@ -1,9 +1,11 @@
 import { LoaderFunctionArgs, json, ActionFunctionArgs } from '@remix-run/node';
-import { NavLink, Outlet, useLoaderData, useParams } from '@remix-run/react';
+import { NavLink, Outlet, useLoaderData } from '@remix-run/react';
 import React from 'react';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
-import { db } from '~/utils/db';
+import { useOrgLoader } from '~/loaders/useOrgLoader';
+import { db } from '~/db';
+import { rolesMapped } from '~/components/models';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId } = params;
@@ -22,6 +24,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 export default function Index() {
   const users = useLoaderData<typeof loader>();
 
+  const user = useOrgLoader();
+
   const columnDefs = React.useMemo<ColDef<(typeof users)[0]>[]>(
     () => [
       {
@@ -38,6 +42,7 @@ export default function Index() {
         field: 'role',
         headerName: 'Rola',
         width: 120,
+        valueFormatter: ({ value }) => rolesMapped[value],
       },
       {
         field: 'permissions',
@@ -56,14 +61,16 @@ export default function Index() {
   return (
     <>
       <div className="flex flex-1 flex-col p-5">
-        <div className="flex gap-2">
-          <NavLink
-            to="create"
-            className="m-2 self-start rounded bg-blue-500 px-4 py-1 text-white"
-          >
-            + Dodaj korisnika
-          </NavLink>
-        </div>
+        {user?.role === 'ADMIN' && (
+          <div className="flex gap-2">
+            <NavLink
+              to="create"
+              className="m-2 self-start rounded bg-blue-500 px-4 py-1 text-white"
+            >
+              + Dodaj korisnika
+            </NavLink>
+          </div>
+        )}
 
         <AgGrid columnDefs={columnDefs} rowData={users} />
         <Outlet />

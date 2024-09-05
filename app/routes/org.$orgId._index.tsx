@@ -1,14 +1,5 @@
-import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { json, Outlet } from '@remix-run/react';
+import { redirect } from '@remix-run/node';
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
-  return json({});
-}
-
-export const action = async ({ request, params }: ActionFunctionArgs) => {
-  return json({});
-};
-
-export default function Index() {
-  return <div className="flex flex-col text-cyan-900">Organizacija</div>;
+export async function loader() {
+  return redirect('polls');
 }

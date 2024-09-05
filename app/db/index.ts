@@ -1,18 +1,13 @@
 import { parse } from 'cookie';
-import {
-  addDays,
-  addMinutes,
-  addMonths,
-  addSeconds,
-  format,
-  parseISO,
-} from 'date-fns';
+import { addMinutes, addMonths } from 'date-fns';
 import jwt from 'jsonwebtoken';
 import { ulid } from 'ulid';
 import { serialize } from 'cookie';
-import { db } from './db';
 import bcrypt from 'bcryptjs';
-import numbro from 'numbro';
+
+import { PrismaClient } from '@prisma/client';
+
+export const db = new PrismaClient();
 
 type TToken = {
   tokenId: string;
@@ -152,25 +147,4 @@ export async function hashPassword(password) {
     console.error('Error hashing password:', error);
     throw new Error('Hashing failed');
   }
-}
-
-export const formatter = {
-  number: {
-    toAmount: (value: number | undefined | null) => {
-      if (value === undefined || value === null) return '';
-      return numbro(value).format({
-        thousandSeparated: true,
-        mantissa: 2, // number of decimals displayed
-      });
-    },
-  },
-};
-
-export function toHrDateString(date: any): string {
-  if (!date) return '';
-  // Ensure the date is a valid Date object
-
-  console.log('inside');
-
-  return format(date, 'dd.MM.yyyy. HH:mm');
 }

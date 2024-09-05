@@ -1,23 +1,29 @@
-import {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  redirect,
-} from '@remix-run/node';
-import { Form, json, useLoaderData } from '@remix-run/react';
-import React from 'react';
+import { LoaderFunctionArgs, json, ActionFunctionArgs } from '@remix-run/node';
 import { getValidatedFormData, useRemixForm } from 'remix-hook-form';
 import { Modal } from '~/components/Modal';
 import * as zod from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HookForm } from '~/components/Form/Form';
 import InputField from '~/components/Form/FormInput';
+import SelectField from '~/components/Form/SelectForm';
+import { db } from '~/db';
+import { jsonWithError, redirectWithSuccess } from 'remix-toast';
+import {
+  roleSchema,
+  statusSchema,
+  roleOptions,
+  statusOptions,
+} from '~/components/models';
 import { ulid } from 'ulid';
-import { db, hashPassword } from '~/db';
 
+//TODO: create post method
 const schema = zod.object({
-  name: zod.string().min(1),
-  email: zod.string().email('Neispravan email').min(1),
-  password: zod.string().min(1),
+  name: zod.string().min(1, 'Obvezan podatak'),
+  email: zod.string().email('Obvezan podatak'),
+  password: zod.string().min(1, 'Obvezan podatak'),
+  role: roleSchema.default('ADMIN'),
+  status: statusSchema.default('ACTIVE'),
+  permissions: zod.string().default(''),
 });
 
 type FormData = zod.infer<typeof schema>;
@@ -34,77 +40,59 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   return json({});
 }
 
-export const action = async ({ request }: ActionFunctionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   const {
     errors,
     data,
     receivedValues: defaultValues,
   } = await getValidatedFormData<FormData>(request, resolver);
+
   if (errors) {
     // The keys "errors" and "defaultValues" are picked up automatically by useRemixForm
-    return json({ errors, defaultValues });
+    return jsonWithError({ errors, defaultValues }, 'Neispravni podaci');
   }
 
-  const password = await hashPassword(data.password);
-
-  const org = await db.orgTable.create({
-    data: {
-      id: ulid(),
-      email: data.email,
-      name: data.name,
-      role: 'ORG',
-    },
-  });
-  await db.userTable.create({
-    data: {
-      id: ulid(),
-      orgId: org.id,
-      email: data.email,
-      name: data.name,
-      role: 'ADMIN',
-      password,
-      permissions: 'CRUD',
-    },
-  });
-
-  // Do something with the data
-  return redirect(`..`);
+  const orgId = params.orgId;
+  if (orgId) {
+    await db.userTable.create({
+      data: { ...data, id: ulid(), orgId },
+    });
+    return redirectWithSuccess('..', {
+      message: 'Uspješno ste kreirali korisnika',
+    });
+  }
 };
-export default function Index() {
+
+const Index = () => {
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     resolver,
   });
 
   return (
-    <Modal title="Nova organizacija">
+    <Modal title="Novi korisnik">
       <HookForm
         formMethods={formMethods}
         onSubmit={formMethods.handleSubmit}
         method="POST"
         className="flex w-96 flex-col gap-4 p-4"
       >
-        <InputField label="Email" name="email" />
-        <InputField label="Naziv" name="name" />
+        <InputField label="Email" name="email" autoFocus />
+        <InputField label="Ime korisnika" name="name" />
         <InputField label="Inicijalna lozinka" name="password" />
+        <SelectField label="Rola" name="role" data={roleOptions} />
+        <SelectField label="Status" name="status" data={statusOptions} />
+        <InputField label="Dozvole" name="permissions" />
 
         <button
           type="submit"
           className="rounded bg-slate-200 p-2 hover:bg-slate-300"
         >
-          Registriraj novu organizaciju
+          Dodaj korisnika
         </button>
       </HookForm>
     </Modal>
   );
-}
+};
 
-{
-  /**
-  
-  
-  - firme
-  - neaktivne firme
-
-  */
-}
+export default Index;

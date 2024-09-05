@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
+import { LoaderFunctionArgs } from '@remix-run/node';
 import {
   json,
   NavLink,
@@ -7,9 +7,7 @@ import {
   useLoaderData,
 } from '@remix-run/react';
 import { MdOutlineLogout } from 'react-icons/md';
-import { redirectWithSuccess } from 'remix-toast';
-import { decodeTokenFromRequest } from '~/utils';
-import { db } from '~/utils/db';
+import { decodeTokenFromRequest } from '~/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // const token = decode

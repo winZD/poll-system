@@ -16,10 +16,9 @@ import {
 import React from 'react';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
-import { db } from '~/utils/db';
 import { format } from 'date-fns';
-import { getValidatedFormData } from 'remix-hook-form';
-import { decodeTokenFromRequest } from '~/utils';
+import { db, decodeTokenFromRequest } from '~/db';
+import { toHrDateString } from '~/utils';
 import { jsonWithSuccess } from 'remix-toast';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -78,13 +77,13 @@ export default function Index() {
         field: 'createdAt',
         headerName: 'Vrijeme kreiranja',
         width: 200,
-        valueFormatter: ({ value }) => format(value, 'dd.MM.yyyy. HH:mm'),
+        valueFormatter: ({ value }) => toHrDateString(value),
       },
       {
         field: 'expiresAt',
         headerName: 'Vrijeme završetka',
         width: 200,
-        valueFormatter: ({ value }) => format(value, 'dd.MM.yyyy. HH:mm'),
+        valueFormatter: ({ value }) => toHrDateString(value),
       },
 
       {

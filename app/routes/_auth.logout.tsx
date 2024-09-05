@@ -1,8 +1,7 @@
 // app/routes/logout.js or .ts
 import { createCookie, redirect } from '@remix-run/node';
 import { serialize } from 'cookie';
-import { decodeTokenFromRequest } from '~/utils';
-import { db } from '~/utils/db';
+import { db, decodeTokenFromRequest } from '~/db';
 
 export async function loader({ request }) {
   const ctx = await decodeTokenFromRequest(request);

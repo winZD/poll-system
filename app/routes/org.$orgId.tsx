@@ -10,8 +10,7 @@ import {
 } from '@remix-run/react';
 import { MdOutlineLogout } from 'react-icons/md';
 import { redirectWithError } from 'remix-toast';
-import { decodeTokenFromRequest } from '~/utils';
-import { db } from '~/utils/db';
+import { db, decodeTokenFromRequest } from '~/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const ctx = await decodeTokenFromRequest(request);
@@ -36,11 +35,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     return redirectWithError('/', { message: 'Nemate ovlasti' });
   }
 
-  return json({
-    userName: ctx?.userName,
-    orgId: ctx?.userOrgId,
-    orgName: user?.Org?.name,
-  });
+  return json(user);
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -55,7 +50,7 @@ export default function Index() {
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex items-center justify-end gap-8 border p-2">
-        <div className="text-center">{data.userName}</div>
+        <div className="text-center">{data.name}</div>
         <NavLink
           to={'/logout'}
           className={
@@ -69,14 +64,6 @@ export default function Index() {
       <div className="flex flex-1">
         <div className="flex w-52 flex-col border bg-slate-50">
           <div className="flex flex-1 flex-col">
-            <NavLink
-              to={`/org/${params?.orgId}`}
-              className={({ isActive }) =>
-                `p-4 hover:bg-blue-200 ${isActive && location?.pathname === `/org/${params?.orgId}` ? 'bg-blue-100' : ''}`
-              }
-            >
-              Organizacija
-            </NavLink>
             <NavLink
               to={'polls'}
               className={({ isActive }) =>

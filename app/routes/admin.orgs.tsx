@@ -7,7 +7,7 @@ import {
   useRouteLoaderData,
 } from '@remix-run/react';
 import React from 'react';
-import { db } from '~/utils/db';
+import { db } from '~/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // const token = decode

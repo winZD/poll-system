@@ -52,3 +52,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return <Outlet />;
 }
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error('Global error caught by ErrorBoundary:', error); // Log for debugging
+
+  return (
+    <html>
+      <head>
+        <Meta />
+        <title>Application Error</title>
+      </head>
+      <body>
+        <h1>Something went wrong</h1>
+        <p>{error.message}</p>
+        <p>Sorry, an unexpected error has occurred. Please try again later.</p>
+        <Scripts />{' '}
+        {/* Keep the Scripts component to ensure the app continues working */}
+      </body>
+    </html>
+  );
+}

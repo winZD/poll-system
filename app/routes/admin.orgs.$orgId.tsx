@@ -11,10 +11,12 @@ import {
 import React from 'react';
 import { jsonWithSuccess } from 'remix-toast';
 import { Button } from '~/components/Button';
-import { db } from '~/utils/db';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
 import { format } from 'date-fns';
+import { db } from '~/db';
+import { rolesMapped, statusMapped } from '~/components/models';
+import { toHrDateString } from '~/utils';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // return redirect("active-orgs");
@@ -152,6 +154,7 @@ const UsersTable = (props) => {
         field: 'role',
         headerName: 'Rola',
         width: 120,
+        valueFormatter: ({ value }) => rolesMapped[value],
       },
       {
         field: 'permissions',
@@ -162,6 +165,7 @@ const UsersTable = (props) => {
         field: 'status',
         headerName: 'Status',
         width: 120,
+        valueFormatter: ({ value }) => statusMapped[value],
       },
     ],
     [],
@@ -188,6 +192,7 @@ const PollsTable = (props) => {
         field: 'status',
         headerName: 'Status',
         width: 120,
+        valueFormatter: ({ value }) => statusMapped[value],
       },
       {
         field: 'User.name',
@@ -198,13 +203,13 @@ const PollsTable = (props) => {
         field: 'createdAt',
         headerName: 'Vrijeme kreiranja',
         width: 200,
-        valueFormatter: ({ value }) => format(value, 'dd.MM.yyyy. HH:mm'),
+        valueFormatter: ({ value }) => toHrDateString(value),
       },
       {
         field: 'expiresAt',
         headerName: 'Vrijeme završetka',
         width: 200,
-        valueFormatter: ({ value }) => format(value, 'dd.MM.yyyy. HH:mm'),
+        valueFormatter: ({ value }) => toHrDateString(value),
       },
     ],
     [],
