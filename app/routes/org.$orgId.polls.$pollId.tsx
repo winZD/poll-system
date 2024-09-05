@@ -106,7 +106,7 @@ const Index = () => {
       <HookForm
         formMethods={formMethods}
         onSubmit={formMethods.handleSubmit}
-        method="POST"
+        method="PUT"
         className="flex w-96 flex-col gap-4 p-4"
       >
         <SelectField
