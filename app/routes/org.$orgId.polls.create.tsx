@@ -15,6 +15,7 @@ import React from 'react';
 import { db } from '~/utils/db';
 import { ulid } from 'ulid';
 import { decodeTokenFromRequest } from '~/utils';
+import { redirectWithToast } from 'remix-toast';
 enum StatusType {
   INACTIVE = 'INACTIVE',
   ACTIVE = 'ACTIVE',
@@ -65,7 +66,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       },
     });
   });
-  return redirect(`..`);
+  return redirectWithToast('..', {
+    message: 'Uspješno ste kreirali anketu',
+    description: 'Kreiranje ankete',
+    type: 'success',
+  });
 };
 
 const Index = () => {
