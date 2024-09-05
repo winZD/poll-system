@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { InputHTMLAttributes } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-interface InputProps {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   name: string;
-  type?: string;
 }
 
-const InputField: React.FC<InputProps> = ({ label, name, type = 'text' }) => {
+const InputField: React.FC<InputProps> = ({
+  label,
+  name,
+  type = 'text',
+  className = '',
+  autoComplete = 'off',
+  ...rest
+}) => {
   const {
     register,
     formState: { errors },
@@ -15,13 +21,16 @@ const InputField: React.FC<InputProps> = ({ label, name, type = 'text' }) => {
 
   return (
     <div className="relative flex items-center justify-between gap-2">
-      <label htmlFor={name}>{label}</label>
+      <label className="flex-1" htmlFor={name}>
+        {label}
+      </label>
       <input
         id={name}
-        autoComplete="off"
-        className="rounded border-slate-200 outline-none"
+        autoComplete={autoComplete}
+        className={`flex-1 rounded border-slate-200 outline-none ${className}`}
         type={type}
         {...register(name)}
+        {...rest}
       />
       {errors[name] && (
         <div className="absolute bottom-0 right-2 top-0 flex items-center text-xs text-red-500">

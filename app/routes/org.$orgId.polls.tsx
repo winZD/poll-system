@@ -10,8 +10,8 @@ import {
 import React from 'react';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
-import { db } from '~/utils/db';
 import { format } from 'date-fns';
+import { db } from '~/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId } = params;

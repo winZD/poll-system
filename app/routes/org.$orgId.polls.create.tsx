@@ -12,10 +12,10 @@ import { HookForm } from '~/components/Form/Form';
 import InputField from '~/components/Form/FormInput';
 import SelectField from '~/components/Form/SelectForm';
 import React from 'react';
-import { db } from '~/utils/db';
 import { ulid } from 'ulid';
-import { decodeTokenFromRequest } from '~/utils';
+import { db, decodeTokenFromRequest } from '~/db';
 import { redirectWithToast } from 'remix-toast';
+import { statusOptions } from '~/components/models';
 enum StatusType {
   INACTIVE = 'INACTIVE',
   ACTIVE = 'ACTIVE',
@@ -92,14 +92,7 @@ const Index = () => {
         method="POST"
         className="flex w-96 flex-col gap-4 p-4"
       >
-        <SelectField
-          label="Status"
-          name="status"
-          data={Object.values(StatusType).map((value, index) => ({
-            id: index,
-            value,
-          }))}
-        />
+        <SelectField label="Status" name="status" data={statusOptions} />
         <InputField label="Name" name="name" />
         <InputField label="Title" name="iframeTitle" />
         <InputField label="Src" name="iframeSrc" />

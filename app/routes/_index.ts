@@ -1,5 +1,5 @@
 import { json, LoaderFunctionArgs, redirect } from '@remix-run/node';
-import { decodeTokenFromRequest } from '~/utils';
+import { decodeTokenFromRequest } from '~/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // const token = decode

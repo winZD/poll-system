@@ -1,9 +1,9 @@
 import { useFormContext } from 'react-hook-form';
 
-interface SelectProps {
+interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label: string;
   name: string;
-  data: Array<{ id: number; value: string }>;
+  data: Array<{ value: any; label: string }>;
 }
 
 const SelectField: React.FC<SelectProps> = ({ label, name, data }) => {
@@ -14,11 +14,17 @@ const SelectField: React.FC<SelectProps> = ({ label, name, data }) => {
 
   return (
     <div className="relative flex items-center justify-between gap-2">
-      <label htmlFor={name}>{label}</label>
-      <select className="rounded border-slate-200" {...register(name)}>
+      <label className="flex-1" htmlFor={name}>
+        {label}
+      </label>
+      <select
+        id={name}
+        className="flex-1 rounded border-slate-200"
+        {...register(name)}
+      >
         {data.map((option) => (
-          <option key={option.id} value={option.value}>
-            {option.value}
+          <option key={option.value} value={option.value}>
+            {option.label}
           </option>
         ))}
       </select>

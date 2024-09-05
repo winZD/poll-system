@@ -3,9 +3,8 @@ import { json, useLoaderData } from '@remix-run/react';
 import { Modal } from '~/components/Modal';
 import * as zod from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { db } from '~/utils/db';
-import { toHrDateString } from '~/utils';
 import { format } from 'date-fns';
+import { db } from '~/db';
 
 const schema = zod.object({
   name: zod.string().min(1),
