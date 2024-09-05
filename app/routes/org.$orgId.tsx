@@ -94,16 +94,6 @@ export default function Index() {
               Korisnici
             </NavLink>
           </div>
-
-          <NavLink
-            to={'/logout'}
-            className={
-              'flex items-center justify-center gap-2 p-2 font-bold text-red-500 hover:bg-red-100'
-            }
-          >
-            <div>Odjava</div>
-            <MdOutlineLogout />
-          </NavLink>
         </div>
         <div className="flex flex-1 bg-slate-50">
           <Outlet />
