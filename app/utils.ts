@@ -16,8 +16,12 @@ export const formatter = {
 export function toHrDateString(date: any): string {
   if (!date) return '';
   // Ensure the date is a valid Date object
-
-  console.log('inside');
-
   return format(date, 'dd.MM.yyyy. HH:mm');
 }
+
+type Assert = (condition: unknown, error?: string) => asserts condition;
+export const assert: Assert = (condition: any, message?: string) => {
+  if (!condition) {
+    throw new Error(message || 'Assertion failed');
+  }
+};

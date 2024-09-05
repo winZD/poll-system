@@ -5,6 +5,7 @@ import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
 import { useOrgLoader } from '~/loaders/useOrgLoader';
 import { db } from '~/db';
+import { rolesMapped } from '~/components/models';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId } = params;
@@ -41,6 +42,7 @@ export default function Index() {
         field: 'role',
         headerName: 'Rola',
         width: 120,
+        valueFormatter: ({ value }) => rolesMapped[value],
       },
       {
         field: 'permissions',

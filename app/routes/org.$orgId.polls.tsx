@@ -12,6 +12,7 @@ import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
 import { format } from 'date-fns';
 import { db } from '~/db';
+import { toHrDateString } from '~/utils';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId } = params;
@@ -55,13 +56,13 @@ export default function Index() {
         field: 'createdAt',
         headerName: 'Vrijeme kreiranja',
         width: 200,
-        valueFormatter: ({ value }) => format(value, 'dd.MM.yyyy. HH:mm'),
+        valueFormatter: ({ value }) => toHrDateString(value),
       },
       {
         field: 'expiresAt',
         headerName: 'Vrijeme završetka',
         width: 200,
-        valueFormatter: ({ value }) => format(value, 'dd.MM.yyyy. HH:mm'),
+        valueFormatter: ({ value }) => toHrDateString(value),
       },
     ],
     [],

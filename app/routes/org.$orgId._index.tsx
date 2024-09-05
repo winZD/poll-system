@@ -1,10 +1,5 @@
-import {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  redirect,
-} from '@remix-run/node';
-import { json, Outlet } from '@remix-run/react';
+import { redirect } from '@remix-run/node';
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader() {
   return redirect('polls');
 }
