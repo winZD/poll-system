@@ -7,7 +7,6 @@ async function main() {
   try {
     // Step 1: Fetch 5 existing organizations
     const orgs = await prisma.orgTable.findMany({
-      take: 5,
       orderBy: { name: 'asc' },
     });
 

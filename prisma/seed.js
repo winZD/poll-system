@@ -28,7 +28,7 @@ const orgNames = [
   'Syfy',
   'AMC',
   'Bravo',
-];
+].sort((a, b) => (a < b ? -1 : 0));
 
 const userNames = [
   'Ivan Horvat',
@@ -97,7 +97,10 @@ async function main() {
           data: {
             id: `user-${i + 1}-${j + 1}`,
             orgId: org.id,
-            email: `${userName.toLowerCase().replace(/\s+/g, '')}${(i + j).toString()}@example.com`,
+            email:
+              j === 0
+                ? `org${i.toString()}@org.com`
+                : `${userName.toLowerCase().replace(/\s+/g, '')}${(i + j).toString()}@example.com`,
             name: userName,
             password: `password${j + 1}`, // Normally you'd hash this
             role: j === 0 ? 'ADMIN' : 'USER', // First user as ADMIN, others as USER
