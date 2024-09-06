@@ -15,6 +15,7 @@ import {
   statusOptions,
 } from '~/components/models';
 import { ulid } from 'ulid';
+import { FormContent } from '~/components/Form/FormContent';
 
 //TODO: create post method
 const schema = zod.object({
@@ -75,21 +76,22 @@ const Index = () => {
         formMethods={formMethods}
         onSubmit={formMethods.handleSubmit}
         method="POST"
-        className="flex w-96 flex-col gap-4 p-4"
       >
-        <InputField label="Email" name="email" autoFocus />
-        <InputField label="Ime korisnika" name="name" />
-        <InputField label="Inicijalna lozinka" name="password" />
-        <SelectField label="Rola" name="role" data={roleOptions} />
-        <SelectField label="Status" name="status" data={statusOptions} />
-        <InputField label="Dozvole" name="permissions" />
+        <FormContent>
+          <InputField label="Email" name="email" autoFocus />
+          <InputField label="Ime korisnika" name="name" />
+          <InputField label="Inicijalna lozinka" name="password" />
+          <SelectField label="Uloga" name="role" data={roleOptions} />
+          <SelectField label="Status" name="status" data={statusOptions} />
+          <InputField label="Ovlasti" name="permissions" />
 
-        <button
-          type="submit"
-          className="rounded bg-slate-200 p-2 hover:bg-slate-300"
-        >
-          Dodaj korisnika
-        </button>
+          <button
+            type="submit"
+            className="rounded bg-slate-200 p-2 hover:bg-slate-300"
+          >
+            Dodaj korisnika
+          </button>
+        </FormContent>
       </HookForm>
     </Modal>
   );

@@ -13,7 +13,7 @@ const SelectField: React.FC<SelectProps> = ({ label, name, data }) => {
   } = useFormContext();
 
   return (
-    <div className="relative flex items-center justify-between gap-2">
+    <div className="relative flex flex-col justify-between">
       <label className="flex-1" htmlFor={name}>
         {label}
       </label>

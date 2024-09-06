@@ -6,31 +6,41 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { HookForm } from '~/components/Form/Form';
 import InputField from '~/components/Form/FormInput';
 import SelectField from '~/components/Form/SelectForm';
-import { ulid } from 'ulid';
-import { db, decodeTokenFromRequest } from '~/db';
-import { jsonWithError, redirectWithSuccess } from 'remix-toast';
-import { statusOptions, statusSchema, statusValues } from '~/components/models';
-import { addDays } from 'date-fns';
+import { db } from '~/db';
+import { useLoaderData } from '@remix-run/react';
+import {
+  jsonWithError,
+  redirectWithError,
+  redirectWithSuccess,
+} from 'remix-toast';
+import {
+  roleOptions,
+  roleSchema,
+  statusOptions,
+  statusSchema,
+} from '~/components/models';
 import { FormContent } from '~/components/Form/FormContent';
 
-//TODO: create post method
 const schema = zod.object({
-  name: zod.string().min(1),
-  status: statusSchema.default('INACTIVE'),
+  name: zod.string().min(1, 'Obvezan podatak'),
+  role: roleSchema.default('ADMIN'),
+  status: statusSchema.default('ACTIVE'),
+  permissions: zod.string().default(''),
 });
-
 type FormData = zod.infer<typeof schema>;
 
 const resolver = zodResolver(schema);
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  // const token = decode
+  const { orgId, userId } = params;
 
-  // check if admin is logged in
+  const user = await db.userTable.findUnique({
+    where: { orgId: orgId, id: userId },
+  });
 
-  // const users = await db.userTable.findMany({ where: { status: "ACTIVE" } });
+  if (!user) return redirectWithError('..', 'Nepostojeći korisnik');
 
-  return json({});
+  return json(user);
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -45,58 +55,50 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     return jsonWithError({ errors, defaultValues }, 'Neispravni podaci');
   }
 
-  const ctx = await decodeTokenFromRequest(request);
+  const { orgId, userId } = params;
+  await db.userTable.update({
+    where: { orgId, id: userId },
+    data: {
+      ...data,
+    },
+  });
 
-  const orgId = params.orgId;
-  if (orgId && ctx?.userId) {
-    const id = ulid();
-    await db.pollTable.create({
-      data: {
-        id,
-        orgId,
-        userId: ctx.userId,
-        name: data.name,
-        status: data.status,
-        createdAt: new Date(),
-        expiresAt: addDays(new Date(), 7),
-        iframeTitle: '',
-        iframeSrc: `http://localhost:5173/poll/${id}`,
-      },
-    });
-    return redirectWithSuccess(`../${id}`, {
-      message: 'Uspješno ste kreirali anketu',
-    });
-  }
+  return redirectWithSuccess('..', 'Uspješno ste ažurirali korisnika');
 };
 
-const Index = () => {
+export default function Index() {
+  const user = useLoaderData<typeof loader>();
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     resolver,
-    defaultValues: { name: '', status: statusValues.INACTIVE },
+    defaultValues: {
+      ...user,
+      status: user?.status as any,
+      role: user?.role as any,
+    },
   });
 
   return (
-    <Modal title="Nova anketa">
+    <Modal title="Ažuriraj korisnika">
       <HookForm
         formMethods={formMethods}
         onSubmit={formMethods.handleSubmit}
-        method="POST"
+        method="PUT"
       >
         <FormContent>
+          <InputField label="Ime korisnika" name="name" />
+          <SelectField label="Uloga" name="role" data={roleOptions} />
           <SelectField label="Status" name="status" data={statusOptions} />
-          <InputField label="Naziv ankete" name="name" />
+          <InputField label="Ovlasti" name="permissions" />
 
           <button
             type="submit"
             className="rounded bg-slate-200 p-2 hover:bg-slate-300"
           >
-            Dodaj anketu
+            Ažuriraj korisnika
           </button>
         </FormContent>
       </HookForm>
     </Modal>
   );
-};
-
-export default Index;
+}

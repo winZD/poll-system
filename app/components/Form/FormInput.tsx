@@ -20,14 +20,14 @@ const InputField: React.FC<InputProps> = ({
   } = useFormContext();
 
   return (
-    <div className="relative flex items-center justify-between gap-2">
-      <label className="flex-1" htmlFor={name}>
+    <div className="relative flex flex-col justify-between">
+      <label className="" htmlFor={name}>
         {label}
       </label>
       <input
         id={name}
         autoComplete={autoComplete}
-        className={`flex-1 rounded border-slate-200 outline-none ${className}`}
+        className={`rounded border-slate-200 outline-none ${className}`}
         type={type}
         {...register(name)}
         {...rest}

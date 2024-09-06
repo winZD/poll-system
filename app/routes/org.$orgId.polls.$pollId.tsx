@@ -23,10 +23,12 @@ import {
   redirectWithToast,
 } from 'remix-toast';
 import { statusOptions, statusSchema } from '~/components/models';
+import { FormContent } from '~/components/Form/FormContent';
 
 const schema = zod.object({
   name: zod.string().min(1),
   status: statusSchema.default('INACTIVE'),
+  defaultIframeSrc: zod.string().min(3, 'Obvezan podatak'),
   iframeSrc: zod.string().min(3, 'Obvezan podatak'),
 });
 
@@ -64,15 +66,13 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 
   const { orgId, pollId } = params;
-  await db.$transaction(async (tx) => {
-    await tx.pollTable.update({
-      where: { orgId, id: pollId },
-      data: {
-        name: data.name,
-        status: data.status,
-        iframeSrc: data.iframeSrc,
-      },
-    });
+  await db.pollTable.update({
+    where: { orgId, id: pollId },
+    data: {
+      name: data.name,
+      status: data.status,
+      iframeSrc: data.iframeSrc,
+    },
   });
 
   return redirectWithSuccess('..', 'Uspješno ste ažurirali anketu');
@@ -83,7 +83,11 @@ const Index = () => {
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     resolver,
-    defaultValues: { ...poll, status: poll?.status as any },
+    defaultValues: {
+      ...poll,
+      status: poll?.status as any,
+      defaultIframeSrc: `http://localhost:5173/poll/${poll.id}`,
+    },
   });
 
   return (
@@ -92,24 +96,25 @@ const Index = () => {
         formMethods={formMethods}
         onSubmit={formMethods.handleSubmit}
         method="PUT"
-        className="flex w-[600px] flex-col gap-4 p-4"
       >
-        <SelectField label="Status" name="status" data={statusOptions} />
-        <InputField label="Naziv ankete" name="name" />
+        <FormContent>
+          <SelectField label="Status" name="status" data={statusOptions} />
+          <InputField label="Naziv ankete" name="name" />
 
-        <div>
-          <div>Izvorni IframeSrc</div>
-          <pre>{`http://localhost:5173/poll/${poll.id}`}</pre>
-        </div>
+          <InputField
+            readOnly
+            label="Izvorni IframeSrc"
+            name="defaultIframeSrc"
+          />
+          <InputField label="IframeSrc" name="iframeSrc" />
 
-        <InputField label="IframeSrc" name="iframeSrc" />
-
-        <button
-          type="submit"
-          className="rounded bg-slate-200 p-2 hover:bg-slate-300"
-        >
-          Ažuriraj anketu
-        </button>
+          <button
+            type="submit"
+            className="rounded bg-slate-200 p-2 hover:bg-slate-300"
+          >
+            Ažuriraj anketu
+          </button>
+        </FormContent>
       </HookForm>
     </Modal>
   );

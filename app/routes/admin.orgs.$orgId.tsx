@@ -152,7 +152,7 @@ const UsersTable = (props) => {
       },
       {
         field: 'role',
-        headerName: 'Rola',
+        headerName: 'Uloga',
         width: 120,
         valueFormatter: ({ value }) => rolesMapped[value],
       },

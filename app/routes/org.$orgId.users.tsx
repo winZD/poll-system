@@ -1,11 +1,11 @@
 import { LoaderFunctionArgs, json, ActionFunctionArgs } from '@remix-run/node';
-import { NavLink, Outlet, useLoaderData } from '@remix-run/react';
+import { NavLink, Outlet, useLoaderData, useNavigate } from '@remix-run/react';
 import React from 'react';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
 import { useOrgLoader } from '~/loaders/useOrgLoader';
 import { db } from '~/db';
-import { rolesMapped } from '~/components/models';
+import { rolesMapped, statusMapped } from '~/components/models';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId } = params;
@@ -13,6 +13,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   //TODO: fix fetch by db.orgTable
   const users = await db.userTable.findMany({
     where: { orgId },
+    orderBy: [{ status: 'asc' }, { role: 'asc' }, { name: 'asc' }],
   });
   return json(users);
 }
@@ -24,13 +25,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 export default function Index() {
   const users = useLoaderData<typeof loader>();
 
+  const navigate = useNavigate();
+
   const user = useOrgLoader();
 
   const columnDefs = React.useMemo<ColDef<(typeof users)[0]>[]>(
     () => [
       {
         field: 'name',
-        headerName: 'Ime',
+        headerName: 'Ime korisnika',
         width: 200,
       },
       {
@@ -40,7 +43,7 @@ export default function Index() {
       },
       {
         field: 'role',
-        headerName: 'Rola',
+        headerName: 'Uloga',
         width: 120,
         valueFormatter: ({ value }) => rolesMapped[value],
       },
@@ -53,6 +56,7 @@ export default function Index() {
         field: 'status',
         headerName: 'Status',
         width: 120,
+        valueFormatter: ({ value }) => statusMapped[value],
       },
     ],
     [],
@@ -72,7 +76,12 @@ export default function Index() {
           </div>
         )}
 
-        <AgGrid columnDefs={columnDefs} rowData={users} />
+        <AgGrid
+          columnDefs={columnDefs}
+          rowData={users}
+          onRowClicked={({ data }) => navigate(data.id)}
+          rowClass={'cursor-pointer hover:bg-slate-100'}
+        />
         <Outlet />
       </div>
     </>
