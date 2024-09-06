@@ -91,16 +91,19 @@ export default function Index() {
 
       {
         /* onCellClicked: (props) => console.log(props), */
+        /* cellClass: 'flex items-center justify-end', */
+        sortable: false,
+        cellClass: 'justify-center flex  items-center bg-red-200',
         cellRenderer: (props) => (
           <div className="flex gap-x-3">
-            <button
-              className="rounded bg-blue-500 px-2 font-semibold text-white transition duration-300 ease-in-out hover:bg-blue-600"
+            {/* <button
+              className="rounded bg-blue-500 px-2 text-xs font-semibold text-white transition duration-300 ease-in-out hover:bg-blue-600"
               onClick={() => navigate(`${props.data.id}`)}
             >
               Edit
-            </button>
+            </button> */}
             <button
-              className="rounded bg-red-500 px-2 font-semibold text-white transition duration-300 ease-in-out hover:bg-red-700"
+              className="rounded bg-red-500 px-2 text-xs font-semibold text-white transition duration-300 ease-in-out hover:bg-red-700"
               onClick={() =>
                 submit(
                   {
@@ -136,7 +139,7 @@ export default function Index() {
           rowClass={'cursor-pointer hover:bg-slate-100'}
           columnDefs={columnDefs}
           rowData={polls}
-          /*  onRowClicked={({ data }) => navigate(`${data.id}`)} */
+          onRowClicked={({ data }) => navigate(`${data.id}`)}
 
           /* onRowClicked={({ data }) => console.log(data)} */
         />
