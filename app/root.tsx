@@ -13,6 +13,7 @@ import { getToast } from 'remix-toast';
 import React from 'react';
 import { ToastContainer, toast as notify } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { DialogProvider } from './components/Dialog';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   // Extracts the toast from the request
@@ -50,7 +51,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <DialogProvider>
+      <Outlet />;
+    </DialogProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
