@@ -90,12 +90,10 @@ export default function Index() {
       },
 
       {
-        /* onCellClicked: (props) => console.log(props), */
-        /* cellClass: 'flex items-center justify-end', */
         sortable: false,
-        cellClass: 'justify-center flex  items-center bg-red-200',
+        cellClass: ' bg-red-200',
         cellRenderer: (props) => (
-          <div className="flex gap-x-3">
+          <div className="flex h-full items-center gap-x-3">
             {/* <button
               className="rounded bg-blue-500 px-2 text-xs font-semibold text-white transition duration-300 ease-in-out hover:bg-blue-600"
               onClick={() => navigate(`${props.data.id}`)}
