@@ -87,24 +87,33 @@ export default function Index() {
 
       {
         sortable: false,
-        cellRenderer: (props) => (
-          <div className="flex h-full items-center justify-end gap-x-3">
-            <button
-              className="rounded bg-red-500 px-2 font-semibold text-white transition duration-300 ease-in-out hover:bg-red-700"
-              onClick={() =>
-                submit(
-                  {
-                    id: props.data.id,
-                    orgId: params.orgId ? params.orgId : '',
-                  },
-                  { method: 'delete' },
-                )
-              }
-            >
-              <MdDelete size={25} />
-            </button>
-          </div>
-        ),
+        onCellClicked: (props) => props.event?.stopPropagation(),
+        cellRenderer: (props) => {
+          const handleDeleteClick = (event: React.MouseEvent) => {
+            if (event.button === 0) {
+              event.stopPropagation(); // Prevents the event from bubbling up to parent elements
+              console.log('Left mouse button pressed down');
+              submit(
+                {
+                  id: props.data.id,
+                  orgId: params.orgId ? params.orgId : '',
+                },
+                { method: 'delete' },
+              );
+            }
+          };
+
+          return (
+            <div className="flex h-full items-center justify-end gap-x-3">
+              <button
+                className="rounded bg-red-500 px-2 font-semibold text-white transition duration-300 ease-in-out hover:bg-red-700"
+                onMouseDown={handleDeleteClick}
+              >
+                <MdDelete size={25} />
+              </button>
+            </div>
+          );
+        },
       },
     ],
     [],
