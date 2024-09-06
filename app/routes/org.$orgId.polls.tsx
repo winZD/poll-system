@@ -18,7 +18,9 @@ import { AgGrid } from '~/components/AgGrid';
 import { db, decodeTokenFromRequest } from '~/db';
 import { toHrDateString } from '~/utils';
 import { jsonWithSuccess } from 'remix-toast';
-import { MdDelete } from 'react-icons/md';
+import { HiOutlineTrash } from 'react-icons/hi2';
+import { useConfirmDialog } from '~/components/Dialog';
+import { statusValues } from '~/components/models';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const ctx = await decodeTokenFromRequest(request);
@@ -37,10 +39,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const formData = await request.formData();
 
   const id = formData.get('id')?.toString();
-  const orgId = formData.get('orgId')?.toString();
+  const orgId = params.orgId;
 
-  await db.pollTable.delete({
-    where: { id: id, orgId },
+  console.log({ orgId, id });
+
+  await db.$transaction(async (tx) => {
+    await tx.votesTable.deleteMany({ where: { pollId: id, orgId } });
+    await tx.pollQuestionTable.deleteMany({ where: { pollId: id, orgId } });
+    await tx.pollTable.delete({ where: { id, orgId } });
   });
 
   return jsonWithSuccess({}, 'Uspješno izbrisana anketa');
@@ -54,81 +60,75 @@ export default function Index() {
 
   const params = useParams();
 
-  const columnDefs = React.useMemo<ColDef[]>(
+  const { openDialog } = useConfirmDialog();
+
+  const columnDefs = React.useMemo<ColDef<(typeof polls)[0]>[]>(
     () => [
       {
         field: 'name',
         headerName: 'Naziv ankete',
         width: 200,
-        onCellClicked: ({ data }) => navigate(`${data.id}`),
       },
 
       {
         field: 'status',
         headerName: 'Status',
         width: 120,
-        onCellClicked: ({ data }) => navigate(`${data.id}`),
       },
       {
         field: 'User.name',
         headerName: 'Anketu kreirao',
         width: 200,
-        onCellClicked: ({ data }) => navigate(`${data.id}`),
       },
       {
         field: 'createdAt',
         headerName: 'Vrijeme kreiranja',
         width: 200,
         valueFormatter: ({ value }) => toHrDateString(value),
-        onCellClicked: ({ data }) => navigate(`${data.id}`),
       },
       {
         field: 'expiresAt',
         headerName: 'Vrijeme završetka',
         width: 200,
         valueFormatter: ({ value }) => toHrDateString(value),
-        onCellClicked: ({ data }) => navigate(`${data.id}`),
       },
 
       {
+        colId: 'delete',
         sortable: false,
+        width: 40,
 
         cellRenderer: (props) => {
-          /* const handleDeleteClick = (event: React.MouseEvent) => {
-            if (event.button === 0) {
-              event.stopPropagation(); // Prevents the event from bubbling up to parent elements
-              console.log('Left mouse button pressed down');
-              submit(
-                {
-                  id: props.data.id,
-                  orgId: params.orgId ? params.orgId : '',
-                },
-                { method: 'delete' },
-              );
-            }
-          }; */
+          const isDisabled = props.data.status === statusValues.ACTIVE;
 
           return (
-            <div className="flex h-full items-center justify-end gap-x-3">
+            <div className="flex h-full flex-row items-center justify-center p-0">
               <button
-                className="rounded bg-red-500 px-2 font-semibold text-white transition duration-300 ease-in-out hover:bg-red-700"
-                /* onMouseDown={handleDeleteClick} */
-                onClick={() =>
-                  submit(
-                    {
-                      id: props.data.id,
-                      orgId: params.orgId ? params.orgId : '',
-                    },
-                    { method: 'delete' },
-                  )
-                }
+                onClick={() => {
+                  if (isDisabled) return;
+                  openDialog({
+                    title: 'Brisanje zapisa',
+                    buttonText: 'Izbriši',
+                    message: 'Potvrdite brisanje zapisa',
+                    onConfirm: () =>
+                      submit(
+                        {
+                          id: props.data.id,
+                        },
+                        { method: 'delete' },
+                      ),
+                  });
+                }}
               >
-                <MdDelete size={25} />
+                <HiOutlineTrash
+                  className={`text-lg ${isDisabled ? 'cursor-not-allowed text-zinc-500' : 'text-red-500'}`}
+                />
               </button>
             </div>
           );
         },
       },
+      { flex: 1 },
     ],
     [],
   );
@@ -149,7 +149,10 @@ export default function Index() {
           rowClass={'cursor-pointer hover:bg-slate-100'}
           columnDefs={columnDefs}
           rowData={polls}
-          /* onRowClicked={({ data }) => navigate(`${data.id}`)} */
+          onCellClicked={(row) => {
+            if (row.colDef.colId === 'delete') return;
+            navigate(`${row.data.id}`);
+          }}
         />
         <Outlet />
       </div>

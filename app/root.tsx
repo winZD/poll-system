@@ -28,7 +28,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   React.useEffect(() => {
     if (toast) {
       // Call your toast function here
-      notify(toast.message, { type: toast.type });
+      notify(toast.message, { type: toast.type, position: 'top-center' });
     }
   }, [toast]);
 
@@ -41,7 +41,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="flex h-full w-full flex-col">
-        {children}
+        <DialogProvider>{children}</DialogProvider>
         <ScrollRestoration />
         <Scripts />
         <ToastContainer />
@@ -51,11 +51,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return (
-    <DialogProvider>
-      <Outlet />;
-    </DialogProvider>
-  );
+  return <Outlet />;
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
