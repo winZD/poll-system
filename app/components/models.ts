@@ -10,13 +10,15 @@ export const rolesMapped = {
   [roleValues.ADMIN]: 'Admin',
   [roleValues.USER]: 'Korisnik',
 };
-export const statusSchema = zod.enum(['ACTIVE', 'INACTIVE']);
+export const statusSchema = zod.enum(['DRAFT', 'ACTIVE', 'INACTIVE']);
 export const statusValues = statusSchema.Values;
 export const statusOptions = [
+  { value: statusValues.DRAFT, label: 'Draft' },
   { value: statusValues.ACTIVE, label: 'Aktivan' },
   { value: statusValues.INACTIVE, label: 'Neaktivan' },
 ];
 export const statusMapped = {
+  [statusValues.DRAFT]: 'Draft',
   [statusValues.ACTIVE]: 'Aktivan',
   [statusValues.INACTIVE]: 'Neaktivan',
 };
