@@ -65,7 +65,7 @@ export function ErrorBoundary({ error }: { error: Error }) {
       </head>
       <body>
         <h1>Something went wrong</h1>
-        <p>{error.message}</p>
+        <p>{error?.message?.toString()}</p>
         <p>Sorry, an unexpected error has occurred. Please try again later.</p>
         <Scripts />{' '}
         {/* Keep the Scripts component to ensure the app continues working */}

@@ -20,6 +20,7 @@ import {
   statusSchema,
 } from '~/components/models';
 import { FormContent } from '~/components/Form/FormContent';
+import PermissionsForm from '~/components/Form/PermissionsForm';
 
 const schema = zod.object({
   name: zod.string().min(1, 'Obvezan podatak'),
@@ -89,7 +90,7 @@ export default function Index() {
           <InputField label="Ime korisnika" name="name" />
           <SelectField label="Uloga" name="role" data={roleOptions} />
           <SelectField label="Status" name="status" data={statusOptions} />
-          <InputField label="Ovlasti" name="permissions" />
+          <PermissionsForm />
 
           <button
             type="submit"

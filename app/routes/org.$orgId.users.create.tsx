@@ -13,9 +13,12 @@ import {
   statusSchema,
   roleOptions,
   statusOptions,
+  roleValues,
+  statusValues,
 } from '~/components/models';
 import { ulid } from 'ulid';
 import { FormContent } from '~/components/Form/FormContent';
+import PermissionsForm from '~/components/Form/PermissionsForm';
 
 //TODO: create post method
 const schema = zod.object({
@@ -68,7 +71,14 @@ const Index = () => {
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     resolver,
+    defaultValues: {
+      permissions: '',
+      role: roleValues.USER,
+      status: statusValues.ACTIVE,
+    },
   });
+
+  const permissions = formMethods.watch('permissions');
 
   return (
     <Modal title="Novi korisnik">
@@ -83,7 +93,8 @@ const Index = () => {
           <InputField label="Inicijalna lozinka" name="password" />
           <SelectField label="Uloga" name="role" data={roleOptions} />
           <SelectField label="Status" name="status" data={statusOptions} />
-          <InputField label="Ovlasti" name="permissions" />
+
+          <PermissionsForm />
 
           <button
             type="submit"
