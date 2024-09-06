@@ -8,7 +8,6 @@ import {
   NavLink,
   Outlet,
   useLoaderData,
-  useLocation,
   useNavigate,
   useParams,
   useSubmit,
@@ -16,10 +15,10 @@ import {
 import React from 'react';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
-import { format } from 'date-fns';
 import { db, decodeTokenFromRequest } from '~/db';
 import { toHrDateString } from '~/utils';
 import { jsonWithSuccess } from 'remix-toast';
+import { MdDelete } from 'react-icons/md';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const ctx = await decodeTokenFromRequest(request);
@@ -27,7 +26,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!ctx) return redirect('/login');
   const { orgId } = params;
 
-  //TODO: fix fetch by db.orgTable
   const polls = await db.pollTable.findMany({
     where: { orgId },
     include: { Votes: { select: { id: true } }, User: true },
@@ -40,7 +38,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   const id = formData.get('id')?.toString();
   const orgId = formData.get('orgId')?.toString();
-  console.log(formData);
 
   await db.pollTable.delete({
     where: { id: id, orgId },
@@ -91,17 +88,11 @@ export default function Index() {
 
       {
         sortable: false,
-        cellClass: ' bg-red-200',
+
         cellRenderer: (props) => (
-          <div className="flex h-full items-center gap-x-3">
-            {/* <button
-              className="rounded bg-blue-500 px-2 text-xs font-semibold text-white transition duration-300 ease-in-out hover:bg-blue-600"
-              onClick={() => navigate(`${props.data.id}`)}
-            >
-              Edit
-            </button> */}
+          <div className="flex h-full items-center justify-end gap-x-3">
             <button
-              className="rounded bg-red-500 px-2 text-xs font-semibold text-white transition duration-300 ease-in-out hover:bg-red-700"
+              className="rounded bg-red-500 px-2 font-semibold text-white transition duration-300 ease-in-out hover:bg-red-700"
               onClick={() =>
                 submit(
                   {
@@ -112,7 +103,7 @@ export default function Index() {
                 )
               }
             >
-              Obriši
+              <MdDelete size={25} />
             </button>
           </div>
         ),
@@ -138,8 +129,6 @@ export default function Index() {
           columnDefs={columnDefs}
           rowData={polls}
           onRowClicked={({ data }) => navigate(`${data.id}`)}
-
-          /* onRowClicked={({ data }) => console.log(data)} */
         />
         <Outlet />
       </div>
