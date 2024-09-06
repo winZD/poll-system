@@ -17,6 +17,7 @@ import { format } from 'date-fns';
 import { db } from '~/db';
 import { rolesMapped, statusMapped } from '~/components/models';
 import { toHrDateString } from '~/utils';
+import { useDialog } from '~/components/Dialog';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // return redirect("active-orgs");
@@ -93,6 +94,7 @@ export default function Index() {
             Aktiviraj
           </Button>
         )}
+
         <div className="flex flex-col gap-2 font-semibold">
           <div>{`${org.name} `}</div>
           <div>{`${org.email} `}</div>
