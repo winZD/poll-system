@@ -18,7 +18,9 @@ import { AgGrid } from '~/components/AgGrid';
 import { db, decodeTokenFromRequest } from '~/db';
 import { toHrDateString } from '~/utils';
 import { jsonWithSuccess } from 'remix-toast';
-import { MdDelete } from 'react-icons/md';
+import { HiOutlineTrash } from 'react-icons/hi2';
+import { useConfirmDialog } from '~/components/Dialog';
+import { statusValues } from '~/components/models';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const ctx = await decodeTokenFromRequest(request);
@@ -37,10 +39,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const formData = await request.formData();
 
   const id = formData.get('id')?.toString();
-  const orgId = formData.get('orgId')?.toString();
+  const orgId = params.orgId;
 
-  await db.pollTable.delete({
-    where: { id: id, orgId },
+  console.log({ orgId, id });
+
+  await db.$transaction(async (tx) => {
+    await tx.votesTable.deleteMany({ where: { pollId: id, orgId } });
+    await tx.pollQuestionTable.deleteMany({ where: { pollId: id, orgId } });
+    await tx.pollTable.delete({ where: { id, orgId } });
   });
 
   return jsonWithSuccess({}, 'Uspješno izbrisana anketa');
@@ -54,7 +60,9 @@ export default function Index() {
 
   const params = useParams();
 
-  const columnDefs = React.useMemo<ColDef[]>(
+  const { openDialog } = useConfirmDialog();
+
+  const columnDefs = React.useMemo<ColDef<(typeof polls)[0]>[]>(
     () => [
       {
         field: 'name',
@@ -86,26 +94,41 @@ export default function Index() {
       },
 
       {
+        colId: 'delete',
         sortable: false,
-        cellRenderer: (props) => (
-          <div className="flex h-full items-center justify-end gap-x-3">
-            <button
-              className="rounded bg-red-500 px-2 font-semibold text-white transition duration-300 ease-in-out hover:bg-red-700"
-              onClick={() =>
-                submit(
-                  {
-                    id: props.data.id,
-                    orgId: params.orgId ? params.orgId : '',
-                  },
-                  { method: 'delete' },
-                )
-              }
-            >
-              <MdDelete size={25} />
-            </button>
-          </div>
-        ),
+        width: 40,
+
+        cellRenderer: (props) => {
+          const isDisabled = props.data.status === statusValues.ACTIVE;
+
+          return (
+            <div className="flex h-full flex-row items-center justify-center p-0">
+              <button
+                onClick={() => {
+                  if (isDisabled) return;
+                  openDialog({
+                    title: 'Brisanje zapisa',
+                    buttonText: 'Izbriši',
+                    message: 'Potvrdite brisanje zapisa',
+                    onConfirm: () =>
+                      submit(
+                        {
+                          id: props.data.id,
+                        },
+                        { method: 'delete' },
+                      ),
+                  });
+                }}
+              >
+                <HiOutlineTrash
+                  className={`text-lg ${isDisabled ? 'cursor-not-allowed text-zinc-500' : 'text-red-500'}`}
+                />
+              </button>
+            </div>
+          );
+        },
       },
+      { flex: 1 },
     ],
     [],
   );
@@ -126,7 +149,10 @@ export default function Index() {
           rowClass={'cursor-pointer hover:bg-slate-100'}
           columnDefs={columnDefs}
           rowData={polls}
-          onRowClicked={({ data }) => navigate(`${data.id}`)}
+          onCellClicked={(row) => {
+            if (row.colDef.colId === 'delete') return;
+            navigate(`${row.data.id}`);
+          }}
         />
         <Outlet />
       </div>
