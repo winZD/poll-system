@@ -60,36 +60,41 @@ export default function Index() {
         field: 'name',
         headerName: 'Naziv ankete',
         width: 200,
+        onCellClicked: ({ data }) => navigate(`${data.id}`),
       },
 
       {
         field: 'status',
         headerName: 'Status',
         width: 120,
+        onCellClicked: ({ data }) => navigate(`${data.id}`),
       },
       {
         field: 'User.name',
         headerName: 'Anketu kreirao',
         width: 200,
+        onCellClicked: ({ data }) => navigate(`${data.id}`),
       },
       {
         field: 'createdAt',
         headerName: 'Vrijeme kreiranja',
         width: 200,
         valueFormatter: ({ value }) => toHrDateString(value),
+        onCellClicked: ({ data }) => navigate(`${data.id}`),
       },
       {
         field: 'expiresAt',
         headerName: 'Vrijeme završetka',
         width: 200,
         valueFormatter: ({ value }) => toHrDateString(value),
+        onCellClicked: ({ data }) => navigate(`${data.id}`),
       },
 
       {
         sortable: false,
-        onCellClicked: (props) => props.event?.stopPropagation(),
+
         cellRenderer: (props) => {
-          const handleDeleteClick = (event: React.MouseEvent) => {
+          /* const handleDeleteClick = (event: React.MouseEvent) => {
             if (event.button === 0) {
               event.stopPropagation(); // Prevents the event from bubbling up to parent elements
               console.log('Left mouse button pressed down');
@@ -101,13 +106,22 @@ export default function Index() {
                 { method: 'delete' },
               );
             }
-          };
+          }; */
 
           return (
             <div className="flex h-full items-center justify-end gap-x-3">
               <button
                 className="rounded bg-red-500 px-2 font-semibold text-white transition duration-300 ease-in-out hover:bg-red-700"
-                onMouseDown={handleDeleteClick}
+                /* onMouseDown={handleDeleteClick} */
+                onClick={() =>
+                  submit(
+                    {
+                      id: props.data.id,
+                      orgId: params.orgId ? params.orgId : '',
+                    },
+                    { method: 'delete' },
+                  )
+                }
               >
                 <MdDelete size={25} />
               </button>
@@ -135,7 +149,7 @@ export default function Index() {
           rowClass={'cursor-pointer hover:bg-slate-100'}
           columnDefs={columnDefs}
           rowData={polls}
-          onRowClicked={({ data }) => navigate(`${data.id}`)}
+          /* onRowClicked={({ data }) => navigate(`${data.id}`)} */
         />
         <Outlet />
       </div>
