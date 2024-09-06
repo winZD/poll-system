@@ -63,7 +63,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         iframeSrc: `http://localhost:5173/poll/${id}`,
       },
     });
-    return redirectWithSuccess(`../${id}`, {
+    return redirectWithSuccess(`..`, {
       message: 'Uspješno ste kreirali anketu',
     });
   }

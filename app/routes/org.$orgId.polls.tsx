@@ -53,7 +53,6 @@ export default function Index() {
   const polls = useLoaderData<typeof loader>();
 
   const params = useParams();
-  console.log(params);
 
   const columnDefs = React.useMemo<ColDef[]>(
     () => [
@@ -88,7 +87,6 @@ export default function Index() {
 
       {
         sortable: false,
-
         cellRenderer: (props) => (
           <div className="flex h-full items-center justify-end gap-x-3">
             <button
