@@ -39,11 +39,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const formData = await request.formData();
 
   const id = formData.get('id')?.toString();
+  const orgId = formData.get('orgId')?.toString();
   console.log(formData);
-  const { orgId, pollId } = params;
 
   await db.pollTable.delete({
-    where: { id: id },
+    where: { id: id, orgId },
   });
 
   return jsonWithSuccess({}, 'Uspješno izbrisana anketa');
@@ -54,6 +54,9 @@ export default function Index() {
 
   const submit = useSubmit();
   const polls = useLoaderData<typeof loader>();
+
+  const params = useParams();
+  console.log(params);
 
   const columnDefs = React.useMemo<ColDef[]>(
     () => [
@@ -99,7 +102,13 @@ export default function Index() {
             <button
               className="rounded bg-red-500 px-2 font-semibold text-white transition duration-300 ease-in-out hover:bg-red-700"
               onClick={() =>
-                submit({ id: props.data.id }, { method: 'delete' })
+                submit(
+                  {
+                    id: props.data.id,
+                    orgId: params.orgId ? params.orgId : '',
+                  },
+                  { method: 'delete' },
+                )
               }
             >
               Obriši
