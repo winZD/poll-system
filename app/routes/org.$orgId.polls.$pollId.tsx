@@ -27,7 +27,7 @@ import { FormContent } from '~/components/Form/FormContent';
 
 const schema = zod.object({
   name: zod.string().min(1),
-  status: statusSchema.default('INACTIVE'),
+  status: statusSchema.default('DRAFT'),
   defaultIframeSrc: zod.string().min(3, 'Obvezan podatak'),
   iframeSrc: zod.string().min(3, 'Obvezan podatak'),
 });

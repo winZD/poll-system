@@ -16,7 +16,7 @@ import { FormContent } from '~/components/Form/FormContent';
 //TODO: create post method
 const schema = zod.object({
   name: zod.string().min(1),
-  status: statusSchema.default('INACTIVE'),
+  status: statusSchema.default('DRAFT'),
 });
 
 type FormData = zod.infer<typeof schema>;
@@ -73,7 +73,7 @@ const Index = () => {
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     resolver,
-    defaultValues: { name: '', status: statusValues.INACTIVE },
+    defaultValues: { name: '', status: statusValues.DRAFT },
   });
 
   return (
