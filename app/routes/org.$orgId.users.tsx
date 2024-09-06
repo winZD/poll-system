@@ -58,7 +58,9 @@ export default function Index() {
         width: 120,
         valueFormatter: ({ value }) => statusMapped[value],
       },
+      { flex: 1 },
     ],
+
     [],
   );
 
