@@ -18,6 +18,7 @@ import { decodeTokenFromRequest } from '~/auth';
 const schema = zod.object({
   name: zod.string().min(1),
   status: statusSchema.default('DRAFT'),
+  question: zod.string().min(1),
 });
 
 type FormData = zod.infer<typeof schema>;
@@ -62,6 +63,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         expiresAt: addDays(new Date(), 7),
         iframeTitle: '',
         iframeSrc: `http://localhost:5173/poll/${id}`,
+        PollQuestions: {
+          create: {
+            id: ulid(),
+            name: data.question,
+          },
+        },
       },
     });
     return redirectWithSuccess(`..`, {
@@ -87,6 +94,7 @@ export default function Index() {
         <FormContent>
           <SelectField label="Status" name="status" data={statusOptions} />
           <InputField label="Naziv ankete" name="name" />
+          <InputField label="Anketno pitanje" name="question" />
 
           <button
             type="submit"
