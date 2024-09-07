@@ -37,11 +37,10 @@ type FormData = zod.infer<typeof schema>;
 const resolver = zodResolver(schema);
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  // const token = decode
+  const ctx = await decodeTokenFromRequest(request);
 
-  // check if admin is logged in
+  if (!ctx) return redirect('/login');
 
-  // const users = await db.userTable.findMany({ where: { status: "ACTIVE" } });
   const { orgId, pollId } = params;
 
   const poll = await db.pollTable.findUnique({
