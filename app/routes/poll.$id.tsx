@@ -1,5 +1,10 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { json, useLoaderData, useSubmit } from '@remix-run/react';
+import {
+  json,
+  useActionData,
+  useLoaderData,
+  useSubmit,
+} from '@remix-run/react';
 import * as zod from 'zod';
 import { db } from '~/db';
 import { toHrDateString } from '~/utils';
@@ -37,11 +42,17 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     .update(dataToHash)
     .digest('hex'); // Output as a hex string
 
-  const voteExists = await db.votesTable.findFirst({
+  const existingVote = await db.votesTable.findFirst({
     where: { orgId: poll.orgId, pollId: poll.id, fingerPrint },
   });
 
-  return json({ ...poll, isVoted: !!voteExists });
+  const votes = await db.votesTable.groupBy({
+    by: ['pollQuestionId'],
+    where: { orgId: poll.orgId, pollId: poll.id },
+    _count: true,
+  });
+
+  return json({ poll, existingVote: existingVote?.pollQuestionId, votes });
 }
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -77,72 +88,77 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
-  const poll = useLoaderData<typeof loader>();
+  const { poll, existingVote, votes } = useLoaderData<typeof loader>();
 
-  const isVoted = poll.isVoted;
+  const ukupnoGlasova = votes.reduce((acc, current) => acc + current._count, 0);
+  const maxBrojGlasova = Math.max(...votes.map((e) => e._count));
 
   const submit = useSubmit();
-  //   const maxVotes = Math.max(...poll.PollQuestions.map((e) => e.Votes.length));
 
   return (
     <>
-      {isVoted ? (
-        <div>
-          <div>Već ste glasali, dodati layout</div>
-          <button
-            onClick={() =>
-              submit(
-                {
-                  pollQuestionId: 'null',
-                  orgId: poll.orgId,
-                  pollId: poll.id,
-                },
-                { method: 'DELETE' },
-              )
-            }
-            className={`rounded bg-blue-50 px-4 py-2 hover:bg-blue-100`}
-          >
-            {'ukloni glasove'}
-          </button>
-        </div>
-      ) : (
-        <div className="m-auto flex flex-col rounded border shadow-lg">
-          <div className="border-b p-4 text-center">{poll.Org.name}</div>
-          <div className="flex flex-col gap-6 px-8 py-4">
-            <div className="text-center font-semibold">{poll.name}</div>
+      <div className="m-auto flex flex-col rounded border shadow-lg">
+        <div className="border-b p-4 text-center">{poll.Org.name}</div>
+        <div className="flex flex-col gap-6 px-8 py-4">
+          <div className="text-center font-semibold">{poll.name}</div>
 
-            <div className="flex flex-col gap-2">
-              {poll.PollQuestions.map((e) => (
-                <>
-                  <button
-                    key={e.id}
-                    onClick={() =>
-                      submit(
-                        {
-                          pollQuestionId: e.id,
-                          orgId: e.orgId,
-                          pollId: e.pollId,
-                        },
-                        { method: 'POST' },
-                      )
-                    }
-                    className={`rounded bg-blue-50 px-4 py-2 hover:bg-blue-100`}
-                  >
-                    {e.name}
-                  </button>
-                </>
-              ))}
+          {existingVote && (
+            <div className="flex flex-col text-center">
+              <div>Već ste dali svoj glas</div>
+              <button
+                onClick={() =>
+                  submit(
+                    {
+                      pollQuestionId: 'null',
+                      orgId: poll.orgId,
+                      pollId: poll.id,
+                    },
+                    { method: 'DELETE' },
+                  )
+                }
+                className={`rounded bg-red-100 px-4 py-2 hover:bg-blue-100`}
+              >
+                {'ukloni glas (DEV ONLY)'}
+              </button>
             </div>
+          )}
 
-            <div className="flex gap-8">
-              <div className="">Vrijeme završetka ankete</div>
-              <div className="font-semibold">
-                {toHrDateString(poll.createdAt)}
-              </div>
+          <div className="flex flex-col gap-2">
+            {poll.PollQuestions.map((e) => (
+              <>
+                <button
+                  key={e.id}
+                  onClick={() => {
+                    if (existingVote) return;
+                    submit(
+                      {
+                        pollQuestionId: e.id,
+                        orgId: e.orgId,
+                        pollId: e.pollId,
+                      },
+                      { method: 'POST' },
+                    );
+                  }}
+                  className={`rounded px-4 py-2 ${existingVote ? 'cursor-default' : 'hover:bg-blue-100'} ${existingVote === e.id ? 'bg-green-100' : 'bg-blue-50'}`}
+                >
+                  {e.name}
+                </button>
+              </>
+            ))}
+          </div>
+
+          {existingVote && (
+            <div className="text-center font-semibold">{`Ukupan broj glasova ${ukupnoGlasova}`}</div>
+          )}
+
+          <div className="flex gap-8">
+            <div className="">Vrijeme završetka ankete</div>
+            <div className="font-semibold">
+              {toHrDateString(poll.createdAt)}
             </div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }
