@@ -14,7 +14,7 @@ import SelectField from '~/components/Form/SelectForm';
 import React from 'react';
 import { ulid } from 'ulid';
 import { db, decodeTokenFromRequest } from '~/db';
-import { useLoaderData } from '@remix-run/react';
+import { useLoaderData, useNavigate, useParams } from '@remix-run/react';
 import {
   jsonWithError,
   jsonWithSuccess,
@@ -37,11 +37,10 @@ type FormData = zod.infer<typeof schema>;
 const resolver = zodResolver(schema);
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  // const token = decode
+  const ctx = await decodeTokenFromRequest(request);
 
-  // check if admin is logged in
+  if (!ctx) return redirect('/login');
 
-  // const users = await db.userTable.findMany({ where: { status: "ACTIVE" } });
   const { orgId, pollId } = params;
 
   const poll = await db.pollTable.findUnique({
@@ -80,6 +79,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 const Index = () => {
   const poll = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
+  const params = useParams();
+
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     resolver,
@@ -113,6 +115,13 @@ const Index = () => {
             className="rounded bg-slate-200 p-2 hover:bg-slate-300"
           >
             Ažuriraj anketu
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate(`/poll/${params.pollId}`)}
+            className="rounded bg-slate-200 p-2 hover:bg-slate-300"
+          >
+            Anketa
           </button>
         </FormContent>
       </HookForm>

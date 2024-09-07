@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { json, useLoaderData, useSubmit } from '@remix-run/react';
 import { Modal } from '~/components/Modal';
@@ -78,10 +79,32 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 
   return jsonWithSuccess(true, 'Vaš glas je uspješno zabilježen');
+=======
+import { LoaderFunctionArgs, ActionFunctionArgs, json } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
+import { redirectWithError } from 'remix-toast';
+import { db } from '~/db';
+
+export async function loader({ request, params }: LoaderFunctionArgs) {
+  const pollId = params.id;
+
+  const poll = await db.pollTable.findUnique({
+    where: { id: pollId },
+  });
+
+  if (!poll) return redirectWithError('..', 'Nepostojeća anketa');
+
+  return json(poll);
+}
+
+export const action = async ({ request, params }: ActionFunctionArgs) => {
+  return json({});
+>>>>>>> 3ce0bb2c9e4154d9dfd9718ac797dccbcdbe4e60
 };
 
 export default function Index() {
   const poll = useLoaderData<typeof loader>();
+<<<<<<< HEAD
 
   const isVoted = poll.isVoted;
 
@@ -165,3 +188,23 @@ export function getClientIPAddress(request: Request): string | undefined {
 
   return undefined;
 }
+=======
+  console.log(poll);
+  return (
+    <div className="flex h-full items-center justify-center">
+      <div className="rounded-lg bg-white p-4 shadow-lg">
+        <div className="mb-4 text-center text-3xl font-bold">POll</div>
+        <p className="text-center text-sm text-gray-600">
+          This is a small card with some sample content. You can add more
+          information here.
+        </p>
+        <div className="mt-4 flex justify-center">
+          <button className="rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
+            Action
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+>>>>>>> 3ce0bb2c9e4154d9dfd9718ac797dccbcdbe4e60

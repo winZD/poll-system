@@ -1,4 +1,9 @@
-import { LoaderFunctionArgs, json, ActionFunctionArgs } from '@remix-run/node';
+import {
+  LoaderFunctionArgs,
+  json,
+  ActionFunctionArgs,
+  redirect,
+} from '@remix-run/node';
 import { getValidatedFormData, useRemixForm } from 'remix-hook-form';
 import { Modal } from '~/components/Modal';
 import * as zod from 'zod';
@@ -6,7 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { HookForm } from '~/components/Form/Form';
 import InputField from '~/components/Form/FormInput';
 import SelectField from '~/components/Form/SelectForm';
-import { db } from '~/db';
+import { db, decodeTokenFromRequest } from '~/db';
 import { useLoaderData } from '@remix-run/react';
 import {
   jsonWithError,
@@ -33,6 +38,10 @@ type FormData = zod.infer<typeof schema>;
 const resolver = zodResolver(schema);
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
+  const ctx = await decodeTokenFromRequest(request);
+
+  if (!ctx) return redirect('/login');
+
   const { orgId, userId } = params;
 
   const user = await db.userTable.findUnique({

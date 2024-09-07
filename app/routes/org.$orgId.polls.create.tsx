@@ -69,7 +69,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 };
 
-const Index = () => {
+export default function Index() {
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     resolver,
@@ -97,6 +97,4 @@ const Index = () => {
       </HookForm>
     </Modal>
   );
-};
-
-export default Index;
+}

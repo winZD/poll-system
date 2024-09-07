@@ -1,16 +1,24 @@
-import { LoaderFunctionArgs, json, ActionFunctionArgs } from '@remix-run/node';
+import {
+  LoaderFunctionArgs,
+  json,
+  ActionFunctionArgs,
+  redirect,
+} from '@remix-run/node';
 import { NavLink, Outlet, useLoaderData, useNavigate } from '@remix-run/react';
 import React from 'react';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
 import { useOrgLoader } from '~/loaders/useOrgLoader';
-import { db } from '~/db';
+import { db, decodeTokenFromRequest } from '~/db';
 import { rolesMapped, statusMapped } from '~/components/models';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
+  const ctx = await decodeTokenFromRequest(request);
+
+  if (!ctx) return redirect('/login');
+
   const { orgId } = params;
 
-  //TODO: fix fetch by db.orgTable
   const users = await db.userTable.findMany({
     where: { orgId },
     orderBy: [{ status: 'asc' }, { role: 'asc' }, { name: 'asc' }],
