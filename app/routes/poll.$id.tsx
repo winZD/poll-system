@@ -11,6 +11,7 @@ import { toHrDateString } from '~/utils';
 import crypto from 'crypto'; // If using ES Modules
 import { jsonWithError, jsonWithSuccess } from 'remix-toast';
 import { ulid } from 'ulid';
+import { getClientIPAddress } from '~/functions/get-client-ip-address';
 
 const schema = zod.object({
   name: zod.string().min(1),
@@ -161,19 +162,4 @@ export default function Index() {
       </div>
     </>
   );
-}
-
-export function getClientIPAddress(request: Request): string | undefined {
-  const forwardedFor = request.headers.get('x-forwarded-for');
-
-  if (forwardedFor) {
-    return forwardedFor.split(',')[0];
-  }
-
-  const cfConnectingIp = request.headers.get('cf-connecting-ip');
-  if (cfConnectingIp) {
-    return cfConnectingIp;
-  }
-
-  return undefined;
 }

@@ -1,20 +1,23 @@
 import { json, LoaderFunctionArgs, redirect } from '@remix-run/node';
-import { decodeTokenFromRequest } from '~/db';
+import { statusValues } from '~/components/models';
+import { db } from '~/db';
+
+import { decodeTokenFromRequest } from '~/auth';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // const token = decode
 
   const ctx = await decodeTokenFromRequest(request);
 
-  if (!ctx) return redirect('/login');
+  if (!ctx?.User) return redirect('/login');
 
-  if (ctx.userOrgRole === 'ORG') {
-    return redirect(`/org/${ctx.userOrgId}`, {
+  if (ctx.User.Org.role === 'ORG') {
+    return redirect(`/org/${ctx.User.orgId}`, {
       ...(ctx.headers ? { headers: ctx.headers } : {}),
     });
   }
 
-  if (ctx.userOrgRole === 'ADMIN') {
+  if (ctx.User.Org.role === 'ADMIN') {
     return redirect(`/admin`, {
       ...(ctx.headers ? { headers: ctx.headers } : {}),
     });

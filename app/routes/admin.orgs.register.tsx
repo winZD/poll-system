@@ -12,7 +12,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { HookForm } from '~/components/Form/Form';
 import InputField from '~/components/Form/FormInput';
 import { ulid } from 'ulid';
-import { db, hashPassword } from '~/db';
+import { db } from '~/db';
+import { hashPassword } from '~/auth';
 
 const schema = zod.object({
   name: zod.string().min(1),

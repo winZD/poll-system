@@ -7,8 +7,7 @@ import bcrypt from 'bcryptjs';
 
 import { OrgTable, PrismaClient, UserTable } from '@prisma/client';
 import { statusValues } from '~/components/models';
-
-export const db = new PrismaClient();
+import { db } from '~/db';
 
 type TToken = {
   tokenId: string;

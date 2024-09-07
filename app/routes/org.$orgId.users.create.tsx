@@ -78,8 +78,6 @@ const Index = () => {
     },
   });
 
-  const permissions = formMethods.watch('permissions');
-
   return (
     <Modal title="Novi korisnik">
       <HookForm

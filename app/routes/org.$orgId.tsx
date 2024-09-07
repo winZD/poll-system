@@ -1,39 +1,27 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import {
-  json,
-  NavLink,
-  Outlet,
-  redirect,
-  useLoaderData,
-} from '@remix-run/react';
+import { json, NavLink, Outlet, useLoaderData } from '@remix-run/react';
 import { MdOutlineLogout } from 'react-icons/md';
-import { redirectWithError } from 'remix-toast';
-import { db, decodeTokenFromRequest } from '~/db';
+import { redirectWithWarning } from 'remix-toast';
+import { decodeTokenFromRequest } from '~/auth';
+import { statusValues } from '~/components/models';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const ctx = await decodeTokenFromRequest(request);
 
-  if (!ctx) return redirect('/login');
-
-  const user = await db.userTable.findUnique({
-    where: { id: ctx?.userId },
-    include: { Org: true },
-  });
-
-  if (!user) {
-    return redirectWithError('/', { message: 'Nepostojeći korisnik' });
+  if (!ctx?.User) {
+    return redirectWithWarning('/login', 'Nepostojeći korisnik');
   }
-
-  if (user.status !== 'ACTIVE') {
-    return redirectWithError('/', { message: 'Korisnik deaktiviran' });
+  if (ctx?.User.status !== statusValues.ACTIVE) {
+    return redirectWithWarning('/login', 'Neaktivan korisnik');
   }
 
   const { orgId } = params;
-  if (user.orgId !== orgId) {
-    return redirectWithError('/', { message: 'Nemate ovlasti' });
+
+  if (ctx.User.orgId !== orgId) {
+    return redirectWithWarning('/', { message: 'Nemate ovlasti' });
   }
 
-  return json(user);
+  return json(ctx.User);
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {

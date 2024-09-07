@@ -9,11 +9,13 @@ import { serialize } from 'cookie';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { jsonWithError } from 'remix-toast';
 import { addDays, addMinutes, addMonths } from 'date-fns';
-import { db, generateAccessToken, generateRefreshToken } from '~/db';
+import { db } from '~/db';
 import InputField from '~/components/Form/FormInput';
 import { FormProvider } from 'react-hook-form';
 import { HookForm } from '~/components/Form/Form';
 import bcrypt from 'bcryptjs';
+import { statusValues } from '~/components/models';
+import { generateAccessToken, generateRefreshToken } from '~/auth';
 
 const schema = zod.object({
   email: zod.string().min(1, 'Upišite ispravno korisničko ime'),
@@ -29,6 +31,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     data,
     receivedValues: defaultValues,
   } = await getValidatedFormData<FormData>(request, resolver);
+
+  if (errors) {
+    // The keys "errors" and "defaultValues" are picked up automatically by useRemixForm
+    return jsonWithError({ errors, defaultValues }, 'Neispravni podaci');
+  }
 
   if (!data) {
     return jsonWithError(null, 'Neispravni podaci', {
@@ -48,31 +55,26 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       status: 401,
     });
   }
+  if (user.status !== statusValues.ACTIVE) {
+    return jsonWithError(null, 'Neaktivan korisnik', {
+      status: 401,
+    });
+  }
 
   const isValid = true;
   // const isValid = await bcrypt.compare(data.password, user.password);
   if (!isValid) {
     return jsonWithError(null, 'Neispravna lozinka', { status: 401 });
   }
-  // console.log({ user });
+
   const tokenId = ulid();
   const accessToken = generateAccessToken({
     tokenId,
     userId: user.id,
-    userRole: user.role,
-    userName: user.name,
-    userPermissions: user.permissions,
-    userOrgRole: user.Org.role,
-    userOrgId: user.orgId,
   });
   const refreshToken = generateRefreshToken({
     tokenId,
     userId: user.id,
-    userRole: user.role,
-    userName: user.name,
-    userPermissions: user.permissions,
-    userOrgRole: user.Org.role,
-    userOrgId: user.orgId,
   });
 
   await db.refreshTokenTable.create({
@@ -80,7 +82,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       id: tokenId,
       userId: user.id,
       createdAt: new Date(),
-      expiresAt: addDays(new Date(), 7),
+      expiresAt: addDays(new Date(), 30),
       familyId: tokenId,
       token: refreshToken,
       status: 'GRANTED',
@@ -103,11 +105,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       path: '/',
       sameSite: 'lax',
       domain: process.env.COOKIE_DOMAIN,
-      expires: addDays(new Date(), 7),
+      expires: addDays(new Date(), 30),
     }),
   );
 
-  return redirect(user.role === 'ADMIN' ? '/admin' : `/org/${user.orgId}`, {
+  return redirect(user.Org.role === 'ADMIN' ? '/admin' : `/org/${user.orgId}`, {
     headers,
   });
 };
@@ -120,8 +122,6 @@ export default function Login() {
     resolver: resolver,
   });
   const { handleSubmit } = formMethods;
-
-  const actionData = useActionData<{ error: string }>();
 
   return (
     <div className="flex h-full w-full items-center justify-center">

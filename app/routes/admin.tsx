@@ -7,23 +7,28 @@ import {
   useLoaderData,
 } from '@remix-run/react';
 import { MdOutlineLogout } from 'react-icons/md';
-import { decodeTokenFromRequest } from '~/db';
+import { redirectWithWarning } from 'remix-toast';
+import { decodeTokenFromRequest } from '~/auth';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // const token = decode
 
   const ctx = await decodeTokenFromRequest(request);
 
-  if (!ctx) return redirect('/login');
+  if (!ctx?.User) return redirect('/login');
 
-  if (ctx.userOrgRole !== 'ADMIN') {
-    return redirect(`/org/${ctx.userOrgId}`, {
-      ...(ctx.headers ? { headers: ctx.headers } : {}),
-    });
+  if (ctx.User?.Org.role !== 'ADMIN') {
+    return redirectWithWarning(
+      `/org/${ctx.User.orgId}`,
+      'Nemate pristup ADMIN dijelu aplikacije',
+      {
+        ...(ctx.headers ? { headers: ctx.headers } : {}),
+      },
+    );
   }
 
   return json(
-    { userName: ctx.userName },
+    { User: ctx.User },
     {
       ...(ctx.headers ? { headers: ctx.headers } : {}),
     },
@@ -39,7 +44,7 @@ export default function Index() {
        * HEADER
        */}
       <div className="flex items-center justify-end gap-8 border p-2">
-        <div className="text-center">{data.userName}</div>
+        <div className="text-center">{data.User.name}</div>
         <NavLink
           to={'/logout'}
           className={
