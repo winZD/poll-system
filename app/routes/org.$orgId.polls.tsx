@@ -15,7 +15,7 @@ import {
 import React from 'react';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
-import { db, decodeTokenFromRequest } from '~/db';
+import { db } from '~/db';
 import { toHrDateString } from '~/utils';
 import { jsonWithSuccess } from 'remix-toast';
 import { HiOutlineTrash } from 'react-icons/hi2';
@@ -23,9 +23,6 @@ import { useConfirmDialog } from '~/components/Dialog';
 import { statusValues } from '~/components/models';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const ctx = await decodeTokenFromRequest(request);
-
-  if (!ctx) return redirect('/login');
   const { orgId } = params;
 
   const polls = await db.pollTable.findMany({

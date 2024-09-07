@@ -9,14 +9,10 @@ import React from 'react';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
 import { useOrgLoader } from '~/loaders/useOrgLoader';
-import { db, decodeTokenFromRequest } from '~/db';
+import { db } from '~/db';
 import { rolesMapped, statusMapped } from '~/components/models';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const ctx = await decodeTokenFromRequest(request);
-
-  if (!ctx) return redirect('/login');
-
   const { orgId } = params;
 
   const users = await db.userTable.findMany({

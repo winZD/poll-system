@@ -7,11 +7,12 @@ import { HookForm } from '~/components/Form/Form';
 import InputField from '~/components/Form/FormInput';
 import SelectField from '~/components/Form/SelectForm';
 import { ulid } from 'ulid';
-import { db, decodeTokenFromRequest } from '~/db';
+import { db } from '~/db';
 import { jsonWithError, redirectWithSuccess } from 'remix-toast';
 import { statusOptions, statusSchema, statusValues } from '~/components/models';
 import { addDays } from 'date-fns';
 import { FormContent } from '~/components/Form/FormContent';
+import { decodeTokenFromRequest } from '~/auth';
 
 //TODO: create post method
 const schema = zod.object({
