@@ -19,6 +19,8 @@ const InputField: React.FC<InputProps> = ({
     formState: { errors },
   } = useFormContext();
 
+  console.log(errors, name);
+
   return (
     <div className="relative flex flex-col justify-between">
       <label className="" htmlFor={name}>
