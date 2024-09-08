@@ -13,7 +13,7 @@ import {
   redirectWithError,
   redirectWithSuccess,
 } from 'remix-toast';
-import { statusOptions, statusSchema, statusValues } from '~/components/models';
+import { statusOptions, statusSchema } from '~/components/models';
 import { FormContent } from '~/components/Form/FormContent';
 import { Button } from '~/components/Button';
 import { useFieldArray } from 'react-hook-form';
@@ -23,19 +23,10 @@ import { assert } from '~/utils';
 import { HiOutlineTrash } from 'react-icons/hi2';
 import {
   MdAdd,
-  MdCheckBox,
-  MdCheckBoxOutlineBlank,
-  MdCheckCircle,
   MdContentCopy,
-  MdEdit,
-  MdFileCopy,
   MdOutlineCheckBox,
-  MdOutlineCheckBoxOutlineBlank,
   MdSave,
-  MdSaveAlt,
-  MdSaveAs,
 } from 'react-icons/md';
-import { IoSave, IoSaveOutline } from 'react-icons/io5';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -133,20 +124,11 @@ const Index = () => {
   });
   const handleCopyToClipboard = () => {
     const iframeSrc = formMethods.getValues('iframeSrc');
-    navigator.clipboard
-      .writeText(iframeSrc)
-      .then(() => {
-        setToClipboard(true);
-        toast.success('Spremljeno u međupremnik!', {
-          position: 'bottom-center',
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error('Došlo je do greške prilikom kopiranja!', {
-          position: 'bottom-center',
-        });
-      });
+    navigator.clipboard.writeText(iframeSrc);
+    setToClipboard(true);
+    toast.success('Spremljeno u međupremnik!', {
+      position: 'bottom-center',
+    });
   };
 
   return (
