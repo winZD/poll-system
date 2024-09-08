@@ -73,7 +73,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 export default function Index() {
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
-    resolver,
+    // resolver,
     defaultValues: { name: '', status: statusValues.DRAFT },
   });
 
@@ -85,7 +85,7 @@ export default function Index() {
         method="POST"
       >
         <FormContent>
-          <SelectField label="Status" name="status" data={statusOptions} />
+          {/* <SelectField label="Status" name="status" data={statusOptions} /> */}
           <InputField label="Naziv ankete" name="name" />
 
           <button

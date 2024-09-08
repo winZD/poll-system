@@ -13,15 +13,16 @@ import {
   redirectWithError,
   redirectWithSuccess,
 } from 'remix-toast';
-import { statusOptions, statusSchema } from '~/components/models';
+import { statusOptions, statusSchema, statusValues } from '~/components/models';
 import { FormContent } from '~/components/Form/FormContent';
 import { Button } from '~/components/Button';
 import { useFieldArray } from 'react-hook-form';
-import { FormValidationContext } from 'react-stately';
 import FormInput from '~/components/Form/FormInput';
 import { ulid } from 'ulid';
 import { assert } from '~/utils';
 import { HiOutlineTrash } from 'react-icons/hi2';
+import { MdAdd, MdEdit, MdSave, MdSaveAlt, MdSaveAs } from 'react-icons/md';
+import { IoSave, IoSaveOutline } from 'react-icons/io5';
 
 const schema = zod.object({
   name: zod.string().min(1),
@@ -46,7 +47,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId, pollId } = params;
 
   const poll = await db.pollTable.findUnique({
-    where: { orgId: orgId, id: pollId },
+    where: { orgId, id: pollId },
     include: { PollQuestions: true },
   });
 
@@ -56,6 +57,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
+  console.log('in action');
+
   const {
     errors,
     data,
@@ -63,18 +66,18 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   } = await getValidatedFormData<FormData>(request, resolver);
 
   if (errors) {
+    console.log({ errors });
     // The keys "errors" and "defaultValues" are picked up automatically by useRemixForm
-
-    // console.log({ errors });
-
-    return jsonWithError({ errors, defaultValues }, 'Neispravni podaci');
+    return jsonWithError({ errors, defaultValues }, 'Nepotpuni podaci');
   }
 
   const { orgId, pollId } = params;
 
+  assert(orgId && pollId);
+
   await db.$transaction(async (tx) => {
     await tx.pollTable.update({
-      where: { orgId, id: pollId },
+      where: { orgId_id: { orgId, id: pollId } },
       data: {
         name: data.name,
         status: data.status,
@@ -82,8 +85,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       },
     });
 
+    await tx.votesTable.deleteMany({ where: { orgId, pollId } });
     await tx.pollQuestionTable.deleteMany({ where: { orgId, pollId } });
-
     await tx.pollQuestionTable.createMany({ data: data.PollQuestions });
   });
 
@@ -104,6 +107,8 @@ const Index = () => {
       defaultIframeSrc: `http://localhost:5173/poll/${poll.id}`,
     },
   });
+
+  // console.log('errors', formMethods.formState.errors);
 
   const { fields, append, remove } = useFieldArray({
     control: formMethods.control,
@@ -134,7 +139,7 @@ const Index = () => {
             <div className="flex flex-1 flex-col gap-4 pt-6">
               <Button
                 type="button"
-                className="w-96"
+                className="flex w-96 items-center justify-center gap-2 font-semibold"
                 onClick={() =>
                   append({
                     id: ulid(),
@@ -144,7 +149,7 @@ const Index = () => {
                   })
                 }
               >
-                + Dodaj opciju
+                <MdAdd /> Dodaj opciju
               </Button>
 
               <div className="flex flex-col gap-2">
@@ -155,7 +160,7 @@ const Index = () => {
                         name={`PollQuestions.${index}.name`}
                         key={field.id}
                         label=""
-                        placeholder="Opcija..."
+                        placeholder={'Opcija...'}
                       />
                     </div>
                     <button
@@ -173,14 +178,16 @@ const Index = () => {
 
           <button
             type="submit"
-            className="rounded bg-blue-200 p-2 hover:bg-slate-300"
+            className="flex items-center gap-2 self-end rounded bg-blue-200 p-2 px-8 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
+            // disabled={poll.status !== statusValues.DRAFT}
           >
+            <MdSave />
             Ažuriraj anketu
           </button>
           <button
             type="button"
             onClick={() => navigate(`/poll/${params.pollId}`)}
-            className="rounded bg-slate-200 p-2 hover:bg-slate-300"
+            className="rounded bg-fuchsia-100 p-2"
           >
             Anketa
           </button>

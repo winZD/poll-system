@@ -10,7 +10,7 @@ import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
 import { useOrgLoader } from '~/loaders/useOrgLoader';
 import { db } from '~/db';
-import { rolesMapped, statusMapped } from '~/components/models';
+import { rolesMapped, statusClass, statusMapped } from '~/components/models';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId } = params;
@@ -60,7 +60,12 @@ export default function Index() {
         field: 'status',
         headerName: 'Status',
         width: 120,
-        valueFormatter: ({ value }) => statusMapped[value],
+        cellRenderer: ({ value }) => (
+          <div className="flex items-center gap-2">
+            <div className={`size-4 rounded-full ${statusClass[value]} `} />
+            <div>{statusMapped[value]}</div>
+          </div>
+        ),
       },
       { flex: 1 },
     ],

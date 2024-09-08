@@ -22,3 +22,9 @@ export const statusMapped = {
   [statusValues.ACTIVE]: 'Aktivan',
   [statusValues.INACTIVE]: 'Neaktivan',
 };
+
+export const statusClass = {
+  [statusValues.DRAFT]: 'bg-yellow-500',
+  [statusValues.ACTIVE]: 'bg-green-500',
+  [statusValues.INACTIVE]: 'bg-red-500',
+};

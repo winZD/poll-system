@@ -20,7 +20,7 @@ import { toHrDateString } from '~/utils';
 import { jsonWithSuccess } from 'remix-toast';
 import { HiOutlineTrash } from 'react-icons/hi2';
 import { useConfirmDialog } from '~/components/Dialog';
-import { statusValues } from '~/components/models';
+import { statusClass, statusMapped, statusValues } from '~/components/models';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId } = params;
@@ -28,6 +28,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const polls = await db.pollTable.findMany({
     where: { orgId },
     include: { Votes: { select: { id: true } }, User: true },
+    orderBy: { createdAt: 'desc' },
   });
   return json(polls);
 }
@@ -71,6 +72,12 @@ export default function Index() {
         field: 'status',
         headerName: 'Status',
         width: 120,
+        cellRenderer: ({ value }) => (
+          <div className="flex items-center gap-2">
+            <div className={`size-4 rounded-full ${statusClass[value]} `} />
+            <div>{statusMapped[value]}</div>
+          </div>
+        ),
       },
       {
         field: 'User.name',
