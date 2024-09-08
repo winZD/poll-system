@@ -14,8 +14,9 @@ import { Button } from '~/components/Button';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
 import { db } from '~/db';
-import { rolesMapped, statusMapped } from '~/components/models';
+import { rolesMapped, statusClass, statusMapped } from '~/components/models';
 import { toHrDateString } from '~/utils';
+import { useConfirmDialog } from '~/components/Dialog';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // return redirect("active-orgs");
@@ -69,16 +70,24 @@ export default function Index() {
 
   const submit = useSubmit();
 
+  const { openDialog } = useConfirmDialog();
+
   return (
     <>
       <div className="flex flex-1 flex-col items-start gap-8 p-4">
         {org.status === 'ACTIVE' ? (
           <Button
             onClick={() =>
-              submit(
-                { action: 'DEACTIVATE', orgId: org.id },
-                { method: 'post' },
-              )
+              openDialog({
+                title: `Deaktivacija ${org.name}`,
+                message: 'Deaktivacijom ćete ujedno otkazati sve aktive ankete',
+                buttonText: 'Deaktiviraj',
+                onConfirm: () =>
+                  submit(
+                    { action: 'DEACTIVATE', orgId: org.id },
+                    { method: 'post' },
+                  ),
+              })
             }
           >
             Deaktiviraj
@@ -165,7 +174,12 @@ const UsersTable = (props) => {
         field: 'status',
         headerName: 'Status',
         width: 120,
-        valueFormatter: ({ value }) => statusMapped[value],
+        cellRenderer: ({ value }) => (
+          <div className="flex items-center gap-2">
+            <div className={`size-4 rounded-full ${statusClass[value]} `} />
+            <div>{statusMapped[value]}</div>
+          </div>
+        ),
       },
     ],
     [],
@@ -192,7 +206,12 @@ const PollsTable = (props) => {
         field: 'status',
         headerName: 'Status',
         width: 120,
-        valueFormatter: ({ value }) => statusMapped[value],
+        cellRenderer: ({ value }) => (
+          <div className="flex items-center gap-2">
+            <div className={`size-4 rounded-full ${statusClass[value]} `} />
+            <div>{statusMapped[value]}</div>
+          </div>
+        ),
       },
       {
         field: 'User.name',

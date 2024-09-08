@@ -7,6 +7,7 @@ import {
   useRouteLoaderData,
 } from '@remix-run/react';
 import React from 'react';
+import { statusClass } from '~/components/models';
 import { db } from '~/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -31,9 +32,6 @@ export default function Index() {
 
   const orgs = useLoaderData<typeof loader>();
 
-  const activeOrgs = orgs.filter((org) => org.status === 'ACTIVE');
-  const inactiveOrgs = orgs.filter((org) => org.status === 'INACTIVE');
-
   return (
     <>
       <div className="flex w-52 flex-col gap-8 border-r">
@@ -45,28 +43,17 @@ export default function Index() {
         </NavLink>
 
         <div className="flex flex-col">
-          {activeOrgs?.map((org) => (
+          {orgs?.map((org) => (
             <NavLink
               key={org.id}
               to={`${org.id}`}
               className={({ isActive }) =>
-                `flex items-center truncate p-2 font-semibold hover:bg-blue-200 ${isActive ? 'bg-blue-100' : ''}`
+                `flex items-center gap-2 truncate px-4 py-2 font-semibold hover:bg-blue-200 ${isActive ? 'bg-blue-100' : ''}`
               }
             >
-              {org.name}
-            </NavLink>
-          ))}
-        </div>
-
-        <div className="flex flex-col">
-          {inactiveOrgs?.map((org) => (
-            <NavLink
-              key={org.id}
-              to={`${org.id}`}
-              className={({ isActive }) =>
-                `flex items-center truncate p-2 font-semibold text-red-500 hover:bg-red-200 ${isActive ? 'bg-red-100' : ''}`
-              }
-            >
+              <div
+                className={`size-4 rounded-full ${statusClass[org.status]} `}
+              />
               {org.name}
             </NavLink>
           ))}
