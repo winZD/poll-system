@@ -50,6 +50,7 @@ export default function Index() {
         headerName: 'Uloga',
         width: 120,
         valueFormatter: ({ value }) => rolesMapped[value],
+        cellRenderer: ({ value }) => <div className="uppercase">{value}</div>,
       },
       {
         field: 'permissions',
