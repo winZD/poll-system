@@ -1,9 +1,4 @@
-import {
-  LoaderFunctionArgs,
-  json,
-  ActionFunctionArgs,
-  redirect,
-} from '@remix-run/node';
+import { LoaderFunctionArgs, json, ActionFunctionArgs } from '@remix-run/node';
 import {
   NavLink,
   Outlet,
@@ -103,13 +98,13 @@ export default function Index() {
         width: 40,
 
         cellRenderer: (props) => {
-          const isDisabled = props.data.status === statusValues.ACTIVE;
+          const isDeleteDisabled = props.data.status !== statusValues.DRAFT;
 
           return (
             <div className="flex h-full flex-row items-center justify-center p-0">
               <button
                 onClick={() => {
-                  if (isDisabled) return;
+                  if (isDeleteDisabled) return;
                   openDialog({
                     title: 'Brisanje zapisa',
                     buttonText: 'Izbriši',
@@ -125,7 +120,7 @@ export default function Index() {
                 }}
               >
                 <HiOutlineTrash
-                  className={`text-lg ${isDisabled ? 'cursor-not-allowed text-zinc-500' : 'text-red-500'}`}
+                  className={`text-lg ${isDeleteDisabled ? 'cursor-not-allowed text-zinc-500' : 'text-red-500'}`}
                 />
               </button>
             </div>

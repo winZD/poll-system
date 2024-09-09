@@ -90,7 +90,11 @@ const Index = () => {
           <InputField label="Ime korisnika" name="name" />
           <InputField label="Inicijalna lozinka" name="password" />
           <SelectField label="Uloga" name="role" data={roleOptions} />
-          <SelectField label="Status" name="status" data={statusOptions} />
+          <SelectField
+            label="Status"
+            name="status"
+            data={statusOptions.filter((e) => e.value !== statusValues.DRAFT)}
+          />
 
           <PermissionsForm />
 

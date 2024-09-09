@@ -5,31 +5,18 @@ import * as zod from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HookForm } from '~/components/Form/Form';
 import InputField from '~/components/Form/FormInput';
-import SelectField from '~/components/Form/SelectForm';
 import { db } from '~/db';
-import { NavLink, useLoaderData } from '@remix-run/react';
 import {
   jsonWithError,
   redirectWithError,
   redirectWithSuccess,
 } from 'remix-toast';
-import {
-  roleOptions,
-  roleSchema,
-  roleValues,
-  statusOptions,
-  statusSchema,
-} from '~/components/models';
+import { roleValues } from '~/components/models';
 import { FormContent } from '~/components/Form/FormContent';
-import PermissionsForm from '~/components/Form/PermissionsForm';
-import { decodeTokenFromRequest } from '~/auth';
-import { MdUpdate } from 'react-icons/md';
+import { decodeTokenFromRequest, hashPassword } from '~/auth';
 
 const schema = zod.object({
-  name: zod.string().min(1, 'Obvezan podatak'),
-  role: roleSchema.default('ADMIN'),
-  status: statusSchema.default('ACTIVE'),
-  permissions: zod.string().default(''),
+  newPassword: zod.string().min(3, 'Obvezan podatak'),
 });
 type FormData = zod.infer<typeof schema>;
 
@@ -40,16 +27,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const ctx = await decodeTokenFromRequest(request);
 
-  const user = await db.userTable.findUnique({
-    where: { orgId: orgId, id: userId },
-  });
+  if (!(ctx?.User?.role === roleValues.ADMIN || ctx?.userId === userId)) {
+    return redirectWithError('..', 'Nemate ovlasti');
+  }
 
-  if (!user) return redirectWithError('..', 'Nepostojeći korisnik');
-
-  const canChangePassword =
-    ctx?.User?.role === roleValues.ADMIN || ctx?.userId === userId;
-
-  return json({ ...user, canChangePassword });
+  return json(null);
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -65,56 +47,42 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 
   const { orgId, userId } = params;
+
+  const password = await hashPassword(data.newPassword);
+
   await db.userTable.update({
     where: { orgId, id: userId },
     data: {
-      ...data,
+      password,
     },
   });
 
-  return redirectWithSuccess('..', 'Uspješno ste ažurirali korisnika');
+  return redirectWithSuccess('..', 'Uspješno ste ažurirali lozinku');
 };
 
 export default function Index() {
-  const user = useLoaderData<typeof loader>();
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
-    resolver,
     defaultValues: {
-      ...user,
-      status: user?.status as any,
-      role: user?.role as any,
+      newPassword: '',
     },
   });
 
   return (
-    <Modal title="Ažuriraj korisnika">
+    <Modal title="Ažuriraj lozinku">
       <HookForm
         formMethods={formMethods}
         onSubmit={formMethods.handleSubmit}
         method="PUT"
       >
         <FormContent>
-          <InputField label="Ime korisnika" name="name" />
-          <SelectField label="Uloga" name="role" data={roleOptions} />
-          <SelectField label="Status" name="status" data={statusOptions} />
-          <PermissionsForm />
-
-          {user.canChangePassword && (
-            <NavLink
-              to="change-password"
-              className="flex items-center gap-2 self-end border p-2"
-            >
-              <MdUpdate />
-              Promjeni lozinku
-            </NavLink>
-          )}
+          <InputField label="Nova lozinka" name="newPassword" />
 
           <button
             type="submit"
             className="rounded bg-slate-200 p-2 hover:bg-slate-300"
           >
-            Ažuriraj korisnika
+            Ažuriraj lozinku
           </button>
         </FormContent>
       </HookForm>
