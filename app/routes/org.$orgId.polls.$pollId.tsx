@@ -27,7 +27,7 @@ import {
   MdOutlineCheckBox,
   MdSave,
 } from 'react-icons/md';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 const schema = zod.object({
@@ -120,13 +120,30 @@ const Index = () => {
     control: formMethods.control,
     name: 'PollQuestions',
   });
-  const handleCopyToClipboard = () => {
+  function handleCopyToClipboard() {
+    //TODO: edit after implementing SSL certificate
+    console.log(navigator.clipboard);
     const iframeSrc = formMethods.getValues('iframeSrc');
-    navigator.clipboard.writeText(iframeSrc);
-    toast.success('Spremljeno u međuspremnik!', {
-      position: 'bottom-center',
-    });
-  };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(iframeSrc)
+        .then(() => {
+          toast.success('Spremljeno u međuspremnik!', {
+            position: 'bottom-center',
+          });
+        })
+        .catch((err) => {
+          console.error('Failed to copy text: ', err);
+          toast.error('Neuspješno kopiranje u međuspremnik.', {
+            position: 'bottom-center',
+          });
+        });
+    } else {
+      toast.error('Potrebno podignut SSL. Radi samo sa HTTPS-om', {
+        position: 'bottom-center',
+      });
+    }
+  }
 
   return (
     <Modal title="Ažuriraj anketu">
