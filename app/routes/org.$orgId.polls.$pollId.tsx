@@ -126,7 +126,7 @@ const Index = () => {
     const iframeSrc = formMethods.getValues('iframeSrc');
     navigator.clipboard.writeText(iframeSrc);
     setToClipboard(true);
-    toast.success('Spremljeno u međupremnik!', {
+    toast.success('Spremljeno u međuspremnik!', {
       position: 'bottom-center',
     });
   };
