@@ -104,8 +104,6 @@ const Index = () => {
   const navigate = useNavigate();
   const params = useParams();
 
-  const [toClipboard, setToClipboard] = useState<boolean>(false);
-
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     // resolver,
@@ -125,7 +123,6 @@ const Index = () => {
   const handleCopyToClipboard = () => {
     const iframeSrc = formMethods.getValues('iframeSrc');
     navigator.clipboard.writeText(iframeSrc);
-    setToClipboard(true);
     toast.success('Spremljeno u međuspremnik!', {
       position: 'bottom-center',
     });
@@ -158,7 +155,7 @@ const Index = () => {
                   type="button"
                   onClick={handleCopyToClipboard}
                 >
-                  {toClipboard ? <MdOutlineCheckBox /> : <MdContentCopy />}
+                  <MdContentCopy />
                 </button>
               </div>
             </div>
