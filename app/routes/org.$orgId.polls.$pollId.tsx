@@ -13,7 +13,7 @@ import {
   redirectWithError,
   redirectWithSuccess,
 } from 'remix-toast';
-import { statusOptions, statusSchema, statusValues } from '~/components/models';
+import { statusOptions, statusSchema } from '~/components/models';
 import { FormContent } from '~/components/Form/FormContent';
 import { Button } from '~/components/Button';
 import { useFieldArray } from 'react-hook-form';
@@ -21,8 +21,14 @@ import FormInput from '~/components/Form/FormInput';
 import { ulid } from 'ulid';
 import { assert } from '~/utils';
 import { HiOutlineTrash } from 'react-icons/hi2';
-import { MdAdd, MdEdit, MdSave, MdSaveAlt, MdSaveAs } from 'react-icons/md';
-import { IoSave, IoSaveOutline } from 'react-icons/io5';
+import {
+  MdAdd,
+  MdContentCopy,
+  MdOutlineCheckBox,
+  MdSave,
+} from 'react-icons/md';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 const schema = zod.object({
   name: zod.string().min(1),
@@ -98,6 +104,8 @@ const Index = () => {
   const navigate = useNavigate();
   const params = useParams();
 
+  const [toClipboard, setToClipboard] = useState<boolean>(false);
+
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     // resolver,
@@ -114,6 +122,14 @@ const Index = () => {
     control: formMethods.control,
     name: 'PollQuestions',
   });
+  const handleCopyToClipboard = () => {
+    const iframeSrc = formMethods.getValues('iframeSrc');
+    navigator.clipboard.writeText(iframeSrc);
+    setToClipboard(true);
+    toast.success('Spremljeno u međupremnik!', {
+      position: 'bottom-center',
+    });
+  };
 
   return (
     <Modal title="Ažuriraj anketu">
@@ -133,7 +149,18 @@ const Index = () => {
                 label="Izvorni IframeSrc"
                 name="defaultIframeSrc"
               />
-              <InputField label="IframeSrc" name="iframeSrc" />
+              <div className="flex items-end justify-between gap-x-2">
+                <div className="flex-1">
+                  <InputField label="IframeSrc" name="iframeSrc" />
+                </div>
+                <button
+                  className="flex items-center gap-2 self-end rounded bg-blue-200 p-3 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
+                  type="button"
+                  onClick={handleCopyToClipboard}
+                >
+                  {toClipboard ? <MdOutlineCheckBox /> : <MdContentCopy />}
+                </button>
+              </div>
             </div>
             <div className="border" />
             <div className="flex flex-1 flex-col gap-4 pt-6">
