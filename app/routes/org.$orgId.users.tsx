@@ -65,6 +65,17 @@ export default function Index() {
         headerName: 'Ovlasti',
         width: 120,
       },
+      {
+        field: 'status',
+        headerName: 'Status',
+        width: 120,
+        cellRenderer: ({ value }) => (
+          <div className="flex items-center gap-2">
+            <div className={`size-4 rounded-full ${statusClass[value]} `} />
+            <div>{statusMapped[value]}</div>
+          </div>
+        ),
+      },
 
       { flex: 1 },
     ],
