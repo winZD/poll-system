@@ -1,5 +1,5 @@
 // app/routes/logout.js or .ts
-import { createCookie, redirect } from '@remix-run/node';
+import { redirect } from '@remix-run/node';
 import { serialize } from 'cookie';
 import { decodeTokenFromRequest } from '~/auth';
 import { db } from '~/db';

@@ -1,9 +1,4 @@
-import {
-  LoaderFunctionArgs,
-  json,
-  ActionFunctionArgs,
-  redirect,
-} from '@remix-run/node';
+import { LoaderFunctionArgs, json, ActionFunctionArgs } from '@remix-run/node';
 import { NavLink, Outlet, useLoaderData, useNavigate } from '@remix-run/react';
 import React from 'react';
 import { ColDef } from 'ag-grid-community';
@@ -16,7 +11,6 @@ import {
   statusClass,
   statusMapped,
 } from '~/components/models';
-import { TbPasswordUser } from 'react-icons/tb';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId } = params;

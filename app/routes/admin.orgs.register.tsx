@@ -3,8 +3,7 @@ import {
   LoaderFunctionArgs,
   redirect,
 } from '@remix-run/node';
-import { Form, json, useLoaderData } from '@remix-run/react';
-import React from 'react';
+import { json } from '@remix-run/react';
 import { getValidatedFormData, useRemixForm } from 'remix-hook-form';
 import { Modal } from '~/components/Modal';
 import * as zod from 'zod';

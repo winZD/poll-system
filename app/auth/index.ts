@@ -1,12 +1,11 @@
 import { parse } from 'cookie';
-import { addDays, addMinutes, addMonths } from 'date-fns';
+import { addDays, addMinutes } from 'date-fns';
 import jwt from 'jsonwebtoken';
 import { ulid } from 'ulid';
 import { serialize } from 'cookie';
 import bcrypt from 'bcryptjs';
 
-import { OrgTable, PrismaClient, UserTable } from '@prisma/client';
-import { statusValues } from '~/components/models';
+import { OrgTable, UserTable } from '@prisma/client';
 import { db } from '~/db';
 
 type TToken = {

@@ -1,6 +1,4 @@
-import { json, LoaderFunctionArgs, redirect } from '@remix-run/node';
-import { statusValues } from '~/components/models';
-import { db } from '~/db';
+import { LoaderFunctionArgs, redirect } from '@remix-run/node';
 
 import { decodeTokenFromRequest } from '~/auth';
 

@@ -1,11 +1,5 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import {
-  json,
-  NavLink,
-  Outlet,
-  useLoaderData,
-  useRouteLoaderData,
-} from '@remix-run/react';
+import { json, NavLink, Outlet, useLoaderData } from '@remix-run/react';
 import React from 'react';
 import { statusClass } from '~/components/models';
 import { db } from '~/db';

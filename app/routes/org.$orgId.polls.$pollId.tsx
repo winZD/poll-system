@@ -21,13 +21,7 @@ import FormInput from '~/components/Form/FormInput';
 import { ulid } from 'ulid';
 import { assert } from '~/utils';
 import { HiOutlineTrash } from 'react-icons/hi2';
-import {
-  MdAdd,
-  MdContentCopy,
-  MdOutlineCheckBox,
-  MdSave,
-} from 'react-icons/md';
-import { useEffect, useState } from 'react';
+import { MdAdd, MdContentCopy, MdSave } from 'react-icons/md';
 import { toast } from 'react-toastify';
 
 const schema = zod.object({

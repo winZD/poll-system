@@ -1,17 +1,9 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { json, useLoaderData } from '@remix-run/react';
 import { Modal } from '~/components/Modal';
-import * as zod from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { db } from '~/db';
 import { statusMapped } from '~/components/models';
-
-const schema = zod.object({
-  name: zod.string().min(1),
-  email: zod.string().email('Neispravan email').min(1),
-  password: zod.string().min(1),
-});
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId, pollId } = params;
