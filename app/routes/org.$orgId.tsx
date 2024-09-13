@@ -21,7 +21,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     return redirectWithWarning('/', { message: 'Nemate ovlasti' });
   }
 
-  return json(ctx.User);
+  return json(ctx.User, {
+    ...(ctx.headers ? { headers: ctx.headers } : {}),
+  });
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
