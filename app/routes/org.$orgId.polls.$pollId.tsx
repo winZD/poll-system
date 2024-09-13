@@ -219,13 +219,22 @@ const Index = () => {
             <MdSave />
             Ažuriraj anketu
           </button>
-          <button
-            type="button"
-            onClick={() => navigate(`/poll/${params.pollId}`)}
-            className="rounded bg-fuchsia-100 p-2"
-          >
-            Anketa
-          </button>
+          <div className="flex gap-x-4">
+            <button
+              type="button"
+              onClick={() => navigate(`/poll/${params.pollId}`)}
+              className="w-full rounded bg-fuchsia-100 p-2"
+            >
+              Anketa
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate(`/poll/${params.pollId}/tv`)}
+              className="w-full rounded bg-slate-100 p-2"
+            >
+              Anketa TV
+            </button>
+          </div>
         </FormContent>
       </HookForm>
     </Modal>
