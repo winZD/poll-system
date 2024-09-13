@@ -34,7 +34,7 @@ export default function Index() {
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex items-center justify-end gap-8 border p-2">
-        <div className="text-center">{data.name}</div>
+        <div className="text-center">{`${data.name}@${data.Org.name}`}</div>
         <NavLink
           to={'/logout'}
           className={

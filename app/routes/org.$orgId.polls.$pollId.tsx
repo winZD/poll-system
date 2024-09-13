@@ -28,6 +28,7 @@ const schema = zod.object({
   name: zod.string().min(1),
   status: statusSchema.default('DRAFT'),
   defaultIframeSrc: zod.string().min(3, 'Obvezan podatak'),
+  iframeTag: zod.string().min(3, 'Obvezan podatak'),
   iframeSrc: zod.string().min(3, 'Obvezan podatak'),
   PollQuestions: zod.array(
     zod.object({
@@ -105,6 +106,7 @@ const Index = () => {
       ...poll,
       status: poll?.status as any,
       defaultIframeSrc: `http://localhost:5173/poll/${poll.id}`,
+      iframeTag: `<iframe src="http://localhost:5173/poll/${poll.id}"/>`,
     },
   });
 
@@ -148,18 +150,17 @@ const Index = () => {
       >
         <FormContent className="">
           <div className="flex gap-8">
-            <div className="flex w-96 flex-col">
+            <div className="flex w-96 flex-col gap-2">
               <SelectField label="Status" name="status" data={statusOptions} />
               <InputField label="Naziv ankete" name="name" />
 
-              <InputField
-                readOnly
-                label="Izvorni IframeSrc"
-                name="defaultIframeSrc"
-              />
+              <InputField readOnly label="URL ankete" name="defaultIframeSrc" />
+
+              <InputField readOnly label="Iframe tag" name="iframeTag" />
+
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">
-                  <InputField label="IframeSrc" name="iframeSrc" />
+                  <InputField label="QRCode url" name="iframeSrc" />
                 </div>
                 <button
                   className="flex items-center gap-2 self-end rounded bg-blue-200 p-3 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
