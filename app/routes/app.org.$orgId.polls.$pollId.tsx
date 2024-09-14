@@ -7,7 +7,7 @@ import { HookForm } from '~/components/Form/Form';
 import InputField from '~/components/Form/FormInput';
 import SelectField from '~/components/Form/SelectForm';
 import { db } from '~/db';
-import { useLoaderData, useNavigate, useParams } from '@remix-run/react';
+import { Link, useLoaderData, useNavigate, useParams } from '@remix-run/react';
 import {
   jsonWithError,
   redirectWithError,
@@ -98,6 +98,7 @@ const Index = () => {
   const poll = useLoaderData<typeof loader>();
   const navigate = useNavigate();
   const params = useParams();
+  console.log(params);
 
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
@@ -106,7 +107,7 @@ const Index = () => {
       ...poll,
       status: poll?.status as any,
       defaultIframeSrc: `http://localhost:5173/poll/${poll.id}`,
-      iframeTag: `<iframe src="http://localhost:5173/poll/${poll.id}"/>`,
+      iframeTag: `<iframe src="http://localhost:5173/poll/${poll.id}" style="height:100%;width:100%;" frameborder="0" scrolling="no"/>`,
     },
   });
 
@@ -156,7 +157,18 @@ const Index = () => {
 
               <InputField readOnly label="URL ankete" name="defaultIframeSrc" />
 
-              <InputField readOnly label="Iframe tag" name="iframeTag" />
+              <div className="flex items-end justify-between gap-x-2">
+                <div className="flex-1">
+                  <InputField readOnly label="Iframe tag" name="iframeTag" />
+                </div>
+                <Link
+                  className="flex items-center gap-2 self-end rounded bg-blue-200 p-3 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
+                  to={`/org/${params.orgId}/polls/${params.pollId}/iframe?iframe=${encodeURIComponent(formMethods.getValues('iframeTag'))}`}
+                  target="_blank"
+                >
+                  <MdContentCopy />
+                </Link>
+              </div>
 
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">
