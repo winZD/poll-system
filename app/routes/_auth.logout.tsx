@@ -1,44 +1,26 @@
 // app/routes/logout.js or .ts
 import { redirect } from '@remix-run/node';
-import { serialize } from 'cookie';
-import { decodeTokenFromRequest } from '~/auth';
 import { db } from '~/db';
+import { parse } from 'cookie';
+import { createHeaderCookies, verifyToken } from '~/auth';
 
 export async function loader({ request }) {
-  const ctx = await decodeTokenFromRequest(request);
-  if (ctx?.tokenId) {
-    const rt = await db.refreshTokenTable.findUnique({
-      where: { id: ctx.tokenId },
+  const cookies = parse(request.headers.get('Cookie') ?? '');
+
+  const at = verifyToken(cookies['at']);
+
+  if (at?.tokenId) {
+    const refreshToken = await db.refreshTokenTable.findUnique({
+      where: { id: at.tokenId },
     });
-    if (rt) {
+    if (refreshToken) {
       await db.refreshTokenTable.updateMany({
-        where: { familyId: rt?.familyId },
+        where: { familyId: refreshToken?.familyId },
         data: { status: 'REVOKED' },
       });
     }
   }
-
-  let headers = new Headers();
-
-  headers.append(
-    'Set-Cookie',
-    serialize('at', '', {
-      path: '/',
-      sameSite: 'lax',
-      domain: process.env.COOKIE_DOMAIN,
-      // expires: addDays(new Date(), 1),
-      expires: new Date(0),
-    }),
-  );
-  headers.append(
-    'Set-Cookie',
-    serialize('rt', '', {
-      path: '/',
-      sameSite: 'lax',
-      domain: process.env.COOKIE_DOMAIN,
-      expires: new Date(0),
-    }),
-  );
+  const headers = await createHeaderCookies('', '');
 
   return redirect('/login', { headers });
 }

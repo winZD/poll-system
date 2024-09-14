@@ -1,29 +1,17 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { json, NavLink, Outlet, useLoaderData } from '@remix-run/react';
+import { json, NavLink, Outlet } from '@remix-run/react';
 import { MdOutlineLogout } from 'react-icons/md';
 import { redirectWithWarning } from 'remix-toast';
-import { decodeTokenFromRequest } from '~/auth';
-import { statusValues } from '~/components/models';
+import { getUserFromRequest } from '~/auth';
+import { roleValues } from '~/components/models';
+import { useAppLoader } from '~/loaders';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const ctx = await decodeTokenFromRequest(request);
-
-  if (!ctx?.User) {
-    return redirectWithWarning('/login', 'Nepostojeći korisnik');
+  const user = await getUserFromRequest(request);
+  if (user?.Org.role === roleValues.ADMIN) {
+    return redirectWithWarning('/app', 'Nemate ovlasti');
   }
-  if (ctx?.User.status !== statusValues.ACTIVE) {
-    return redirectWithWarning('/login', 'Neaktivan korisnik');
-  }
-
-  const { orgId } = params;
-
-  if (ctx.User.orgId !== orgId) {
-    return redirectWithWarning('/', { message: 'Nemate ovlasti' });
-  }
-
-  return json(ctx.User, {
-    ...(ctx.headers ? { headers: ctx.headers } : {}),
-  });
+  return null;
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -31,12 +19,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
-  const data = useLoaderData<typeof loader>();
+  const { User } = useAppLoader();
 
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex items-center justify-end gap-8 border p-2">
-        <div className="text-center">{`${data.name}@${data.Org.name}`}</div>
+        <div className="text-center">{`${User.name}@${User.Org?.name}`}</div>
         <NavLink
           to={'/logout'}
           className={

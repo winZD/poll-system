@@ -1,42 +1,23 @@
 import { LoaderFunctionArgs } from '@remix-run/node';
-import {
-  json,
-  NavLink,
-  Outlet,
-  redirect,
-  useLoaderData,
-} from '@remix-run/react';
+import { NavLink, Outlet } from '@remix-run/react';
 import { MdOutlineLogout } from 'react-icons/md';
 import { redirectWithWarning } from 'remix-toast';
-import { decodeTokenFromRequest } from '~/auth';
+import { getUserFromRequest } from '~/auth';
+import { roleValues } from '~/components/models';
+import { useAppLoader } from '~/loaders';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // const token = decode
 
-  const ctx = await decodeTokenFromRequest(request);
-
-  if (!ctx?.User) return redirect('/login');
-
-  if (ctx.User?.Org.role !== 'ADMIN') {
-    return redirectWithWarning(
-      `/org/${ctx.User.orgId}`,
-      'Nemate pristup ADMIN dijelu aplikacije',
-      {
-        ...(ctx.headers ? { headers: ctx.headers } : {}),
-      },
-    );
+  const user = await getUserFromRequest(request);
+  if (user?.Org.role !== roleValues.ADMIN) {
+    return redirectWithWarning('/app', 'Nemate ovlasti');
   }
-
-  return json(
-    { User: ctx.User },
-    {
-      ...(ctx.headers ? { headers: ctx.headers } : {}),
-    },
-  );
+  return null;
 }
 
 export default function Index() {
-  const data = useLoaderData<typeof loader>();
+  const data = useAppLoader();
 
   return (
     <div className="flex flex-1 flex-col">

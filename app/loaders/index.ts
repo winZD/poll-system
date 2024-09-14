@@ -1,4 +1,4 @@
-import { UserTable } from '@prisma/client';
+import { OrgTable, UserTable } from '@prisma/client';
 import { useRouteLoaderData } from '@remix-run/react';
 import { assert } from '~/utils';
 
@@ -8,4 +8,13 @@ export const useOrgLoader = () => {
   assert(user, 'No user defined');
 
   return user;
+};
+export const useAppLoader = () => {
+  const data = useRouteLoaderData<{ User: UserTable & { Org: OrgTable } }>(
+    'routes/app',
+  );
+
+  assert(data, 'No user defined');
+
+  return data;
 };

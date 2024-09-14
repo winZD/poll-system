@@ -22,8 +22,8 @@ import {
 } from '~/components/models';
 import { FormContent } from '~/components/Form/FormContent';
 import PermissionsForm from '~/components/Form/PermissionsForm';
-import { decodeTokenFromRequest } from '~/auth';
 import { MdUpdate } from 'react-icons/md';
+import { getUserFromRequest } from '~/auth';
 
 const schema = zod.object({
   name: zod.string().min(1, 'Obvezan podatak'),
@@ -38,7 +38,7 @@ const resolver = zodResolver(schema);
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId, userId } = params;
 
-  const ctx = await decodeTokenFromRequest(request);
+  const ctxUser = await getUserFromRequest(request);
 
   const user = await db.userTable.findUnique({
     where: { orgId: orgId, id: userId },
@@ -47,7 +47,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!user) return redirectWithError('..', 'Nepostojeći korisnik');
 
   const canChangePassword =
-    ctx?.User?.role === roleValues.ADMIN || ctx?.userId === userId;
+    ctxUser?.role === roleValues.ADMIN || ctxUser?.id === userId;
 
   return json({ ...user, canChangePassword });
 }
@@ -95,6 +95,7 @@ export default function Index() {
         method="PUT"
       >
         <FormContent>
+          <InputField label="Email" name="email" readOnly />
           <InputField label="Ime korisnika" name="name" />
           <SelectField label="Uloga" name="role" data={roleOptions} />
           <SelectField label="Status" name="status" data={statusOptions} />

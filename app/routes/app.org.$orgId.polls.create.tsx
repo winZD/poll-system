@@ -11,7 +11,7 @@ import { jsonWithError, redirectWithSuccess } from 'remix-toast';
 import { statusSchema, statusValues } from '~/components/models';
 import { addDays } from 'date-fns';
 import { FormContent } from '~/components/Form/FormContent';
-import { decodeTokenFromRequest } from '~/auth';
+import { getUserFromRequest } from '~/auth';
 
 //TODO: create post method
 const schema = zod.object({
@@ -45,16 +45,16 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     return jsonWithError({ errors, defaultValues }, 'Neispravni podaci');
   }
 
-  const ctx = await decodeTokenFromRequest(request);
+  const ctxUser = await getUserFromRequest(request);
 
   const orgId = params.orgId;
-  if (orgId && ctx?.userId) {
+  if (orgId && ctxUser?.id) {
     const id = ulid();
     await db.pollTable.create({
       data: {
         id,
         orgId,
-        userId: ctx.userId,
+        userId: ctxUser.id,
         name: data.name,
         status: data.status,
         createdAt: new Date(),

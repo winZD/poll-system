@@ -3,7 +3,6 @@ import { NavLink, Outlet, useLoaderData, useNavigate } from '@remix-run/react';
 import React from 'react';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
-import { useOrgLoader } from '~/loaders/useOrgLoader';
 import { db } from '~/db';
 import {
   rolesMapped,
@@ -11,6 +10,7 @@ import {
   statusClass,
   statusMapped,
 } from '~/components/models';
+import { useAppLoader } from '~/loaders';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId } = params;
@@ -31,9 +31,9 @@ export default function Index() {
 
   const navigate = useNavigate();
 
-  const user = useOrgLoader();
+  const { User } = useAppLoader();
 
-  const isAdmin = user.role === roleValues.ADMIN;
+  const isAdmin = User.role === roleValues.ADMIN;
 
   const columnDefs = React.useMemo<ColDef<(typeof users)[0]>[]>(
     () => [
@@ -80,7 +80,7 @@ export default function Index() {
   return (
     <>
       <div className="flex flex-1 flex-col p-5">
-        {user?.role === 'ADMIN' && (
+        {User?.role === 'ADMIN' && (
           <div className="flex gap-2">
             <NavLink
               to="create"

@@ -12,7 +12,7 @@ import { db } from '~/db';
 import InputField from '~/components/Form/FormInput';
 import { HookForm } from '~/components/Form/Form';
 import { statusValues } from '~/components/models';
-import { generateAccessToken, generateRefreshToken } from '~/auth';
+import { createHeaderCookies, createNewTokens } from '~/auth';
 
 const schema = zod.object({
   email: zod.string().min(1, 'Upišite ispravno korisničko ime'),
@@ -46,7 +46,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     },
     include: { Org: true },
   });
-  // console.log({ user });
   if (!user) {
     return jsonWithError(null, 'Nepostojeći korisnik', {
       status: 401,
@@ -64,51 +63,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return jsonWithError(null, 'Neispravna lozinka', { status: 401 });
   }
 
-  const tokenId = ulid();
-  const accessToken = generateAccessToken({
-    tokenId,
-    userId: user.id,
-  });
-  const refreshToken = generateRefreshToken({
-    tokenId,
-    userId: user.id,
-  });
+  const { accessToken, refreshToken } = await createNewTokens(user.id);
 
-  await db.refreshTokenTable.create({
-    data: {
-      id: tokenId,
-      userId: user.id,
-      createdAt: new Date(),
-      expiresAt: addDays(new Date(), 30),
-      familyId: tokenId,
-      token: refreshToken,
-      status: 'GRANTED',
+  const headers = createHeaderCookies(accessToken, refreshToken);
+
+  return redirect(
+    user.Org.role === 'ADMIN' ? '/app/admin' : `/app/org/${user.orgId}`,
+    {
+      headers,
     },
-  });
-
-  let headers = new Headers();
-  headers.append(
-    'Set-Cookie',
-    serialize('at', accessToken, {
-      path: '/',
-      sameSite: 'lax',
-      domain: process.env.COOKIE_DOMAIN,
-      expires: addMinutes(new Date(), 30),
-    }),
   );
-  headers.append(
-    'Set-Cookie',
-    serialize('rt', refreshToken, {
-      path: '/',
-      sameSite: 'lax',
-      domain: process.env.COOKIE_DOMAIN,
-      expires: addDays(new Date(), 30),
-    }),
-  );
-
-  return redirect(user.Org.role === 'ADMIN' ? '/admin' : `/org/${user.orgId}`, {
-    headers,
-  });
 };
 
 export default function Login() {

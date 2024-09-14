@@ -1,146 +1,119 @@
-import { parse } from 'cookie';
+import { serialize } from 'cookie';
 import { addDays, addMinutes } from 'date-fns';
 import jwt from 'jsonwebtoken';
 import { ulid } from 'ulid';
-import { serialize } from 'cookie';
 import bcrypt from 'bcryptjs';
-
-import { OrgTable, UserTable } from '@prisma/client';
 import { db } from '~/db';
+import { parse } from 'cookie';
 
 type TToken = {
   tokenId: string;
   userId: string;
 };
 
-export const generateAccessToken = (data: TToken) =>
+const generateAccessToken = (data: TToken) =>
   jwt.sign(data, process.env.COOKIE_JWT_SECRET, {
-    // expiresIn: "5s",
     expiresIn: '30min',
   });
 
-export const generateRefreshToken = (data: TToken) =>
+const generateRefreshToken = (data: TToken) =>
   jwt.sign(data, process.env.COOKIE_JWT_SECRET, {
     expiresIn: '30d',
   });
 
-export const decodeTokenFromRequest = async (
-  request: Request,
-): Promise<
-  | (TToken & {
-      iat: number;
-      exp: number;
-      User?: UserTable & { Org: OrgTable };
-      headers?: Headers;
-    })
-  | null
-> => {
+export const getUserFromRequest = async (request: Request) => {
   const cookies = parse(request.headers.get('Cookie') ?? '');
-
-  let decoded;
-  try {
-    decoded = jwt.verify(cookies['at'], process.env.COOKIE_JWT_SECRET, {
-      algorithms: ['HS256'],
-    });
-  } catch (e) {
-    //
-  }
-
-  if (decoded) {
-    console.log('AT valid');
-    const User = await db.userTable.findUnique({
-      where: { id: decoded.userId },
+  const at = verifyToken(cookies['at']);
+  if (at) {
+    return await db.userTable.findUniqueOrThrow({
+      where: { id: at.userId },
       include: { Org: true },
     });
-    return { ...decoded, User };
   } else {
-    try {
-      decoded = jwt.verify(cookies['rt'], process.env.COOKIE_JWT_SECRET, {
-        algorithms: ['HS256'],
-      });
-    } catch (e) {
-      //
-    }
-    console.log('AT invalid');
-
-    if (decoded) {
-      const oldRT = await db.refreshTokenTable.findUnique({
-        where: { id: decoded.tokenId, status: 'GRANTED' },
-      });
-
-      console.log('RT valid');
-
-      if (!oldRT) {
-        console.log('RefreshTokenTable invalid');
-        return null;
-      }
-
-      console.log('RefreshTokenTable valid, generating new tokens');
-
-      await db.refreshTokenTable.update({
-        where: { id: decoded.tokenId },
-        data: { status: 'REVOKED' },
-      });
-
-      const User = await db.userTable.findUnique({
-        where: { id: decoded.userId },
+    const rt = verifyToken(cookies['rt']);
+    if (rt) {
+      return await db.userTable.findUniqueOrThrow({
+        where: { id: rt.userId },
         include: { Org: true },
       });
-
-      const tokenId = ulid();
-      const accessToken = generateAccessToken({
-        tokenId,
-        userId: decoded.userId,
-      });
-      const refreshToken = generateRefreshToken({
-        tokenId,
-        userId: decoded.userId,
-      });
-      await db.refreshTokenTable.create({
-        data: {
-          id: tokenId,
-          userId: decoded.userId,
-          createdAt: new Date(),
-          expiresAt: addDays(new Date(), 30),
-          familyId: oldRT.familyId,
-          token: refreshToken,
-          status: 'GRANTED',
-        },
-      });
-
-      const headers = new Headers();
-      headers.append(
-        'Set-Cookie',
-        serialize('at', accessToken, {
-          path: '/',
-          sameSite: 'lax',
-          domain: process.env.COOKIE_DOMAIN,
-          expires: addMinutes(new Date(), 30),
-          // expires: addDays(new Date(), 1),
-        }),
-      );
-      headers.append(
-        'Set-Cookie',
-        serialize('rt', refreshToken, {
-          path: '/',
-          sameSite: 'lax',
-          domain: process.env.COOKIE_DOMAIN,
-          expires: addDays(new Date(), 30),
-        }),
-      );
-
-      return { ...decoded, headers, User };
     } else {
       return null;
     }
   }
 };
 
-export async function hashPassword(password) {
+export const verifyToken = (token: string): TToken | null => {
+  try {
+    return jwt.verify(token, process.env.COOKIE_JWT_SECRET as string, {
+      algorithms: ['HS256'],
+    });
+  } catch (error) {
+    console.error(token, 'Token verification failed:', error);
+    return null;
+  }
+};
+
+export const revokeOldRefreshToken = async (tokenId: string) => {
+  console.log('revokeOldRefreshToken');
+  await db.refreshTokenTable.update({
+    where: { id: tokenId },
+    data: { status: 'REVOKED' },
+  });
+};
+
+export const createNewTokens = async (userId: string, familyId?: string) => {
+  console.log('createNewTokens');
+
+  const tokenId = ulid();
+  const accessToken = generateAccessToken({ tokenId, userId });
+  const refreshToken = generateRefreshToken({ tokenId, userId });
+
+  await db.refreshTokenTable.create({
+    data: {
+      id: tokenId,
+      userId,
+      createdAt: new Date(),
+      expiresAt: addDays(new Date(), 30),
+      familyId: familyId || tokenId,
+      token: refreshToken,
+      status: 'GRANTED',
+    },
+  });
+
+  return { accessToken, refreshToken };
+};
+
+export const createHeaderCookies = (
+  accessToken: string,
+  refreshToken: string,
+) => {
+  console.log('createHeaderCookies');
+  const headers = new Headers();
+  headers.append(
+    'Set-Cookie',
+    serialize('at', accessToken, {
+      path: '/',
+      sameSite: 'lax',
+      domain: process.env.COOKIE_DOMAIN,
+      expires: accessToken ? addMinutes(new Date(), 30) : new Date(0),
+    }),
+  );
+  headers.append(
+    'Set-Cookie',
+    serialize('rt', refreshToken, {
+      path: '/',
+      sameSite: 'lax',
+      domain: process.env.COOKIE_DOMAIN,
+      expires: refreshToken ? addDays(new Date(), 30) : new Date(0),
+    }),
+  );
+  return headers;
+};
+
+export async function hashPassword(password: string): Promise<string> {
   const saltRounds = 10;
   try {
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    return hashedPassword;
+    return await bcrypt.hash(password, saltRounds);
   } catch (error) {
     console.error('Error hashing password:', error);
     throw new Error('Hashing failed');
