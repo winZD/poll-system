@@ -118,6 +118,8 @@ const Index = () => {
     name: 'PollQuestions',
   });
 
+  const values = formMethods.watch();
+
   function handleCopyToClipboard() {
     //TODO: edit after implementing SSL certificate
 
@@ -142,7 +144,6 @@ const Index = () => {
       });
     }
   }
-  const values = formMethods.watch();
 
   return (
     <Modal title="Ažuriraj anketu">
