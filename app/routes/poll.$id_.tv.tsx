@@ -24,9 +24,7 @@ const Index = () => {
         {tvPoll.name}
       </div>
       <div className="flex items-center justify-center gap-6 px-8 py-4">
-        <div className="text-center font-semibold">
-          {'Skenirajte QR kod za glasanje'}
-        </div>
+        <div className="font-semibold">{'Skenirajte QR kod za glasanje'}</div>
         <QRCodeSVG size={50} value={tvPoll.iframeSrc} />
       </div>
     </div>
