@@ -20,9 +20,13 @@ const Index = () => {
   const tvPoll = useLoaderData<typeof loader>();
   return (
     <div className="m-auto flex flex-col rounded border shadow-lg">
-      <div className="border-b p-4 text-center">{tvPoll.Org.name}</div>
-      <div className="flex gap-6 px-8 py-4">
-        <div className="text-center font-semibold">{tvPoll.name}</div>
+      <div className="border-b bg-slate-50 p-4 text-center font-extrabold">
+        {tvPoll.name}
+      </div>
+      <div className="flex items-center justify-center gap-6 px-8 py-4">
+        <div className="text-center font-semibold">
+          {'Skenirajte QR kod za glasanje'}
+        </div>
         <QRCodeSVG size={50} value={tvPoll.iframeSrc} />
       </div>
     </div>
