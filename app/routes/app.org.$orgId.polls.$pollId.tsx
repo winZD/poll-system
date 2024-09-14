@@ -156,6 +156,7 @@ const Index = () => {
           <div className="flex gap-8">
             <div className="flex w-96 flex-col gap-2">
               <SelectField label="Status" name="status" data={statusOptions} />
+              {/* TODO: add date/time from and date/time to of poll duration */}
               <InputField label="Naziv ankete" name="name" />
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">
