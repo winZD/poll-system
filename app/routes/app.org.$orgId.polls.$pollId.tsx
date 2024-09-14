@@ -7,7 +7,7 @@ import { HookForm } from '~/components/Form/Form';
 import InputField from '~/components/Form/FormInput';
 import SelectField from '~/components/Form/SelectForm';
 import { db } from '~/db';
-import { Link, useLoaderData, useNavigate, useParams } from '@remix-run/react';
+import { useLoaderData } from '@remix-run/react';
 import {
   jsonWithError,
   redirectWithError,
@@ -21,7 +21,7 @@ import FormInput from '~/components/Form/FormInput';
 import { ulid } from 'ulid';
 import { assert } from '~/utils';
 import { HiOutlineTrash } from 'react-icons/hi2';
-import { MdAdd, MdContentCopy, MdSave } from 'react-icons/md';
+import { MdAdd, MdContentCopy, MdLink, MdSave } from 'react-icons/md';
 import { toast } from 'react-toastify';
 
 const schema = zod.object({
@@ -30,6 +30,7 @@ const schema = zod.object({
   defaultIframeSrc: zod.string().min(3, 'Obvezan podatak'),
   iframeTag: zod.string().min(3, 'Obvezan podatak'),
   iframeSrc: zod.string().min(3, 'Obvezan podatak'),
+  qrCodeUrl: zod.string().min(3, 'Obvezan podatak'),
   PollQuestions: zod.array(
     zod.object({
       id: zod.string(),
@@ -46,6 +47,8 @@ const resolver = zodResolver(schema);
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId, pollId } = params;
+  const url = new URL(request.url);
+  const baseUrl = `${url.protocol}//${url.host}`;
 
   const poll = await db.pollTable.findUnique({
     where: { orgId, id: pollId },
@@ -54,12 +57,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   if (!poll) return redirectWithError('..', 'Nepostojeća anketa');
 
-  return json(poll);
+  return json({ data: { poll, baseUrl } });
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
-  console.log('in action');
-
   const {
     errors,
     data,
@@ -95,19 +96,17 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 const Index = () => {
-  const poll = useLoaderData<typeof loader>();
-  const navigate = useNavigate();
-  const params = useParams();
-  console.log(params);
+  const { data } = useLoaderData<typeof loader>();
 
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     // resolver,
     defaultValues: {
-      ...poll,
-      status: poll?.status as any,
-      defaultIframeSrc: `http://localhost:5173/poll/${poll.id}`,
-      iframeTag: `<iframe src="http://localhost:5173/poll/${poll.id}" style="height:100%;width:100%;" frameborder="0" scrolling="no"/>`,
+      ...data.poll,
+      status: data?.poll.status as any,
+      defaultIframeSrc: `${data.baseUrl}/poll/${data?.poll.id}`,
+      iframeTag: `<iframe src="${data.baseUrl}/poll/${data?.poll.id}" style="height:100%;width:100%;" frameborder="0" scrolling="no"/>`,
+      qrCodeUrl: `${data.baseUrl}/poll/${data?.poll.id}/tv`,
     },
   });
 
@@ -117,13 +116,14 @@ const Index = () => {
     control: formMethods.control,
     name: 'PollQuestions',
   });
+
   function handleCopyToClipboard() {
     //TODO: edit after implementing SSL certificate
-    console.log(navigator.clipboard);
-    const iframeSrc = formMethods.getValues('iframeSrc');
+
+    const iframeTag = formMethods.getValues('iframeTag');
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard
-        .writeText(iframeSrc)
+        .writeText(iframeTag)
         .then(() => {
           toast.success('Spremljeno u međuspremnik!', {
             position: 'bottom-center',
@@ -141,6 +141,7 @@ const Index = () => {
       });
     }
   }
+  const values = formMethods.watch();
 
   return (
     <Modal title="Ažuriraj anketu">
@@ -154,25 +155,28 @@ const Index = () => {
             <div className="flex w-96 flex-col gap-2">
               <SelectField label="Status" name="status" data={statusOptions} />
               <InputField label="Naziv ankete" name="name" />
-
-              <InputField readOnly label="URL ankete" name="defaultIframeSrc" />
-
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">
-                  <InputField readOnly label="Iframe tag" name="iframeTag" />
+                  <InputField
+                    readOnly
+                    label="URL ankete"
+                    name="defaultIframeSrc"
+                  />
                 </div>
-                <Link
+                <button
                   className="flex items-center gap-2 self-end rounded bg-blue-200 p-3 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
-                  to={`/org/${params.orgId}/polls/${params.pollId}/iframe?iframe=${encodeURIComponent(formMethods.getValues('iframeTag'))}`}
-                  target="_blank"
+                  type="button"
+                  onClick={() =>
+                    window.open(values?.defaultIframeSrc, '_blank')
+                  }
                 >
-                  <MdContentCopy />
-                </Link>
+                  <MdLink />
+                </button>
               </div>
 
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">
-                  <InputField label="QRCode url" name="iframeSrc" />
+                  <InputField readOnly label="Iframe tag" name="iframeTag" />
                 </div>
                 <button
                   className="flex items-center gap-2 self-end rounded bg-blue-200 p-3 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
@@ -180,6 +184,19 @@ const Index = () => {
                   onClick={handleCopyToClipboard}
                 >
                   <MdContentCopy />
+                </button>
+              </div>
+
+              <div className="flex items-end justify-between gap-x-2">
+                <div className="flex-1">
+                  <InputField label="QRCode url" name="qrCodeUrl" />
+                </div>
+                <button
+                  className="flex items-center gap-2 self-end rounded bg-blue-200 p-3 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
+                  type="button"
+                  onClick={() => window.open(values?.qrCodeUrl, '_blank')}
+                >
+                  <MdLink />
                 </button>
               </div>
             </div>
@@ -192,8 +209,8 @@ const Index = () => {
                   append({
                     id: ulid(),
                     name: '',
-                    orgId: poll.orgId,
-                    pollId: poll.id,
+                    orgId: data?.poll.orgId,
+                    pollId: data?.poll.id,
                   })
                 }
               >
@@ -202,7 +219,7 @@ const Index = () => {
 
               <div className="flex flex-col gap-2">
                 {fields.map((field, index) => (
-                  <div className="flex items-center gap-4">
+                  <div key={index} className="flex items-center gap-4">
                     <div className="flex-1">
                       <FormInput
                         name={`PollQuestions.${index}.name`}
@@ -232,22 +249,6 @@ const Index = () => {
             <MdSave />
             Ažuriraj anketu
           </button>
-          <div className="flex gap-x-4">
-            <button
-              type="button"
-              onClick={() => navigate(`/poll/${params.pollId}`)}
-              className="w-full rounded bg-fuchsia-100 p-2"
-            >
-              Anketa
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate(`/poll/${params.pollId}/tv`)}
-              className="w-full rounded bg-slate-100 p-2"
-            >
-              Anketa TV
-            </button>
-          </div>
         </FormContent>
       </HookForm>
     </Modal>
