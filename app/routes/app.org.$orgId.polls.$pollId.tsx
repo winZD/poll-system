@@ -191,7 +191,7 @@ const Index = () => {
 
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">
-                  <InputField label="QRCode url" name="qrCodeUrl" />
+                  <InputField label="QR code url" name="qrCodeUrl" />
                 </div>
                 <button
                   className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
