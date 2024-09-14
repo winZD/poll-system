@@ -45,6 +45,7 @@ const schema = zod.object({
   defaultIframeSrc: zod.string().min(3, 'Obvezan podatak'),
   iframeTag: zod.string().min(3, 'Obvezan podatak'),
   iframeSrc: zod.string().min(3, 'Obvezan podatak'),
+  qrCodeUrl: zod.string().min(3, 'Obvezan podatak'),
   PollQuestions: zod.array(
     zod.object({
       id: zod.string(),
@@ -111,10 +112,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 const Index = () => {
   const poll = useLoaderData<typeof loader>();
-  const navigate = useNavigate();
-  const params = useParams();
   const location = useLocation();
-
+  const params = useParams();
+  console.log(location);
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     // resolver,
@@ -123,6 +123,7 @@ const Index = () => {
       status: poll?.status as any,
       defaultIframeSrc: `http://localhost:5173/poll/${poll.id}`,
       iframeTag: `<iframe src="http://localhost:5173/poll/${poll.id}" style="height:100%;width:100%;" frameborder="0" scrolling="no"/>`,
+      qrCodeUrl: `/poll/${poll.id}/tv`,
     },
   });
 
@@ -133,36 +134,13 @@ const Index = () => {
     name: 'PollQuestions',
   });
 
-  function handleCopyIframeTag() {
-    const iframeTag = formMethods.getValues('iframeTag');
-    console.log(location);
-    console.log(iframeTag);
-
-    /*     const iframeTag = formMethods.getValues('iframeTag');
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard
-        .writeText(iframeTag)
-        .then(() => {
-          toast.success('Spremljeno u međuspremnik!', {
-            position: 'bottom-center',
-          });
-        })
-        .catch((err) => {
-          console.error('Failed to copy text: ', err);
-          toast.error('Neuspješno kopiranje u međuspremnik.', {
-            position: 'bottom-center',
-          });
-        });
-    } */
-    return null;
-  }
   function handleCopyToClipboard() {
     //TODO: edit after implementing SSL certificate
     console.log(navigator.clipboard);
-    const iframeSrc = formMethods.getValues('iframeSrc');
+    const iframeTag = formMethods.getValues('iframeTag');
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard
-        .writeText(iframeSrc)
+        .writeText(iframeTag)
         .then(() => {
           toast.success('Spremljeno u međuspremnik!', {
             position: 'bottom-center',
@@ -194,8 +172,24 @@ const Index = () => {
             <div className="flex w-96 flex-col gap-2">
               <SelectField label="Status" name="status" data={statusOptions} />
               <InputField label="Naziv ankete" name="name" />
-
-              <InputField readOnly label="URL ankete" name="defaultIframeSrc" />
+              <div className="flex items-end justify-between gap-x-2">
+                <div className="flex-1">
+                  <InputField
+                    readOnly
+                    label="URL ankete"
+                    name="defaultIframeSrc"
+                  />
+                </div>
+                <button
+                  className="flex items-center gap-2 self-end rounded bg-blue-200 p-3 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
+                  type="button"
+                  onClick={() =>
+                    window.open(values?.defaultIframeSrc, '_blank')
+                  }
+                >
+                  <MdLink />
+                </button>
+              </div>
 
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">
@@ -204,28 +198,22 @@ const Index = () => {
                 <button
                   className="flex items-center gap-2 self-end rounded bg-blue-200 p-3 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
                   type="button"
-                  onClick={handleCopyIframeTag}
+                  onClick={handleCopyToClipboard}
                 >
-                  <MdOutlineCopyAll />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => window.open(values.iframeSrc, '_blank')}
-                >
-                  <MdLink />
+                  <MdContentCopy />
                 </button>
               </div>
 
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">
-                  <InputField label="QRCode url" name="iframeSrc" />
+                  <InputField label="QRCode url" name="qrCodeUrl" />
                 </div>
                 <button
                   className="flex items-center gap-2 self-end rounded bg-blue-200 p-3 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
                   type="button"
-                  onClick={handleCopyToClipboard}
+                  onClick={() => window.open(values?.qrCodeUrl, '_blank')}
                 >
-                  <MdContentCopy />
+                  <MdLink />
                 </button>
               </div>
             </div>
@@ -278,22 +266,6 @@ const Index = () => {
             <MdSave />
             Ažuriraj anketu
           </button>
-          <div className="flex gap-x-4">
-            <button
-              type="button"
-              onClick={() => navigate(`/poll/${params.pollId}`)}
-              className="w-full rounded bg-fuchsia-100 p-2"
-            >
-              Anketa
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate(`/poll/${params.pollId}/tv`)}
-              className="w-full rounded bg-slate-100 p-2"
-            >
-              Anketa TV
-            </button>
-          </div>
         </FormContent>
       </HookForm>
     </Modal>
