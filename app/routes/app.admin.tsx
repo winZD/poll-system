@@ -24,7 +24,7 @@ export default function Index() {
       {/**
        * HEADER
        */}
-      <div className="flex items-center justify-end gap-8 border p-2">
+      <header className="flex items-center justify-end gap-8 border p-2">
         <div className="text-center">{data.User.name}</div>
         <NavLink
           to={'/logout'}
@@ -35,7 +35,7 @@ export default function Index() {
           <div>Odjava</div>
           <MdOutlineLogout />
         </NavLink>
-      </div>
+      </header>
       <div className="flex flex-1 bg-slate-50">
         <Outlet />
       </div>

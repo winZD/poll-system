@@ -36,7 +36,7 @@ export default function Index() {
           + Dodaj organizaciju
         </NavLink>
 
-        <div className="flex flex-col">
+        <aside className="flex flex-col">
           {orgs?.map((org) => (
             <NavLink
               key={org.id}
@@ -51,7 +51,7 @@ export default function Index() {
               {org.name}
             </NavLink>
           ))}
-        </div>
+        </aside>
       </div>
       <div className="flex flex-1 flex-col">
         <Outlet />

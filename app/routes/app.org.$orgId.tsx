@@ -23,7 +23,7 @@ export default function Index() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="flex items-center justify-end gap-8 border p-2">
+      <header className="flex items-center justify-end gap-8 border p-2">
         <div className="text-center">{`${User.name}@${User.Org?.name}`}</div>
         <NavLink
           to={'/logout'}
@@ -34,28 +34,22 @@ export default function Index() {
           <div>Odjava</div>
           <MdOutlineLogout />
         </NavLink>
-      </div>
+      </header>
       <div className="flex flex-1">
-        <div className="flex w-52 flex-col border bg-slate-50">
-          <div className="flex flex-1 flex-col">
-            <NavLink
-              to={'polls'}
-              className={({ isActive }) =>
-                `p-4 ${isActive ? 'bg-blue-100' : ''}`
-              }
-            >
-              Ankete
-            </NavLink>
-            <NavLink
-              to={'users'}
-              className={({ isActive }) =>
-                `p-4 ${isActive ? 'bg-blue-100' : ''}`
-              }
-            >
-              Korisnici
-            </NavLink>
-          </div>
-        </div>
+        <aside className="flex w-52 flex-col border bg-slate-50">
+          <NavLink
+            to={'polls'}
+            className={({ isActive }) => `p-4 ${isActive ? 'bg-blue-100' : ''}`}
+          >
+            Ankete
+          </NavLink>
+          <NavLink
+            to={'users'}
+            className={({ isActive }) => `p-4 ${isActive ? 'bg-blue-100' : ''}`}
+          >
+            Korisnici
+          </NavLink>
+        </aside>
         <div className="flex flex-1 bg-slate-50">
           <Outlet />
         </div>
