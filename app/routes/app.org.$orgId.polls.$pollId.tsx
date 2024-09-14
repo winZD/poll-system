@@ -7,13 +7,7 @@ import { HookForm } from '~/components/Form/Form';
 import InputField from '~/components/Form/FormInput';
 import SelectField from '~/components/Form/SelectForm';
 import { db } from '~/db';
-import {
-  Link,
-  useLoaderData,
-  useLocation,
-  useNavigate,
-  useParams,
-} from '@remix-run/react';
+import { useLoaderData } from '@remix-run/react';
 import {
   jsonWithError,
   redirectWithError,
@@ -27,16 +21,7 @@ import FormInput from '~/components/Form/FormInput';
 import { ulid } from 'ulid';
 import { assert } from '~/utils';
 import { HiOutlineTrash } from 'react-icons/hi2';
-import {
-  MdAdd,
-  MdContentCopy,
-  MdForward,
-  MdLink,
-  MdOutlineContentCopy,
-  MdOutlineCopyAll,
-  MdOutlinePreview,
-  MdSave,
-} from 'react-icons/md';
+import { MdAdd, MdContentCopy, MdLink, MdSave } from 'react-icons/md';
 import { toast } from 'react-toastify';
 
 const schema = zod.object({
@@ -62,6 +47,8 @@ const resolver = zodResolver(schema);
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId, pollId } = params;
+  const url = new URL(request.url);
+  const baseUrl = `${url.protocol}//${url.host}`;
 
   const poll = await db.pollTable.findUnique({
     where: { orgId, id: pollId },
@@ -70,12 +57,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   if (!poll) return redirectWithError('..', 'Nepostojeća anketa');
 
-  return json(poll);
+  return json({ data: { poll, baseUrl } });
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
-  console.log('in action');
-
   const {
     errors,
     data,
@@ -111,19 +96,17 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 const Index = () => {
-  const poll = useLoaderData<typeof loader>();
-  const location = useLocation();
-  const params = useParams();
-  console.log(location);
+  const { data } = useLoaderData<typeof loader>();
+
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     // resolver,
     defaultValues: {
-      ...poll,
-      status: poll?.status as any,
-      defaultIframeSrc: `http://localhost:5173/poll/${poll.id}`,
-      iframeTag: `<iframe src="http://localhost:5173/poll/${poll.id}" style="height:100%;width:100%;" frameborder="0" scrolling="no"/>`,
-      qrCodeUrl: `/poll/${poll.id}/tv`,
+      ...data.poll,
+      status: data?.poll.status as any,
+      defaultIframeSrc: `${data.baseUrl}/poll/${data?.poll.id}`,
+      iframeTag: `<iframe src="${data.baseUrl}/poll/${data?.poll.id}" style="height:100%;width:100%;" frameborder="0" scrolling="no"/>`,
+      qrCodeUrl: `${data.baseUrl}/poll/${data?.poll.id}/tv`,
     },
   });
 
@@ -136,7 +119,7 @@ const Index = () => {
 
   function handleCopyToClipboard() {
     //TODO: edit after implementing SSL certificate
-    console.log(navigator.clipboard);
+
     const iframeTag = formMethods.getValues('iframeTag');
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard
@@ -226,8 +209,8 @@ const Index = () => {
                   append({
                     id: ulid(),
                     name: '',
-                    orgId: poll.orgId,
-                    pollId: poll.id,
+                    orgId: data?.poll.orgId,
+                    pollId: data?.poll.id,
                   })
                 }
               >
@@ -236,7 +219,7 @@ const Index = () => {
 
               <div className="flex flex-col gap-2">
                 {fields.map((field, index) => (
-                  <div className="flex items-center gap-4">
+                  <div key={index} className="flex items-center gap-4">
                     <div className="flex-1">
                       <FormInput
                         name={`PollQuestions.${index}.name`}
