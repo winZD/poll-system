@@ -7,7 +7,13 @@ import { HookForm } from '~/components/Form/Form';
 import InputField from '~/components/Form/FormInput';
 import SelectField from '~/components/Form/SelectForm';
 import { db } from '~/db';
-import { Link, useLoaderData, useNavigate, useParams } from '@remix-run/react';
+import {
+  Link,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+  useParams,
+} from '@remix-run/react';
 import {
   jsonWithError,
   redirectWithError,
@@ -21,7 +27,16 @@ import FormInput from '~/components/Form/FormInput';
 import { ulid } from 'ulid';
 import { assert } from '~/utils';
 import { HiOutlineTrash } from 'react-icons/hi2';
-import { MdAdd, MdContentCopy, MdSave } from 'react-icons/md';
+import {
+  MdAdd,
+  MdContentCopy,
+  MdForward,
+  MdLink,
+  MdOutlineContentCopy,
+  MdOutlineCopyAll,
+  MdOutlinePreview,
+  MdSave,
+} from 'react-icons/md';
 import { toast } from 'react-toastify';
 
 const schema = zod.object({
@@ -98,7 +113,7 @@ const Index = () => {
   const poll = useLoaderData<typeof loader>();
   const navigate = useNavigate();
   const params = useParams();
-  console.log(params);
+  const location = useLocation();
 
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
@@ -117,6 +132,30 @@ const Index = () => {
     control: formMethods.control,
     name: 'PollQuestions',
   });
+
+  function handleCopyIframeTag() {
+    const iframeTag = formMethods.getValues('iframeTag');
+    console.log(location);
+    console.log(iframeTag);
+
+    /*     const iframeTag = formMethods.getValues('iframeTag');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(iframeTag)
+        .then(() => {
+          toast.success('Spremljeno u međuspremnik!', {
+            position: 'bottom-center',
+          });
+        })
+        .catch((err) => {
+          console.error('Failed to copy text: ', err);
+          toast.error('Neuspješno kopiranje u međuspremnik.', {
+            position: 'bottom-center',
+          });
+        });
+    } */
+    return null;
+  }
   function handleCopyToClipboard() {
     //TODO: edit after implementing SSL certificate
     console.log(navigator.clipboard);
@@ -141,6 +180,7 @@ const Index = () => {
       });
     }
   }
+  const values = formMethods.watch();
 
   return (
     <Modal title="Ažuriraj anketu">
@@ -161,13 +201,19 @@ const Index = () => {
                 <div className="flex-1">
                   <InputField readOnly label="Iframe tag" name="iframeTag" />
                 </div>
-                <Link
+                <button
                   className="flex items-center gap-2 self-end rounded bg-blue-200 p-3 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
-                  to={`/org/${params.orgId}/polls/${params.pollId}/iframe?iframe=${encodeURIComponent(formMethods.getValues('iframeTag'))}`}
-                  target="_blank"
+                  type="button"
+                  onClick={handleCopyIframeTag}
                 >
-                  <MdContentCopy />
-                </Link>
+                  <MdOutlineCopyAll />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => window.open(values.iframeSrc, '_blank')}
+                >
+                  <MdLink />
+                </button>
               </div>
 
               <div className="flex items-end justify-between gap-x-2">
