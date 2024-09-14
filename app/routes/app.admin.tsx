@@ -10,7 +10,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   // const token = decode
 
   const user = await getUserFromRequest(request);
-  if (user?.Org.role !== roleValues.ADMIN) {
+  if (user?.Org.role === roleValues.USER) {
     return redirectWithWarning('/app', 'Nemate ovlasti');
   }
   return null;

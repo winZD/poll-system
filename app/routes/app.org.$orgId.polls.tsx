@@ -34,8 +34,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const id = formData.get('id')?.toString();
   const orgId = params.orgId;
 
-  console.log({ orgId, id });
-
   await db.$transaction(async (tx) => {
     await tx.votesTable.deleteMany({ where: { pollId: id, orgId } });
     await tx.pollQuestionTable.deleteMany({ where: { pollId: id, orgId } });
@@ -64,17 +62,6 @@ export default function Index() {
       },
 
       {
-        field: 'status',
-        headerName: 'Status',
-        width: 120,
-        cellRenderer: ({ value }) => (
-          <div className="flex items-center gap-2">
-            <div className={`size-4 rounded-full ${statusClass[value]} `} />
-            <div>{statusMapped[value]}</div>
-          </div>
-        ),
-      },
-      {
         field: 'User.name',
         headerName: 'Anketu kreirao',
         width: 200,
@@ -91,7 +78,17 @@ export default function Index() {
         width: 200,
         valueFormatter: ({ value }) => toHrDateString(value),
       },
-
+      {
+        field: 'status',
+        headerName: 'Status',
+        width: 120,
+        cellRenderer: ({ value }) => (
+          <div className="flex items-center gap-2">
+            <div className={`size-4 rounded-full ${statusClass[value]} `} />
+            <div>{statusMapped[value]}</div>
+          </div>
+        ),
+      },
       {
         colId: 'delete',
         sortable: false,

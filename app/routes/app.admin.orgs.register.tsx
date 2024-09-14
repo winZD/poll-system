@@ -68,7 +68,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   });
 
   // Do something with the data
-  return redirect(`..`);
+  return redirect(`../${org.id}`);
 };
 export default function Index() {
   const formMethods = useRemixForm<FormData>({

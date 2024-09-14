@@ -3,11 +3,8 @@ import { redirect } from '@remix-run/react';
 import * as zod from 'zod';
 import { getValidatedFormData, useRemixForm } from 'remix-hook-form';
 
-import { ulid } from 'ulid';
-import { serialize } from 'cookie';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { jsonWithError } from 'remix-toast';
-import { addDays, addMinutes } from 'date-fns';
+import { jsonWithError, redirectWithSuccess } from 'remix-toast';
 import { db } from '~/db';
 import InputField from '~/components/Form/FormInput';
 import { HookForm } from '~/components/Form/Form';
@@ -67,8 +64,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   const headers = createHeaderCookies(accessToken, refreshToken);
 
-  return redirect(
-    user.Org.role === 'ADMIN' ? '/app/admin' : `/app/org/${user.orgId}`,
+  return redirectWithSuccess(
+    user.Org.role === 'ADMIN'
+      ? '/app/admin/orgs'
+      : `/app/org/${user.orgId}/polls`,
+    'Uspješna prijava',
     {
       headers,
     },

@@ -21,8 +21,9 @@ import FormInput from '~/components/Form/FormInput';
 import { ulid } from 'ulid';
 import { assert } from '~/utils';
 import { HiOutlineTrash } from 'react-icons/hi2';
-import { MdAdd, MdContentCopy, MdLink, MdSave } from 'react-icons/md';
+import { MdAdd, MdContentCopy, MdSave } from 'react-icons/md';
 import { toast } from 'react-toastify';
+import { ImNewTab } from 'react-icons/im';
 
 const schema = zod.object({
   name: zod.string().min(1),
@@ -164,13 +165,13 @@ const Index = () => {
                   />
                 </div>
                 <button
-                  className="flex items-center gap-2 self-end rounded bg-blue-200 p-3 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
+                  className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
                   type="button"
                   onClick={() =>
                     window.open(values?.defaultIframeSrc, '_blank')
                   }
                 >
-                  <MdLink />
+                  <ImNewTab />
                 </button>
               </div>
 
@@ -179,7 +180,7 @@ const Index = () => {
                   <InputField readOnly label="Iframe tag" name="iframeTag" />
                 </div>
                 <button
-                  className="flex items-center gap-2 self-end rounded bg-blue-200 p-3 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
+                  className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
                   type="button"
                   onClick={handleCopyToClipboard}
                 >
@@ -192,11 +193,11 @@ const Index = () => {
                   <InputField label="QRCode url" name="qrCodeUrl" />
                 </div>
                 <button
-                  className="flex items-center gap-2 self-end rounded bg-blue-200 p-3 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
+                  className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
                   type="button"
                   onClick={() => window.open(values?.qrCodeUrl, '_blank')}
                 >
-                  <MdLink />
+                  <ImNewTab />
                 </button>
               </div>
             </div>
