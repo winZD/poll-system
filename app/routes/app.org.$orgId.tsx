@@ -24,7 +24,7 @@ export default function Index() {
   return (
     <div className="flex flex-1 flex-col">
       <header className="flex items-center justify-end gap-8 border p-2">
-        <div className="text-center">{`${User.name}@${User.Org?.name}`}</div>
+        <div className="rounded-full border-2 border-slate-50 px-2 py-1 text-center">{`${User.name}@${User.Org?.name}`}</div>
         <NavLink
           to={'/logout'}
           className={
