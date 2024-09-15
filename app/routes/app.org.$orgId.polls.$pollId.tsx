@@ -26,6 +26,9 @@ import { toast } from 'react-toastify';
 import { ImNewTab } from 'react-icons/im';
 import { useAppLoader } from '~/loaders';
 
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
 const schema = zod.object({
   name: zod.string().min(1),
   status: statusSchema.default('DRAFT'),
@@ -41,6 +44,7 @@ const schema = zod.object({
       name: zod.string().min(1, 'Obvezan podatak'),
     }),
   ),
+  expiresAt: zod.date().nullish(),
 });
 
 type FormData = zod.infer<typeof schema>;
@@ -111,6 +115,7 @@ const Index = () => {
       defaultIframeSrc: `${data.baseUrl}/poll/${data?.poll.id}`,
       iframeTag: `<iframe src="${data.baseUrl}/poll/${data?.poll.id}" style="height:100%;width:100%;" frameborder="0" scrolling="no"/>`,
       qrCodeUrl: `${data.baseUrl}/poll/${data?.poll.id}/tv`,
+      expiresAt: data.poll.expiresAt ? new Date(data.poll.expiresAt) : null,
     },
   });
 
@@ -170,6 +175,27 @@ const Index = () => {
                 label="Naziv ankete"
                 name="name"
               />
+
+              <div className="relative flex flex-col justify-between">
+                <label className="" htmlFor={'expiresAt'}>
+                  {'Vrijeme kraja ankete'}
+                </label>
+                <DatePicker
+                  id="expiresAt"
+                  selected={values.expiresAt}
+                  onChange={(date) => formMethods.setValue('expiresAt', date)}
+                  dateFormat="dd.MM.yyyy HH:mm"
+                  name="expiresAt"
+                  showTimeInput
+                  timeFormat="HH:mm"
+                />
+                {/* {error && (
+        <div className="absolute bottom-0 right-2 top-0 flex items-center text-xs text-red-500">
+          {error?.message?.toString()}
+        </div>
+      )} */}
+              </div>
+
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">
                   <InputField
