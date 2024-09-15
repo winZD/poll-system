@@ -4,12 +4,7 @@ import React from 'react';
 import { ColDef } from 'ag-grid-community';
 import { AgGrid } from '~/components/AgGrid';
 import { db } from '~/db';
-import {
-  rolesMapped,
-  roleValues,
-  statusClass,
-  statusMapped,
-} from '~/components/models';
+import { rolesMapped, statusClass, statusMapped } from '~/components/models';
 import { useAppLoader } from '~/loaders';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -19,6 +14,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     where: { orgId },
     orderBy: [{ status: 'asc' }, { role: 'asc' }, { name: 'asc' }],
   });
+
   return json(users);
 }
 
@@ -32,8 +28,6 @@ export default function Index() {
   const navigate = useNavigate();
 
   const { User } = useAppLoader();
-
-  const isAdmin = User.role === roleValues.ADMIN;
 
   const columnDefs = React.useMemo<ColDef<(typeof users)[0]>[]>(
     () => [
@@ -90,11 +84,14 @@ export default function Index() {
             </NavLink>
           </div>
         )}
-
         <AgGrid
           columnDefs={columnDefs}
           rowData={users}
-          onRowClicked={({ data }) => navigate(data.id)}
+          onRowClicked={({ data }) => {
+            if (User.role === 'ADMIN') {
+              navigate(data.id);
+            }
+          }}
           rowClass={'cursor-pointer hover:bg-slate-100'}
         />
         <Outlet />

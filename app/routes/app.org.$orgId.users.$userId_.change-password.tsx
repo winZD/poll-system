@@ -13,7 +13,7 @@ import {
 } from 'remix-toast';
 import { roleValues } from '~/components/models';
 import { FormContent } from '~/components/Form/FormContent';
-import { decodeTokenFromRequest, hashPassword } from '~/auth';
+import { getUserFromRequest, hashPassword } from '~/auth';
 
 const schema = zod.object({
   newPassword: zod.string().min(3, 'Obvezan podatak'),
@@ -25,9 +25,9 @@ const resolver = zodResolver(schema);
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId, userId } = params;
 
-  const ctx = await decodeTokenFromRequest(request);
+  const user = await getUserFromRequest(request);
 
-  if (!(ctx?.User?.role === roleValues.ADMIN || ctx?.userId === userId)) {
+  if (!(user?.role === roleValues.ADMIN || user?.id === userId)) {
     return redirectWithError('..', 'Nemate ovlasti');
   }
 

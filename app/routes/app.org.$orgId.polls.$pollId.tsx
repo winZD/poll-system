@@ -24,6 +24,7 @@ import { HiOutlineTrash } from 'react-icons/hi2';
 import { MdAdd, MdContentCopy, MdSave } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { ImNewTab } from 'react-icons/im';
+import { useAppLoader } from '~/loaders';
 
 const schema = zod.object({
   name: zod.string().min(1),
@@ -99,6 +100,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 const Index = () => {
   const { data } = useLoaderData<typeof loader>();
 
+  const { User } = useAppLoader();
+
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     // resolver,
@@ -153,11 +156,20 @@ const Index = () => {
         method="PUT"
       >
         <FormContent className="">
-          <div className="flex gap-8">
+          <div className="flex gap-8 pb-4">
             <div className="flex w-96 flex-col gap-2">
-              <SelectField label="Status" name="status" data={statusOptions} />
+              <SelectField
+                disabled={!User.canUpdate}
+                label="Status"
+                name="status"
+                data={statusOptions}
+              />
               {/* TODO: add date/time from and date/time to of poll duration */}
-              <InputField label="Naziv ankete" name="name" />
+              <InputField
+                readOnly={!User.canUpdate}
+                label="Naziv ankete"
+                name="name"
+              />
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">
                   <InputField
@@ -192,7 +204,11 @@ const Index = () => {
 
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">
-                  <InputField label="QR code url" name="qrCodeUrl" />
+                  <InputField
+                    readOnly={!User.canUpdate}
+                    label="QR code url"
+                    name="qrCodeUrl"
+                  />
                 </div>
                 <button
                   className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
@@ -204,21 +220,23 @@ const Index = () => {
               </div>
             </div>
             <div className="border" />
-            <div className="flex flex-1 flex-col gap-4 pt-6">
-              <Button
-                type="button"
-                className="flex w-96 items-center justify-center gap-2 font-semibold"
-                onClick={() =>
-                  append({
-                    id: ulid(),
-                    name: '',
-                    orgId: data?.poll.orgId,
-                    pollId: data?.poll.id,
-                  })
-                }
-              >
-                <MdAdd /> Dodaj opciju
-              </Button>
+            <div className="flex min-w-96 flex-1 flex-col gap-4 pt-6">
+              {User.canUpdate && (
+                <Button
+                  type="button"
+                  className="flex w-96 items-center justify-center gap-2 font-semibold"
+                  onClick={() =>
+                    append({
+                      id: ulid(),
+                      name: '',
+                      orgId: data?.poll.orgId,
+                      pollId: data?.poll.id,
+                    })
+                  }
+                >
+                  <MdAdd /> Dodaj opciju
+                </Button>
+              )}
 
               <div className="flex flex-col gap-2">
                 {fields.map((field, index) => (
@@ -229,29 +247,34 @@ const Index = () => {
                         key={field.id}
                         label=""
                         placeholder={'Opcija...'}
+                        readOnly={!User.canUpdate}
                       />
                     </div>
-                    <button
-                      className=""
-                      type="button"
-                      onClick={() => remove(index)}
-                    >
-                      <HiOutlineTrash className="text-lg text-red-500" />
-                    </button>
+                    {User.canUpdate && (
+                      <button
+                        className=""
+                        type="button"
+                        onClick={() => remove(index)}
+                      >
+                        <HiOutlineTrash className="text-lg text-red-500" />
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="flex items-center gap-2 self-end rounded bg-blue-200 p-2 px-8 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
-            // disabled={poll.status !== statusValues.DRAFT}
-          >
-            <MdSave />
-            Ažuriraj anketu
-          </button>
+          {User.canUpdate && (
+            <button
+              type="submit"
+              className="flex items-center gap-2 self-end rounded bg-blue-200 p-2 px-8 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
+              // disabled={poll.status !== statusValues.DRAFT}
+            >
+              <MdSave />
+              Ažuriraj anketu
+            </button>
+          )}
         </FormContent>
       </HookForm>
     </Modal>

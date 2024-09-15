@@ -23,12 +23,15 @@ export default function Index() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="flex items-center justify-end gap-8 border p-2">
-        <div className="rounded-full border-2 border-slate-50 px-2 py-1 text-center">{`${User.name}@${User.Org?.name}`}</div>
+      <header className="flex items-center justify-end gap-8 border px-8 py-2">
+        <NavLink
+          to={`users/${User.id}`}
+          className="rounded-full bg-slate-100 px-4 py-2 text-center hover:bg-slate-200"
+        >{`${User.name}@${User.role} - ${User.Org?.name}`}</NavLink>
         <NavLink
           to={'/logout'}
           className={
-            'flex items-center justify-center gap-2 rounded px-2 py-1 font-bold text-red-500 hover:bg-red-100'
+            'flex items-center justify-center gap-2 rounded-full bg-red-100 px-4 py-2 font-bold text-red-500 hover:bg-red-200'
           }
         >
           <div>Odjava</div>

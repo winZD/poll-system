@@ -8,7 +8,7 @@ import {
   createHeaderCookies,
   verifyToken,
 } from '~/auth';
-import { statusValues } from '~/components/models';
+import { roleValues, statusValues } from '~/components/models';
 import { db } from '~/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -27,7 +27,17 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     });
 
     if (User?.status === statusValues.ACTIVE) {
-      return json({ User });
+      return json({
+        User: {
+          ...User,
+          canCreate:
+            User.permissions.includes('C') || User.role === roleValues.ADMIN,
+          canUpdate:
+            User.permissions.includes('U') || User.role === roleValues.ADMIN,
+          canDelete:
+            User.permissions.includes('D') || User.role === roleValues.ADMIN,
+        },
+      });
     } else {
       return redirectWithError('/login', 'Neaktivan korisnik');
     }
@@ -48,7 +58,23 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
         );
         const headers = await createHeaderCookies(accessToken, refreshToken);
 
-        return json({ User }, { headers });
+        return json(
+          {
+            User: {
+              ...User,
+              canCreate:
+                User.permissions.includes('C') ||
+                User.role === roleValues.ADMIN,
+              canUpdate:
+                User.permissions.includes('U') ||
+                User.role === roleValues.ADMIN,
+              canDelete:
+                User.permissions.includes('D') ||
+                User.role === roleValues.ADMIN,
+            },
+          },
+          { headers },
+        );
       } else {
         return redirectWithError('/login', 'Neaktivan korisnik');
       }

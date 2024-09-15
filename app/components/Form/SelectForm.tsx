@@ -6,7 +6,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   data: Array<{ value: any; label: string }>;
 }
 
-const SelectField: React.FC<SelectProps> = ({ label, name, data }) => {
+const SelectField: React.FC<SelectProps> = ({ label, name, data, ...rest }) => {
   const formMethods = useFormContext();
 
   const {
@@ -23,7 +23,12 @@ const SelectField: React.FC<SelectProps> = ({ label, name, data }) => {
       <label className="flex-1" htmlFor={name}>
         {label}
       </label>
-      <select id={name} className="flex-1 rounded border-slate-200" {...field}>
+      <select
+        {...rest}
+        id={name}
+        className="flex-1 rounded border-slate-200"
+        {...field}
+      >
         {data.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}

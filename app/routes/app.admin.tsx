@@ -25,11 +25,11 @@ export default function Index() {
        * HEADER
        */}
       <header className="flex items-center justify-end gap-8 border p-2">
-        <div className="text-center">{data.User.name}</div>
+        <div className="text-center">{`${data.User.name} - ${data.User.role}`}</div>
         <NavLink
           to={'/logout'}
           className={
-            'flex items-center justify-center gap-2 rounded px-2 py-1 font-bold text-red-500 hover:bg-red-100'
+            'flex items-center justify-center gap-2 rounded-full bg-red-100 px-4 py-2 font-bold text-red-500 hover:bg-red-200'
           }
         >
           <div>Odjava</div>

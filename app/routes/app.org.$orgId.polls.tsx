@@ -16,6 +16,7 @@ import { jsonWithSuccess } from 'remix-toast';
 import { HiOutlineTrash } from 'react-icons/hi2';
 import { useConfirmDialog } from '~/components/Dialog';
 import { statusClass, statusMapped, statusValues } from '~/components/models';
+import { useAppLoader } from '~/loaders';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId } = params;
@@ -46,10 +47,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 export default function Index() {
   const navigate = useNavigate();
 
+  const { User } = useAppLoader();
+
   const submit = useSubmit();
   const polls = useLoaderData<typeof loader>();
-
-  const params = useParams();
 
   const { openDialog } = useConfirmDialog();
 
@@ -89,41 +90,46 @@ export default function Index() {
           </div>
         ),
       },
-      {
-        colId: 'delete',
-        sortable: false,
-        width: 40,
+      ...(User.canDelete
+        ? [
+            {
+              colId: 'delete',
+              sortable: false,
+              width: 40,
 
-        cellRenderer: (props) => {
-          const isDeleteDisabled = props.data.status !== statusValues.DRAFT;
+              cellRenderer: (props) => {
+                const isDeleteDisabled =
+                  props.data.status !== statusValues.DRAFT;
 
-          return (
-            <div className="flex h-full flex-row items-center justify-center p-0">
-              <button
-                onClick={() => {
-                  if (isDeleteDisabled) return;
-                  openDialog({
-                    title: 'Brisanje zapisa',
-                    buttonText: 'Izbriši',
-                    message: 'Potvrdite brisanje zapisa',
-                    onConfirm: () =>
-                      submit(
-                        {
-                          id: props.data.id,
-                        },
-                        { method: 'delete' },
-                      ),
-                  });
-                }}
-              >
-                <HiOutlineTrash
-                  className={`text-lg ${isDeleteDisabled ? 'cursor-not-allowed text-zinc-500' : 'text-red-500'}`}
-                />
-              </button>
-            </div>
-          );
-        },
-      },
+                return (
+                  <div className="flex h-full flex-row items-center justify-center p-0">
+                    <button
+                      onClick={() => {
+                        if (isDeleteDisabled) return;
+                        openDialog({
+                          title: 'Brisanje zapisa',
+                          buttonText: 'Izbriši',
+                          message: 'Potvrdite brisanje zapisa',
+                          onConfirm: () =>
+                            submit(
+                              {
+                                id: props.data.id,
+                              },
+                              { method: 'delete' },
+                            ),
+                        });
+                      }}
+                    >
+                      <HiOutlineTrash
+                        className={`text-lg ${isDeleteDisabled ? 'cursor-not-allowed text-zinc-500' : 'text-red-500'}`}
+                      />
+                    </button>
+                  </div>
+                );
+              },
+            },
+          ]
+        : []),
       { flex: 1 },
     ],
     [],
@@ -132,14 +138,14 @@ export default function Index() {
   return (
     <>
       <div className="flex flex-1 flex-col p-5">
-        <div className="flex gap-2">
+        {User.canCreate && (
           <NavLink
             to="create"
             className="m-2 self-start rounded bg-blue-500 px-4 py-1 text-white"
           >
             + Dodaj anketu
           </NavLink>
-        </div>
+        )}
 
         <AgGrid
           rowClass={'cursor-pointer hover:bg-slate-100'}

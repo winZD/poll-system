@@ -19,11 +19,13 @@ import {
   roleValues,
   statusOptions,
   statusSchema,
+  statusValues,
 } from '~/components/models';
 import { FormContent } from '~/components/Form/FormContent';
 import PermissionsForm from '~/components/Form/PermissionsForm';
 import { MdUpdate } from 'react-icons/md';
 import { getUserFromRequest } from '~/auth';
+import { useAppLoader } from '~/loaders';
 
 const schema = zod.object({
   name: zod.string().min(1, 'Obvezan podatak'),
@@ -46,10 +48,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   if (!user) return redirectWithError('..', 'Nepostojeći korisnik');
 
-  const canChangePassword =
-    ctxUser?.role === roleValues.ADMIN || ctxUser?.id === userId;
-
-  return json({ ...user, canChangePassword });
+  if (ctxUser?.role === roleValues.ADMIN || ctxUser?.id === userId) {
+    return json(user);
+  } else {
+    return redirectWithError('..', 'Nemate ovlasti');
+  }
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -77,6 +80,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 export default function Index() {
   const user = useLoaderData<typeof loader>();
+
+  const ctx = useAppLoader();
+
+  const isAdmin = ctx.User.role === roleValues.ADMIN;
+
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     resolver,
@@ -97,19 +105,27 @@ export default function Index() {
         <FormContent>
           <InputField label="Email" name="email" readOnly />
           <InputField label="Ime korisnika" name="name" />
-          <SelectField label="Uloga" name="role" data={roleOptions} />
-          <SelectField label="Status" name="status" data={statusOptions} />
-          <PermissionsForm />
-
-          {user.canChangePassword && (
-            <NavLink
-              to="change-password"
-              className="flex items-center gap-2 self-end border p-2"
-            >
-              <MdUpdate />
-              Promjeni lozinku
-            </NavLink>
+          {isAdmin && (
+            <>
+              <SelectField label="Uloga" name="role" data={roleOptions} />
+              <SelectField
+                label="Status"
+                name="status"
+                data={statusOptions.filter(
+                  (e) => e.value !== statusValues.DRAFT,
+                )}
+              />
+            </>
           )}
+
+          <PermissionsForm disabled={!isAdmin} />
+          <NavLink
+            to="change-password"
+            className="flex items-center gap-2 self-end border p-2"
+          >
+            <MdUpdate />
+            Promjeni lozinku
+          </NavLink>
 
           <button
             type="submit"

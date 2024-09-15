@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form';
 
 const permissionsLabeled = {
   C: 'Kreiranje',
-  R: 'Pregled',
+  // R: 'Pregled',
   U: 'Ažuriranje',
   D: 'Brisanje',
 };
@@ -17,9 +17,12 @@ const PermissionsForm = ({ className = '', ...rest }) => {
     <div className="flex flex-col">
       <label className="">Ovlasti</label>
       <div className="flex flex-col">
-        {['C', 'R', 'U', 'D'].map((e) => (
-          <label className="flex items-center gap-2">
+        {['C', 'U', 'D'].map((e) => (
+          <label
+            className={`flex items-center gap-2 ${rest.disabled ? 'text-zinc-400' : ''}`}
+          >
             <input
+              disabled={rest.disabled}
               className=""
               type="checkbox"
               checked={permissions.includes(e)}
