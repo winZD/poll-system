@@ -181,6 +181,7 @@ const Index = () => {
                   {'Vrijeme kraja ankete'}
                 </label>
                 <DatePicker
+                  className="rounded border-slate-200 outline-none"
                   id="expiresAt"
                   selected={values.expiresAt}
                   onChange={(date) => formMethods.setValue('expiresAt', date)}
