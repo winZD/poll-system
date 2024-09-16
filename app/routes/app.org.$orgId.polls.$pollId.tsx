@@ -26,8 +26,6 @@ import { toast } from 'react-toastify';
 import { ImNewTab } from 'react-icons/im';
 import { useAppLoader } from '~/loaders';
 
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import { FormDate } from '~/components/Form/FormDate';
 
 const schema = zod.object({
@@ -45,7 +43,7 @@ const schema = zod.object({
       name: zod.string().min(1, 'Obvezan podatak'),
     }),
   ),
-  expiresAt: zod.date().nullish(),
+  expiresAt: zod.coerce.date().nullish(),
 });
 
 type FormData = zod.infer<typeof schema>;
@@ -91,6 +89,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         name: data.name,
         status: data.status,
         iframeSrc: data.iframeSrc,
+        expiresAt: data.expiresAt || undefined,
       },
     });
 
