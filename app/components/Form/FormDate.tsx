@@ -40,6 +40,7 @@ export const FormDate: React.FC<InputProps> = ({
         {`Datum i vrijeme kraja ankete`}
       </label>
       <DatePicker
+        readOnly={rest.readOnly}
         className="rounded border-slate-200 outline-none"
         id={name}
         ref={field.ref}
@@ -54,6 +55,7 @@ export const FormDate: React.FC<InputProps> = ({
       />
       <div className="absolute bottom-0 right-12 flex items-center gap-1">
         <input
+          readOnly={rest.readOnly}
           type="text"
           className="w-12 rounded border border-slate-200 outline-none"
           value={hours}
@@ -67,6 +69,7 @@ export const FormDate: React.FC<InputProps> = ({
         />
         <div>:</div>
         <input
+          readOnly={rest.readOnly}
           type="text"
           className="w-12 rounded border border-slate-200 outline-none"
           value={minutes}

@@ -176,7 +176,11 @@ const Index = () => {
                 name="name"
               />
 
-              <FormDate name="expiresAt" label={'Vrijeme kraja ankete'} />
+              <FormDate
+                readOnly={!User.canUpdate}
+                name="expiresAt"
+                label={'Vrijeme kraja ankete'}
+              />
 
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">
