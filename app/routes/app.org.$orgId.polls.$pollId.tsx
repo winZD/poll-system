@@ -28,6 +28,7 @@ import { useAppLoader } from '~/loaders';
 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { FormDate } from '~/components/Form/FormDate';
 
 const schema = zod.object({
   name: zod.string().min(1),
@@ -161,7 +162,7 @@ const Index = () => {
         method="PUT"
       >
         <FormContent className="">
-          <div className="flex gap-8 pb-4">
+          <div className="flex gap-8 pb-16">
             <div className="flex w-96 flex-col gap-2">
               <SelectField
                 disabled={!User.canUpdate}
@@ -176,26 +177,7 @@ const Index = () => {
                 name="name"
               />
 
-              <div className="relative flex flex-col justify-between">
-                <label className="" htmlFor={'expiresAt'}>
-                  {'Vrijeme kraja ankete'}
-                </label>
-                <DatePicker
-                  className="rounded border-slate-200 outline-none"
-                  id="expiresAt"
-                  selected={values.expiresAt}
-                  onChange={(date) => formMethods.setValue('expiresAt', date)}
-                  dateFormat="dd.MM.yyyy HH:mm"
-                  name="expiresAt"
-                  showTimeInput
-                  timeFormat="HH:mm"
-                />
-                {/* {error && (
-        <div className="absolute bottom-0 right-2 top-0 flex items-center text-xs text-red-500">
-          {error?.message?.toString()}
-        </div>
-      )} */}
-              </div>
+              <FormDate name="expiresAt" label={'Vrijeme kraja ankete'} />
 
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">

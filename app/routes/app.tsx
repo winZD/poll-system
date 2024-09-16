@@ -14,7 +14,7 @@ import { db } from '~/db';
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // const token = decode
 
-  console.log('app.ts', params);
+  // console.log('app.ts', params);
 
   const cookies = parse(request.headers.get('Cookie') ?? '');
 
