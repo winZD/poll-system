@@ -40,7 +40,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="flex h-full w-full flex-col">
+      <body className="mx-auto flex h-full max-w-[1440px] flex-col">
         <DialogProvider>{children}</DialogProvider>
         <ScrollRestoration />
         <Scripts />
