@@ -56,7 +56,8 @@ export default function Index() {
       {
         field: 'status',
         headerName: 'Status',
-        width: 120,
+
+        flex: 1,
         cellRenderer: ({ value }) => (
           <div className="flex items-center gap-2">
             <div className={`size-4 rounded-full ${statusClass[value]} `} />
@@ -64,8 +65,6 @@ export default function Index() {
           </div>
         ),
       },
-
-      { flex: 1, sortable: false },
     ],
 
     [],
@@ -86,6 +85,7 @@ export default function Index() {
         )}
         <AgGrid
           columnDefs={columnDefs}
+          defaultColDef={{ resizable: false }}
           rowData={users}
           onRowClicked={({ data }) => {
             if (User.role === 'ADMIN') {

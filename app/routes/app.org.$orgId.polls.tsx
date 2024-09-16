@@ -96,13 +96,13 @@ export default function Index() {
               colId: 'delete',
               sortable: false,
               width: 40,
-
+              flex: 1,
               cellRenderer: (props) => {
                 const isDeleteDisabled =
                   props.data.status !== statusValues.DRAFT;
 
                 return (
-                  <div className="flex h-full flex-row items-center justify-center p-0">
+                  <div className="flex h-full flex-row items-center justify-start p-0">
                     <button
                       onClick={() => {
                         if (isDeleteDisabled) return;
@@ -130,7 +130,6 @@ export default function Index() {
             },
           ]
         : []),
-      { flex: 1, sortable: false },
     ],
     [],
   );
@@ -150,6 +149,7 @@ export default function Index() {
         <AgGrid
           rowClass={'cursor-pointer hover:bg-slate-100'}
           columnDefs={columnDefs}
+          defaultColDef={{ resizable: false }}
           rowData={polls}
           onCellClicked={(row) => {
             if (row.colDef.colId === 'delete') return;
