@@ -49,6 +49,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   const orgId = params.orgId;
   if (orgId && ctxUser?.id) {
+    const url = new URL(request.url);
+    const baseUrl = `${url.protocol}//${url.host}`;
     const id = ulid();
     await db.pollTable.create({
       data: {
@@ -60,7 +62,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         createdAt: new Date(),
         expiresAt: addDays(new Date().setHours(0, 0, 0, 0), 7),
         iframeTitle: '',
-        iframeSrc: `http://localhost:5173/poll/${id}`,
+        iframeSrc: baseUrl,
       },
     });
     return redirectWithSuccess(`../${id}`, {
