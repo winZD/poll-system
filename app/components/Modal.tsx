@@ -32,11 +32,12 @@ export const Modal: React.FC<ModalProps> = ({
         >
           <div {...modalProps} ref={ref} className="max-h-full">
             <div className="flex max-h-full flex-col rounded-lg bg-white shadow-md">
-              <div className="flex justify-between bg-neutral-100 p-2">
+              <div className="flex items-center justify-between bg-neutral-100 pl-4">
                 <div className="font-semibold">{title}</div>
                 <NavLink
                   to={`..${location.search}`}
                   onClick={() => onClose?.()}
+                  className="flex size-10 items-center justify-center hover:bg-red-300"
                 >
                   ✕
                 </NavLink>

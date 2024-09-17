@@ -157,6 +157,8 @@ export default function Index() {
 const UsersTable = (props) => {
   const org = useLoaderData<typeof loader>();
 
+  const navigate = useNavigate();
+
   const columnDefs = React.useMemo<ColDef<(typeof org.Users)[0]>[]>(
     () => [
       {
@@ -195,7 +197,16 @@ const UsersTable = (props) => {
     [],
   );
 
-  return <AgGrid columnDefs={columnDefs} rowData={org.Users} />;
+  return (
+    <AgGrid
+      onRowClicked={({ data }) =>
+        navigate(`users/${data.id}${location.search}`)
+      }
+      columnDefs={columnDefs}
+      rowData={org.Users}
+      rowClass={'cursor-pointer hover:bg-slate-100'}
+    />
+  );
 };
 
 const PollsTable = (props) => {

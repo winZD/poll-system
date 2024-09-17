@@ -30,7 +30,7 @@ export default function Index() {
   return (
     <Modal title="Detalji ankete">
       <div className="flex flex-col gap-8 p-8">
-        <div className="grid grid-cols-2 self-start">
+        <div className="grid grid-cols-2 gap-x-8 self-start">
           <div className="">Naziv ankete</div>
           <div className="font-semibold">{poll.name}</div>
 
@@ -51,7 +51,7 @@ export default function Index() {
           </div>
         </div>
 
-        <div className="grid grid-cols-[auto_100px] items-center gap-x-2 gap-y-1 self-start">
+        <div className="grid grid-cols-[auto_80px] items-center gap-x-2 gap-y-1 self-start">
           {poll.PollQuestions.map((e) => (
             <>
               <div

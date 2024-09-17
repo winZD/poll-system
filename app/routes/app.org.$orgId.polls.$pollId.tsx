@@ -280,7 +280,7 @@ const Index = () => {
           {User.canUpdate && (
             <button
               type="submit"
-              className="flex items-center gap-2 self-end rounded bg-blue-200 p-2 px-8 hover:bg-blue-300 disabled:cursor-not-allowed disabled:bg-slate-200"
+              className="flex items-center gap-2 self-end rounded bg-slate-200 p-2 px-8 hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
               // disabled={poll.status !== statusValues.DRAFT}
             >
               <MdSave />
