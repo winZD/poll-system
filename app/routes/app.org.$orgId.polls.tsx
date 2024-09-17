@@ -140,7 +140,7 @@ export default function Index() {
         {User.canCreate && (
           <NavLink
             to="create"
-            className="m-2 self-start rounded bg-blue-500 px-4 py-1 text-white"
+            className="m-2 self-start rounded bg-blue-500 px-4 py-1 text-white hover:bg-blue-800"
           >
             + Dodaj anketu
           </NavLink>
