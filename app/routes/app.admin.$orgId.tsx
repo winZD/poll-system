@@ -25,7 +25,15 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const org = await db.orgTable.findUniqueOrThrow({
     where: { id: orgId },
-    include: { Users: true, Polls: { include: { User: true } } },
+    include: {
+      Users: {
+        orderBy: [{ status: 'asc' }, { role: 'asc' }, { name: 'asc' }],
+      },
+      Polls: {
+        include: { User: true },
+        orderBy: [{ status: 'asc' }, { createdAt: 'desc' }],
+      },
+    },
   });
   return json(org);
 }
@@ -77,6 +85,7 @@ export default function Index() {
       <div className="flex flex-1 flex-col items-start gap-8 p-4">
         {org.status === 'ACTIVE' ? (
           <Button
+            className="border-red-500 bg-transparent font-semibold text-red-500 hover:border-red-700 hover:bg-transparent hover:text-red-700"
             onClick={() =>
               openDialog({
                 title: `Deaktivacija ${org.name}`,
@@ -90,15 +99,16 @@ export default function Index() {
               })
             }
           >
-            Deaktiviraj
+            Deaktiviraj organizaciju
           </Button>
         ) : (
           <Button
+            className="border-green-500 bg-transparent font-semibold text-green-500 hover:border-green-700 hover:bg-transparent hover:text-green-700"
             onClick={() =>
               submit({ action: 'ACTIVATE', orgId: org.id }, { method: 'post' })
             }
           >
-            Aktiviraj
+            Aktiviraj organizaciju
           </Button>
         )}
 

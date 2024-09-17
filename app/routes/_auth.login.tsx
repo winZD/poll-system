@@ -65,9 +65,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const headers = createHeaderCookies(accessToken, refreshToken);
 
   return redirectWithSuccess(
-    user.Org.role === 'ADMIN'
-      ? '/app/admin/orgs'
-      : `/app/org/${user.orgId}/polls`,
+    user.Org.role === 'ADMIN' ? '/app/admin' : `/app/org/${user.orgId}/polls`,
     'Uspješna prijava',
     {
       headers,

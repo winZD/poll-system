@@ -27,7 +27,7 @@ export default function Index() {
         <NavLink
           to={`users/${User.id}`}
           className="rounded-full bg-slate-100 px-4 py-2 text-center hover:bg-slate-200"
-        >{`${User.name}@${User.role} - ${User.Org?.name}`}</NavLink>
+        >{`${User.name} - ${User.role}@${User.Org?.name}`}</NavLink>
         <NavLink
           to={'/logout'}
           className={
