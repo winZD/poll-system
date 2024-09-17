@@ -16,3 +16,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       : `/app/org/${user?.Org.id}`,
   );
 }
+
+export default function Index() {
+  return <div />;
+}

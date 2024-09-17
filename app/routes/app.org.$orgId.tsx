@@ -23,7 +23,7 @@ export default function Index() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="flex items-center justify-end gap-8 border px-8 py-2">
+      <header className="flex items-center justify-end gap-8 border-b p-2">
         <NavLink
           to={`users/${User.id}`}
           className="rounded-full bg-slate-100 px-4 py-2 text-center hover:bg-slate-200"
@@ -39,7 +39,7 @@ export default function Index() {
         </NavLink>
       </header>
       <div className="flex flex-1">
-        <aside className="flex w-52 flex-col border bg-slate-50">
+        <aside className="flex w-52 flex-col border-r">
           <NavLink
             to={'polls'}
             className={({ isActive }) => `p-4 ${isActive ? 'bg-blue-100' : ''}`}
@@ -53,7 +53,7 @@ export default function Index() {
             Korisnici
           </NavLink>
         </aside>
-        <div className="flex flex-1 bg-slate-50">
+        <div className="flex flex-1 flex-col">
           <Outlet />
         </div>
       </div>
