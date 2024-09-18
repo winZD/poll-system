@@ -73,14 +73,47 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     .digest('hex'); // Output as a hex string
 
   if (request.method === 'POST') {
+    const id = ulid();
     await db.votesTable.create({
-      data: { fingerPrint, id: ulid(), orgId, pollId, pollQuestionId },
+      data: {
+        fingerPrint,
+        id,
+        orgId,
+        pollId,
+        pollQuestionId,
+        ipAddress,
+      },
     });
+
+    if (ipAddress) {
+      fetch(`https://ipinfo.io/${ipAddress}/json`)
+        .then(async (res) => {
+          const data = await res.json();
+          try {
+            await db.votesTable.update({
+              where: { id },
+              data: {
+                hostname: data.hostname,
+                city: data.city,
+                region: data.region,
+                country: data.country,
+                loc: data.loc,
+                org: data.org,
+                postal: data.postal,
+                timezone: data.timezone,
+              },
+            });
+          } catch (e) {
+            console.log('error updating ip details', { e });
+          }
+        })
+        .catch((e) => console.log('error fetching  ip details'));
+    }
   } else if (request.method === 'DELETE') {
     await db.votesTable.deleteMany({ where: { orgId, pollId, fingerPrint } });
   }
 
-  return jsonWithSuccess(true, 'Vaš glas je uspješno zabilježen');
+  return jsonWithSuccess({}, 'Vaš glas je uspješno zabilježen');
 };
 
 export default function Index() {

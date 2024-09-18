@@ -94,6 +94,16 @@ model VotesTable {
   pollQuestionId String
   fingerPrint    String
 
+  ipAddress String?
+  hostname  String?
+  city      String?
+  region    String?
+  country   String?
+  loc       String?
+  org       String?
+  postal    String?
+  timezone  String?
+
   Poll         PollTable         @relation(name: "FK_Vote_Poll", fields: [pollId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   PollQuestion PollQuestionTable @relation(name: "FK_PollQuestionAnswer_PollQuestion", fields: [pollQuestionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   Org          OrgTable          @relation(name: "FK_Vote_Org", fields: [orgId], references: [id], onDelete: NoAction, onUpdate: NoAction)
