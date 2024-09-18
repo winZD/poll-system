@@ -17,6 +17,7 @@ import { HiOutlineTrash } from 'react-icons/hi2';
 import { useConfirmDialog } from '~/components/Dialog';
 import { statusClass, statusMapped, statusValues } from '~/components/models';
 import { useAppLoader } from '~/loaders';
+import { useTranslation } from 'react-i18next';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId } = params;
@@ -46,6 +47,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 export default function Index() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const { User } = useAppLoader();
 
