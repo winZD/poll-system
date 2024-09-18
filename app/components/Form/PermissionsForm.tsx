@@ -17,11 +17,13 @@ const PermissionsForm = ({ className = '', ...rest }) => {
     <div className="flex flex-col">
       <label className="">Ovlasti</label>
       <div className="flex flex-col">
-        {['C', 'U', 'D'].map((e) => (
+        {['C', 'U', 'D'].map((e, index) => (
           <label
+            key={index}
             className={`flex items-center gap-2 ${rest.disabled ? 'text-zinc-400' : ''}`}
           >
             <input
+              key={index}
               disabled={rest.disabled}
               className=""
               type="checkbox"
