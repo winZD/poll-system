@@ -22,7 +22,7 @@ export default function Index() {
   const { User } = useAppLoader();
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex w-[1280px] flex-1 flex-col self-center">
       <header className="flex items-center justify-end gap-8 border-b p-2">
         <NavLink
           to={`users/${User.id}`}

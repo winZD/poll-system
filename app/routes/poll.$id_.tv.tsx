@@ -11,21 +11,44 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     where: { id },
     include: {
       Org: true,
+      PollQuestions: true,
     },
   });
-  return poll;
+  const votes = await db.votesTable.groupBy({
+    by: ['pollQuestionId'],
+    where: { pollId: id },
+    _count: true,
+  });
+  return { poll, votes };
 }
 
 const Index = () => {
-  const tvPoll = useLoaderData<typeof loader>();
+  const { poll, votes } = useLoaderData<typeof loader>();
+
+  const totalVotes = votes.reduce((acc, current) => acc + current._count, 0);
+
   return (
-    <div className="m-auto flex flex-col rounded border shadow-lg">
+    <div className="flex aspect-video w-[1920px] flex-col justify-end bg-green-50">
       {/* <div className="border-b bg-slate-50 p-4 text-center font-extrabold">
         {tvPoll.name}
       </div> */}
-      <div className="flex items-center justify-center gap-6 px-8 py-4">
-        <div className="font-semibold"> {tvPoll.name}</div>
-        <QRCodeSVG size={64} value={tvPoll.iframeSrc} />
+
+      <div className="flex items-end justify-end gap-16">
+        <div className="flex flex-col">
+          <div className="font-semibold"> {poll.name}</div>
+
+          <div className="flex flex-col gap-2">
+            {poll.PollQuestions.map((e) => (
+              <>
+                <button key={e.id} className={`rounded px-4 py-2`}>
+                  {e.name}
+                </button>
+              </>
+            ))}
+          </div>
+          <div>{`Ukupno glasova ${totalVotes}`}</div>
+        </div>
+        <QRCodeSVG size={64} value={poll.iframeSrc} />
       </div>
     </div>
   );
