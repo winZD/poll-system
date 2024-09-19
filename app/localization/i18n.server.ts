@@ -12,8 +12,8 @@ let i18next = new RemixI18Next({
   // when translating messages server-side only
   i18next: {
     ...i18n,
-    lng: 'hr',
-    fallbackLng: 'en',
+    /*   lng: 'hr',
+    fallbackLng: 'en', */
     backend: {
       loadPath: resolve('./public/locales/{{lng}}/{{ns}}.json'),
     },

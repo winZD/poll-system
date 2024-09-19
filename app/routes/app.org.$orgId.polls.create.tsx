@@ -60,7 +60,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         name: data.name,
         status: data.status,
         createdAt: new Date(),
-        expiresAt: addDays(new Date().setHours(0, 0, 0, 0), 7),
+        expiresAt: addDays(new Date().setHours(0, 0, 0, 0), 1),
         iframeTitle: '',
         iframeSrc: baseUrl,
       },
