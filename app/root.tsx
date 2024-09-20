@@ -17,9 +17,14 @@ import { DialogProvider } from './components/Dialog';
 import i18next from './localization/i18n.server';
 import { useTranslation } from 'react-i18next';
 import { useChangeLanguage } from 'remix-i18next/react';
+import { parse } from 'cookie';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  let locale = await i18next.getLocale(request);
+  const cookieHeader = request.headers.get('Cookie') || '';
+  const cookies = parse(cookieHeader);
+
+  let localeFromReq = await i18next.getLocale(request);
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
   // Extracts the toast from the request
   const { toast = null, headers } = await getToast(request);
   // Important to pass in the headers so the toast is cleared properly
