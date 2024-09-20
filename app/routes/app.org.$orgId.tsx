@@ -15,6 +15,7 @@ import { serialize } from 'cookie';
 
 import i18n from '~/localization/i18n';
 import { parse } from 'cookie';
+import { toast } from 'react-toastify';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await getUserFromRequest(request);
@@ -71,9 +72,13 @@ export default function Index() {
         </NavLink>
         <select
           className="rounded border-slate-200"
-          onChange={(e) =>
-            submit({ language: e.target.value }, { method: 'POST' })
-          }
+          onChange={(e) => {
+            e.preventDefault();
+            submit({ language: e.target.value }, { method: 'POST' });
+            toast.success(
+              `Promijenili ste jezik na ${e.target.value.toUpperCase()}`,
+            );
+          }}
           value={lng}
         >
           {i18n.supportedLngs.map((option) => (
