@@ -7,7 +7,7 @@ import {
   useSubmit,
 } from '@remix-run/react';
 import { MdOutlineLogout } from 'react-icons/md';
-import { redirectWithWarning } from 'remix-toast';
+import { jsonWithSuccess, redirectWithWarning } from 'remix-toast';
 import { getUserFromRequest } from '~/auth';
 import { roleValues } from '~/components/models';
 import { useAppLoader } from '~/loaders';
@@ -26,7 +26,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const cookieHeader = request.headers.get('Cookie');
   const cookies = parse(cookieHeader || '');
   const lng = cookies.lng;
-  return { lng };
+  return json({ lng });
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -46,7 +46,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   console.log(formData);
 
-  return json({}, { headers });
+  return jsonWithSuccess({}, 'success', { headers });
 };
 
 export default function Index() {
@@ -75,9 +75,9 @@ export default function Index() {
           onChange={(e) => {
             e.preventDefault();
             submit({ language: e.target.value }, { method: 'POST' });
-            toast.success(
+            /*   toast.success(
               `Promijenili ste jezik na ${e.target.value.toUpperCase()}`,
-            );
+            ); */
           }}
           value={lng}
         >
