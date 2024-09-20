@@ -46,7 +46,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   console.log(formData);
 
-  return jsonWithSuccess({}, 'success', { headers });
+  return json({}, { headers });
 };
 
 export default function Index() {
@@ -70,14 +70,35 @@ export default function Index() {
           <div>Odjava</div>
           <MdOutlineLogout />
         </NavLink>
-        <select
+        <div className="flex items-center rounded-md border border-gray-300 shadow-sm">
+          {/*  <div className="rounded-lg bg-green-800 p-1">en</div>
+          <div className="p-1">/</div>
+          <div className="rounded-lg bg-red-800 p-1">hr</div> */}
+
+          {i18n.supportedLngs.map((lang) => (
+            <button
+              key={lang}
+              className={`px-3 py-1 ${
+                lang === lng
+                  ? 'rounded-l-lg bg-blue-500 text-white hover:bg-blue-800'
+                  : 'rounded-r-lg text-gray-700 hover:bg-gray-300'
+              }`}
+              onClick={() =>
+                submit({ language: lang }, { method: 'post', navigate: false })
+              }
+            >
+              {lang.toUpperCase()}
+            </button>
+          ))}
+        </div>
+        {/*  <select
           className="rounded border-slate-200"
           onChange={(e) => {
             e.preventDefault();
             submit({ language: e.target.value }, { method: 'POST' });
-            /*   toast.success(
+              toast.success(
               `Promijenili ste jezik na ${e.target.value.toUpperCase()}`,
-            ); */
+            );
           }}
           value={lng}
         >
@@ -86,7 +107,7 @@ export default function Index() {
               {option.toUpperCase()}
             </option>
           ))}
-        </select>
+        </select> */}
       </header>
       <div className="flex flex-1">
         <aside className="flex w-52 flex-col border-r">
