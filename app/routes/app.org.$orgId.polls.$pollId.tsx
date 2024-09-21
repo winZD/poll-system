@@ -27,6 +27,7 @@ import { ImNewTab } from 'react-icons/im';
 import { useAppLoader } from '~/loaders';
 
 import { FormDate } from '~/components/Form/FormDate';
+import { useTranslation } from 'react-i18next';
 
 const schema = zod.object({
   name: zod.string().min(1),
@@ -103,7 +104,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 const Index = () => {
   const { data } = useLoaderData<typeof loader>();
-
+  const { t } = useTranslation();
   const { User } = useAppLoader();
 
   const formMethods = useRemixForm<FormData>({
@@ -154,7 +155,7 @@ const Index = () => {
   }
 
   return (
-    <Modal title="Ažuriraj anketu">
+    <Modal title={t('updatePoll')}>
       <HookForm
         formMethods={formMethods}
         onSubmit={formMethods.handleSubmit}
@@ -165,28 +166,28 @@ const Index = () => {
             <div className="flex w-96 flex-col gap-2">
               <SelectField
                 disabled={!User.canUpdate}
-                label="Status"
+                label={t('pollStatus')}
                 name="status"
                 data={statusOptions}
               />
-              {/* TODO: add date/time from and date/time to of poll duration */}
+
               <InputField
                 readOnly={!User.canUpdate}
-                label="Naziv ankete"
+                label={t('pollName')}
                 name="name"
               />
 
               <FormDate
                 readOnly={!User.canUpdate}
+                label={t('pollExpirationTime')}
                 name="expiresAt"
-                label={'Vrijeme kraja ankete'}
               />
 
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">
                   <InputField
                     readOnly
-                    label="URL ankete"
+                    label={t('pollURL')}
                     name="defaultIframeSrc"
                   />
                 </div>
@@ -203,7 +204,11 @@ const Index = () => {
 
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">
-                  <InputField readOnly label="Iframe tag" name="iframeTag" />
+                  <InputField
+                    readOnly
+                    label={t('iframeTag')}
+                    name="iframeTag"
+                  />
                 </div>
                 <button
                   className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
@@ -218,7 +223,7 @@ const Index = () => {
                 <div className="flex-1">
                   <InputField
                     readOnly={!User.canUpdate}
-                    label="QR code url"
+                    label={t('QRCodeURL')}
                     name="qrCodeUrl"
                   />
                 </div>
@@ -246,7 +251,7 @@ const Index = () => {
                     })
                   }
                 >
-                  <MdAdd /> Dodaj opciju
+                  <MdAdd /> {t('addOption')}
                 </Button>
               )}
 
@@ -284,7 +289,7 @@ const Index = () => {
               // disabled={poll.status !== statusValues.DRAFT}
             >
               <MdSave />
-              Ažuriraj anketu
+              {t('updatePoll')}
             </button>
           )}
         </FormContent>

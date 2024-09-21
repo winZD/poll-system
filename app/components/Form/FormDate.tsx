@@ -37,7 +37,7 @@ export const FormDate: React.FC<InputProps> = ({
   return (
     <div className="relative flex flex-col justify-between">
       <label className="" htmlFor={name}>
-        {`Datum i vrijeme kraja ankete`}
+        {label}
       </label>
       <DatePicker
         readOnly={rest.readOnly}

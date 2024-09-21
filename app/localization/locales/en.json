@@ -6,6 +6,13 @@
   "users": "Users",
   "newPoll": "New poll",
   "pollName":"Poll name",
+  "updatePoll":"Update poll",
+  "pollStatus":"Status",
+   "pollExpirationTime":"Poll expiration date and time",
+   "pollURL":"Poll URL",
+   "iframeTag":"Iframe tag",
+   "QRCodeURL":"QR code URL",
+   "addOption":"Add option",
   "table": {
     "pollName": "Poll name",
     "createdBy": "Poll created by",
