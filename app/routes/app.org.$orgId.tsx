@@ -70,7 +70,7 @@ export default function Index() {
           <div>Odjava</div>
           <MdOutlineLogout />
         </NavLink>
-        <div className="flex items-center border border-gray-300 shadow-sm">
+        <div className="flex items-center rounded-md border border-gray-300 shadow-sm hover:bg-gray-300">
           {/*  <div className="rounded-lg bg-green-800 p-1">en</div>
           <div className="p-1">/</div>
           <div className="rounded-lg bg-red-800 p-1">hr</div> */}
@@ -80,7 +80,7 @@ export default function Index() {
               key={lang}
               className={`px-3 py-1 ${
                 lang === lng
-                  ? 'bg-blue-500 text-white hover:bg-blue-800'
+                  ? 'rounded-md bg-blue-500 text-white hover:bg-blue-800'
                   : 'text-gray-700 hover:bg-gray-300'
               }`}
               onClick={() =>
