@@ -117,13 +117,13 @@ export default function Index() {
             to={'polls'}
             className={({ isActive }) => `p-4 ${isActive ? 'bg-blue-100' : ''}`}
           >
-            Ankete
+            {t('polls')}
           </NavLink>
           <NavLink
             to={'users'}
             className={({ isActive }) => `p-4 ${isActive ? 'bg-blue-100' : ''}`}
           >
-            Korisnici
+            {t('users')}
           </NavLink>
         </aside>
         <div className="flex flex-1 flex-col">
