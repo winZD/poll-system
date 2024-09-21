@@ -4,6 +4,8 @@
   "logout": "Logout",
   "polls": "Polls",
   "users": "Users",
+  "newPoll": "New poll",
+  "pollName":"Poll name",
   "table": {
     "pollName": "Poll name",
     "createdBy": "Poll created by",
@@ -11,9 +13,9 @@
     "expirationTime": "Expiration time",
     "status": "Status"
   },
-  "status":{
-    "ACTIVE":"ACTIVE",
-    "INACTIVE":"INACTIVE",
-    "DRAFT":"DRAFT"
+  "status": {
+    "ACTIVE": "ACTIVE",
+    "INACTIVE": "INACTIVE",
+    "DRAFT": "DRAFT"
   }
 }

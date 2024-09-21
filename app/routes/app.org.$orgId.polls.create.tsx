@@ -12,6 +12,7 @@ import { statusSchema, statusValues } from '~/components/models';
 import { addDays } from 'date-fns';
 import { FormContent } from '~/components/Form/FormContent';
 import { getUserFromRequest } from '~/auth';
+import { useTranslation } from 'react-i18next';
 
 //TODO: create post method
 const schema = zod.object({
@@ -72,6 +73,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
+  const { t } = useTranslation();
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     // resolver,
@@ -79,21 +81,20 @@ export default function Index() {
   });
 
   return (
-    <Modal title="Nova anketa">
+    <Modal title={t('newPoll')}>
       <HookForm
         formMethods={formMethods}
         onSubmit={formMethods.handleSubmit}
         method="POST"
       >
         <FormContent>
-          {/* <SelectField label="Status" name="status" data={statusOptions} /> */}
-          <InputField label="Naziv ankete" name="name" />
+          <InputField label={t('pollName')} name="name" />
 
           <button
             type="submit"
             className="rounded bg-slate-200 p-2 hover:bg-slate-300"
           >
-            Dodaj anketu
+            {t('addPoll')}
           </button>
         </FormContent>
       </HookForm>
