@@ -11,9 +11,19 @@
     "expirationTime": "Expiration time",
     "status": "Status"
   },
-  "status":{
-    "ACTIVE":"ACTIVE",
-    "INACTIVE":"INACTIVE",
-    "DRAFT":"DRAFT"
-  }
+  "status": {
+    "ACTIVE": "ACTIVE",
+    "INACTIVE": "INACTIVE",
+    "DRAFT": "DRAFT"
+  },
+  "poll-statistics-sidebar": {
+    "poll": "Poll",
+    "city": "City",
+    "region": "Region",
+    "country": "Country",
+    "postal": "Postal",
+    "timezone": "Timezone"
+  },
+  "details": "Details",
+  "statistics": "Statistics"
 }
