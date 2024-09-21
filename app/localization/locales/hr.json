@@ -1,3 +1,20 @@
 {
-    "poll":"Anketa"
-}
+    "poll": "Anketa",
+    "addPoll": "Dodaj anketu",
+    "logout": "Odjava",
+    "polls": "Ankete",
+    "users": "Korisnici",
+    "table": {
+      "pollName": "Naziv ankete",
+      "createdBy": "Anketu kreirao",
+      "createdTime": "Vrijeme kreiranja",
+      "expirationTime": "Vrijeme završetka",
+      "status": "Status"
+    },
+    "status":{
+    "ACTIVE":"AKTIVAN",
+    "INACTIVE":"NEAKTIVAN",
+    "DRAFT":"U IZRADI"
+  }
+  }
+  

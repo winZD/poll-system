@@ -47,7 +47,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 export default function Index() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  console.log({ res: i18n.resolvedLanguage });
 
   const { User } = useAppLoader();
 
@@ -60,35 +62,35 @@ export default function Index() {
     () => [
       {
         field: 'name',
-        headerName: 'Naziv ankete',
+        headerName: t('table.pollName'),
         width: 200,
       },
 
       {
         field: 'User.name',
-        headerName: 'Anketu kreirao',
+        headerName: t('table.createdBy'),
         width: 200,
       },
       {
         field: 'createdAt',
-        headerName: 'Vrijeme kreiranja',
+        headerName: t('table.createdTime'),
         width: 200,
         valueFormatter: ({ value }) => toHrDateString(value),
       },
       {
         field: 'expiresAt',
-        headerName: 'Vrijeme završetka',
+        headerName: t('table.expirationTime'),
         width: 200,
         valueFormatter: ({ value }) => toHrDateString(value),
       },
       {
         field: 'status',
-        headerName: 'Status',
-        width: 120,
+        headerName: t('table.status'),
+        width: 130,
         cellRenderer: ({ value }) => (
           <div className="flex items-center gap-2">
             <div className={`size-4 rounded-full ${statusClass[value]} `} />
-            <div>{statusMapped[value]}</div>
+            <div>{t(`status.${value}`)}</div>
           </div>
         ),
       },
@@ -133,7 +135,7 @@ export default function Index() {
           ]
         : []),
     ],
-    [],
+    [t, i18n.resolvedLanguage],
   );
 
   return (
@@ -144,7 +146,7 @@ export default function Index() {
             to="create"
             className="m-2 self-start rounded bg-blue-500 px-4 py-1 text-white hover:bg-blue-800"
           >
-            + Dodaj anketu
+            + {t('addPoll')}
           </NavLink>
         )}
 

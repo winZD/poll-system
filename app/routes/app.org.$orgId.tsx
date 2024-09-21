@@ -16,6 +16,7 @@ import { serialize } from 'cookie';
 import i18n from '~/localization/i18n';
 import { parse } from 'cookie';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await getUserFromRequest(request);
@@ -53,6 +54,7 @@ export default function Index() {
   const { User } = useAppLoader();
   const { lng } = useLoaderData<typeof loader>();
   const submit = useSubmit();
+  const { t } = useTranslation();
 
   return (
     <div className="flex w-[1280px] flex-1 flex-col self-center">
@@ -67,7 +69,7 @@ export default function Index() {
             'flex items-center justify-center gap-2 rounded-full bg-red-100 px-4 py-2 font-bold text-red-500 hover:bg-red-200'
           }
         >
-          <div>Odjava</div>
+          <div>{t('logout')}</div>
           <MdOutlineLogout />
         </NavLink>
         <div className="flex items-center rounded-md border border-gray-300 shadow-sm hover:bg-gray-300">

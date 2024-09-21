@@ -1,3 +1,19 @@
 {
-    "poll":"Poll"
+  "poll": "Poll",
+  "addPoll": "Add poll",
+  "logout": "Logout",
+  "polls": "Polls",
+  "users": "Users",
+  "table": {
+    "pollName": "Poll name",
+    "createdBy": "Poll created by",
+    "createdTime": "Created time",
+    "expirationTime": "Expiration time",
+    "status": "Status"
+  },
+  "status":{
+    "ACTIVE":"ACTIVE",
+    "INACTIVE":"INACTIVE",
+    "DRAFT":"DRAFT"
+  }
 }
