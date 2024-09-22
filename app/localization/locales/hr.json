@@ -15,24 +15,30 @@
   "addOption": "Dodaj opciju",
   "option": "Opcija...",
   "addUser": "Dodaj korisnika",
-   "totalVotes": "Ukupno glasova",
-   "updateUser":"Ažuriraj korisnika",
-   "username":"Ime korisnika",
-   "role":"Uloga",
-   "changePassword":"Promijeni lozinku",
-   "userStatus":"Status",
-   "admin":"Admin",
-   "user":"Korisnik",
+  "totalVotes": "Ukupno glasova",
+  "updateUser": "Ažuriraj korisnika",
+  "username": "Ime korisnika",
+  "role": "Uloga",
+  "changePassword": "Promijeni lozinku",
+  "userStatus": "Status",
+  "admin": "Admin",
+  "user": "Korisnik",
+  "permissions": "Ovlasti",
+  "perms": {
+    "C": "Kreiranje",
+    "U": "Ažuriranje",
+    "D": "Brisanje"
+  },
   "table": {
     "pollName": "Naziv ankete",
     "createdBy": "Anketu kreirao",
     "createdTime": "Vrijeme kreiranja",
     "expirationTime": "Vrijeme završetka",
     "status": "Status",
-    "username":"Ime korisnika",
-    "email":"E-mail",
-    "role":"Uloga",
-    "permissions":"Ovlasti"
+    "username": "Ime korisnika",
+    "email": "E-mail",
+    "role": "Uloga",
+    "permissions": "Ovlasti"
   },
   "status": {
     "ACTIVE": "AKTIVAN",
@@ -46,7 +52,6 @@
     "country": "Zemlje",
     "postal": "Poštanski brojevi",
     "timezone": "Vremenske zone"
- 
   },
   "details": "Detalji",
   "statistics": "Statistike"

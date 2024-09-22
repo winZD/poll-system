@@ -1,21 +1,24 @@
+import { t } from 'i18next';
 import React, { InputHTMLAttributes } from 'react';
 import { useFormContext } from 'react-hook-form';
-
-const permissionsLabeled = {
-  C: 'Kreiranje',
-  // R: 'Pregled',
-  U: 'Ažuriranje',
-  D: 'Brisanje',
-};
+import { useTranslation } from 'react-i18next';
 
 const PermissionsForm = ({ className = '', ...rest }) => {
   const { setValue, watch } = useFormContext();
+
+  const { t } = useTranslation();
+
+  const permissionsLabeled = {
+    C: t('perms.C'), // Translates to 'Kreiranje' or equivalent
+    U: t('perms.U'), // Translates to 'Ažuriranje'
+    D: t('perms.D'), // Translates to 'Brisanje'
+  };
 
   const permissions = watch('permissions');
 
   return (
     <div className="flex flex-col">
-      <label className="">Ovlasti</label>
+      <label className="">{t('permissions')}</label>
       <div className="flex flex-col">
         {['C', 'U', 'D'].map((e, index) => (
           <label

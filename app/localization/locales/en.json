@@ -16,13 +16,19 @@
   "option": "Option...",
   "addUser": "Add user",
   "totalVotes": "Total votes",
-  "updateUser":"Update user",
-  "username":"Username",
-  "role":"Role",
-  "changePassword":"Change password",
-  "userStatus":"Status",
-  "admin":"Admin",
-  "user":"User",
+  "updateUser": "Update user",
+  "username": "Username",
+  "role": "Role",
+  "changePassword": "Change password",
+  "userStatus": "Status",
+  "admin": "Admin",
+  "user": "User",
+  "permissions": "Permissions",
+  "perms": {
+    "C": "Creating",
+    "U": "Updating",
+    "D": "Deleting"
+  },
   "table": {
     "pollName": "Poll name",
     "createdBy": "Poll created by",
@@ -46,7 +52,6 @@
     "country": "Country",
     "postal": "Postal",
     "timezone": "Total votes"
-    
   },
   "details": "Details",
   "statistics": "Statistics"
