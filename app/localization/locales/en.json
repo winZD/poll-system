@@ -21,10 +21,10 @@
     "createdTime": "Created time",
     "expirationTime": "Expiration time",
     "status": "Status",
-    "username":"Username",
-    "email":"E-mail",
-    "role":"Role",
-    "permissions":"Permissions"
+    "username": "Username",
+    "email": "E-mail",
+    "role": "Role",
+    "permissions": "Permissions"
   },
   "status": {
     "ACTIVE": "ACTIVE",
@@ -37,7 +37,8 @@
     "region": "Region",
     "country": "Country",
     "postal": "Postal",
-    "timezone": "Total votes"
+    "timezone": "Total votes",
+    "totalVotes": "Ukupno glasova"
   },
   "details": "Details",
   "statistics": "Statistics"
