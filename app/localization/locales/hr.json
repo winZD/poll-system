@@ -13,6 +13,8 @@
   "iframeTag": "Iframe tag",
   "QRCodeURL": "QR kod URL",
   "addOption": "Dodaj opciju",
+  "option":"Opcija...",
+
   "table": {
     "pollName": "Naziv ankete",
     "createdBy": "Anketu kreirao",

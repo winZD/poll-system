@@ -13,6 +13,7 @@
   "iframeTag": "Iframe tag",
   "QRCodeURL": "QR code URL",
   "addOption": "Add option",
+  "option":"Option...",
   "table": {
     "pollName": "Poll name",
     "createdBy": "Poll created by",

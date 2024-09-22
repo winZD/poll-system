@@ -125,7 +125,7 @@ const Index = () => {
   const { t } = useTranslation();
 
   return (
-    <Modal title="Ažuriraj anketu">
+    <Modal title={t('updatePoll')}>
       <div className="flex h-[660px] w-[1000px] flex-1 flex-col self-stretch overflow-hidden p-4">
         <div className="flex self-start font-semibold text-slate-900">
           <div
@@ -165,6 +165,7 @@ export default Index;
 
 const DetailsTab = (props) => {
   const data = useLoaderData<typeof loader>();
+  const { t } = useTranslation();
 
   const { User } = useAppLoader();
 
@@ -226,28 +227,28 @@ const DetailsTab = (props) => {
           <div className="flex w-96 flex-col gap-2">
             <SelectField
               disabled={!User.canUpdate}
-              label="Status"
+              label={t('pollStatus')}
               name="status"
               data={statusOptions}
             />
             {/* TODO: add date/time from and date/time to of poll duration */}
             <InputField
               readOnly={!User.canUpdate}
-              label="Naziv statistics"
+              label={t('pollName')}
               name="name"
             />
 
             <FormDate
               readOnly={!User.canUpdate}
+              label={t('pollExpirationTime')}
               name="expiresAt"
-              label={'Vrijeme kraja statistics'}
             />
 
             <div className="flex items-end justify-between gap-x-2">
               <div className="flex-1">
                 <InputField
                   readOnly
-                  label="URL statistics"
+                  label={t('pollURL')}
                   name="defaultIframeSrc"
                 />
               </div>
@@ -262,7 +263,7 @@ const DetailsTab = (props) => {
 
             <div className="flex items-end justify-between gap-x-2">
               <div className="flex-1">
-                <InputField readOnly label="Iframe tag" name="iframeTag" />
+                <InputField readOnly label={t('iframeTag')} name="iframeTag" />
               </div>
               <button
                 className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
@@ -277,7 +278,7 @@ const DetailsTab = (props) => {
               <div className="flex-1">
                 <InputField
                   readOnly={!User.canUpdate}
-                  label="QR code url"
+                  label={t('QRCodeUR')}
                   name="qrCodeUrl"
                 />
               </div>
@@ -305,7 +306,7 @@ const DetailsTab = (props) => {
                   })
                 }
               >
-                <MdAdd /> Dodaj opciju
+                <MdAdd /> {t('addOption')}
               </Button>
             )}
 
@@ -317,7 +318,7 @@ const DetailsTab = (props) => {
                       name={`PollQuestions.${index}.name`}
                       key={field.id}
                       label=""
-                      placeholder={'Opcija...'}
+                      placeholder={t('option')}
                       readOnly={!User.canUpdate}
                     />
                   </div>
@@ -343,7 +344,7 @@ const DetailsTab = (props) => {
             // disabled={poll.status !== statusValues.DRAFT}
           >
             <MdSave />
-            Ažuriraj anketu
+            {t('updatePoll')}
           </button>
         )}
       </FormContent>
