@@ -16,6 +16,10 @@
   "option": "Opcija...",
   "addUser": "Dodaj korisnika",
    "totalVotes": "Ukupno glasova",
+   "updateUser":"Ažuriraj korisnika",
+   "username":"Ime korisnika",
+   "role":"Uloga",
+   "changePassword":"Promijeni lozinku",
   "table": {
     "pollName": "Naziv ankete",
     "createdBy": "Anketu kreirao",

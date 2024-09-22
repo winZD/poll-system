@@ -26,6 +26,7 @@ import PermissionsForm from '~/components/Form/PermissionsForm';
 import { MdUpdate } from 'react-icons/md';
 import { getUserFromRequest } from '~/auth';
 import { useAppLoader } from '~/loaders';
+import { useTranslation } from 'react-i18next';
 
 const schema = zod.object({
   name: zod.string().min(1, 'Obvezan podatak'),
@@ -81,6 +82,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 export default function Index() {
   const user = useLoaderData<typeof loader>();
 
+  const { t } = useTranslation();
+
   const ctx = useAppLoader();
 
   const isAdmin = ctx.User.role === roleValues.ADMIN;
@@ -96,7 +99,7 @@ export default function Index() {
   });
 
   return (
-    <Modal title="Ažuriraj korisnika">
+    <Modal title={t('updateUser')}>
       <HookForm
         formMethods={formMethods}
         onSubmit={formMethods.handleSubmit}
@@ -104,12 +107,12 @@ export default function Index() {
       >
         <FormContent>
           <InputField label="Email" name="email" readOnly />
-          <InputField label="Ime korisnika" name="name" />
+          <InputField label={t('username')} name="name" />
           {isAdmin && (
             <>
-              <SelectField label="Uloga" name="role" data={roleOptions} />
+              <SelectField label={t('role')} name="role" data={roleOptions} />
               <SelectField
-                label="Status"
+                label={t('status')}
                 name="status"
                 data={statusOptions.filter(
                   (e) => e.value !== statusValues.DRAFT,
@@ -124,14 +127,14 @@ export default function Index() {
             className="flex items-center gap-2 self-end border p-2"
           >
             <MdUpdate />
-            Promjeni lozinku
+            {t('changePasword')}
           </NavLink>
 
           <button
             type="submit"
             className="rounded bg-slate-200 p-2 hover:bg-slate-300"
           >
-            Ažuriraj korisnika
+            {t('updateUser')}
           </button>
         </FormContent>
       </HookForm>

@@ -15,7 +15,11 @@
   "addOption": "Add option",
   "option": "Option...",
   "addUser": "Add user",
-  "totalVotes": "Ukupno glasova",
+  "totalVotes": "Total votes",
+  "updateUser":"Update user",
+  "username":"Username",
+  "role":"Role",
+  "changePassword":"Change password",
   "table": {
     "pollName": "Poll name",
     "createdBy": "Poll created by",
