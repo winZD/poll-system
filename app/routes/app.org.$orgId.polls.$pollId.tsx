@@ -398,9 +398,7 @@ const PollChart = (props) => {
         })}
       </div>
       <div className="flex justify-between gap-4 px-2">
-        <div className="flex-1 text-right">
-          {t('poll-statistics-sidebar.totalVotes')}
-        </div>
+        <div className="flex-1 text-right">{t('totalVotes')}</div>
         <div>{`${totalVotes}`}</div>
         <div className="w-20 text-right"></div>
       </div>

@@ -15,6 +15,7 @@
   "addOption": "Add option",
   "option": "Option...",
   "addUser": "Add user",
+  "totalVotes": "Ukupno glasova",
   "table": {
     "pollName": "Poll name",
     "createdBy": "Poll created by",
@@ -37,8 +38,8 @@
     "region": "Region",
     "country": "Country",
     "postal": "Postal",
-    "timezone": "Total votes",
-    "totalVotes": "Ukupno glasova"
+    "timezone": "Total votes"
+    
   },
   "details": "Details",
   "statistics": "Statistics"

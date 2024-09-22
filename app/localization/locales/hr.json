@@ -15,7 +15,7 @@
   "addOption": "Dodaj opciju",
   "option": "Opcija...",
   "addUser": "Dodaj korisnika",
-
+   "totalVotes": "Ukupno glasova",
   "table": {
     "pollName": "Naziv ankete",
     "createdBy": "Anketu kreirao",
@@ -38,8 +38,8 @@
     "region": "Regije",
     "country": "Zemlje",
     "postal": "Poštanski brojevi",
-    "timezone": "Vremenske zone",
-    "totalVotes": "Ukupno glasova"
+    "timezone": "Vremenske zone"
+ 
   },
   "details": "Detalji",
   "statistics": "Statistike"
