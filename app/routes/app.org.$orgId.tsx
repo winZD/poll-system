@@ -41,7 +41,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       path: '/',
       sameSite: 'lax',
       httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60, // 30 days
+      maxAge: 365 * 24 * 60 * 60, // 1 year in seconds (31,536,000 seconds)
     }),
   );
 
