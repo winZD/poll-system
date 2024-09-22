@@ -13,7 +13,7 @@ import {
   redirectWithError,
   redirectWithSuccess,
 } from 'remix-toast';
-import { statusOptions, statusSchema } from '~/components/models';
+import { getStatusOptions, statusSchema } from '~/components/models';
 import { FormContent } from '~/components/Form/FormContent';
 import { Button } from '~/components/Button';
 import { useFieldArray } from 'react-hook-form';
@@ -229,7 +229,7 @@ const DetailsTab = (props) => {
               disabled={!User.canUpdate}
               label={t('pollStatus')}
               name="status"
-              data={statusOptions}
+              data={getStatusOptions()}
             />
             {/* TODO: add date/time from and date/time to of poll duration */}
             <InputField
