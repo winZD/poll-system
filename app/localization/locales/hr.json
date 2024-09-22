@@ -24,6 +24,8 @@
   "admin": "Admin",
   "user": "Korisnik",
   "permissions": "Ovlasti",
+  "updatePassword":"Ažuriraj lozinku",
+  "newPassword":"Nova lozinka",
   "perms": {
     "C": "Kreiranje",
     "U": "Ažuriranje",

@@ -14,6 +14,7 @@ import {
 import { roleValues } from '~/components/models';
 import { FormContent } from '~/components/Form/FormContent';
 import { getUserFromRequest, hashPassword } from '~/auth';
+import { useTranslation } from 'react-i18next';
 
 const schema = zod.object({
   newPassword: zod.string().min(3, 'Obvezan podatak'),
@@ -61,6 +62,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
+  const { t } = useTranslation();
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     defaultValues: {
@@ -69,20 +71,20 @@ export default function Index() {
   });
 
   return (
-    <Modal title="Ažuriraj lozinku">
+    <Modal title={t('updatePassword')}>
       <HookForm
         formMethods={formMethods}
         onSubmit={formMethods.handleSubmit}
         method="PUT"
       >
         <FormContent>
-          <InputField label="Nova lozinka" name="newPassword" />
+          <InputField label={t('newPassword')} name="newPassword" />
 
           <button
             type="submit"
             className="rounded bg-slate-200 p-2 hover:bg-slate-300"
           >
-            Ažuriraj lozinku
+            {t('updatePassword')}
           </button>
         </FormContent>
       </HookForm>

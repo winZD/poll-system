@@ -24,6 +24,8 @@
   "admin": "Admin",
   "user": "User",
   "permissions": "Permissions",
+  "updatePassword":"Update password",
+  "newPassword":"New password",
   "perms": {
     "C": "Creating",
     "U": "Updating",
