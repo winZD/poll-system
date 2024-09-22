@@ -126,7 +126,7 @@ const Index = () => {
 
   return (
     <Modal title="Ažuriraj anketu">
-      <div className="flex h-[660px] w-[1000px] flex-1 flex-col self-stretch p-4">
+      <div className="flex h-[660px] w-[1000px] flex-1 flex-col self-stretch overflow-hidden p-4">
         <div className="flex self-start font-semibold text-slate-900">
           <div
             onClick={() => {
@@ -153,9 +153,8 @@ const Index = () => {
             {t('statistics')}
           </div>
         </div>
-        <div className="border-primary-200 flex flex-1 flex-col border">
-          {selectedTab === 'details' && <PollDetails />}
-          {selectedTab === 'statistics' && <PollStatistics />}
+        <div className="border-primary-200 flex flex-1 flex-col overflow-hidden border">
+          {selectedTab === 'details' ? <PollDetails /> : <PollStatistics />}
         </div>
       </div>
     </Modal>
@@ -163,40 +162,6 @@ const Index = () => {
 };
 
 export default Index;
-
-const PollStatistics = (props) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const selectedSidebar = searchParams.get('statistics-sidebar') || 'poll'; // details | statistics
-
-  const { t } = useTranslation();
-
-  return (
-    <div className="flex flex-1 gap-2 p-4">
-      <div className="flex flex-col font-semibold text-slate-900">
-        {sidebars.map((sidebar) => (
-          <div
-            key={sidebar}
-            onClick={() => {
-              const params = new URLSearchParams(searchParams);
-              params.set('statistics-sidebar', sidebar);
-              setSearchParams(params);
-            }}
-            className={`cursor-pointer rounded-t px-4 py-1 ${
-              selectedSidebar === sidebar ? 'bg-blue-200' : ''
-            }`}
-          >
-            {t(`poll-statistics-sidebar.${sidebar}`)}
-          </div>
-        ))}
-      </div>
-      <div className="flex flex-1 flex-col items-center px-4">
-        {selectedSidebar === 'poll' && <PollChart />}
-        <SidebarStatisticElement />
-      </div>
-    </div>
-  );
-};
 
 const PollDetails = (props) => {
   const data = useLoaderData<typeof loader>();
@@ -435,6 +400,40 @@ const PollChart = (props) => {
   );
 };
 
+const PollStatistics = (props) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const selectedSidebar = searchParams.get('statistics-sidebar') || 'poll'; // details | statistics
+
+  const { t } = useTranslation();
+
+  return (
+    <div className="flex flex-1 gap-2 overflow-auto p-4">
+      <div className="flex flex-col font-semibold text-slate-900">
+        {sidebars.map((sidebar) => (
+          <div
+            key={sidebar}
+            onClick={() => {
+              const params = new URLSearchParams(searchParams);
+              params.set('statistics-sidebar', sidebar);
+              setSearchParams(params);
+            }}
+            className={`cursor-pointer rounded-t px-4 py-1 ${
+              selectedSidebar === sidebar ? 'bg-blue-200' : ''
+            }`}
+          >
+            {t(`poll-statistics-sidebar.${sidebar}`)}
+          </div>
+        ))}
+      </div>
+      <div className="flex flex-1 flex-col overflow-hidden px-16">
+        {selectedSidebar === 'poll' && <PollChart />}
+        <SidebarStatisticElement />
+      </div>
+    </div>
+  );
+};
+
 const SidebarStatisticElement = () => {
   const { poll } = useLoaderData<typeof loader>();
 
@@ -461,7 +460,7 @@ const SidebarStatisticElement = () => {
   );
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-2 overflow-auto px-4">
       {sortedOccurrences.map((e: any) => {
         const valueVotes = e[1];
 
