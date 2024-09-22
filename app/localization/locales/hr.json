@@ -13,7 +13,7 @@
   "iframeTag": "Iframe tag",
   "QRCodeURL": "QR kod URL",
   "addOption": "Dodaj opciju",
-  "option":"Opcija...",
+  "option": "Opcija...",
 
   "table": {
     "pollName": "Naziv ankete",
@@ -33,7 +33,8 @@
     "region": "Regije",
     "country": "Zemlje",
     "postal": "Poštanski brojevi",
-    "timezone": "Vremenske zone"
+    "timezone": "Vremenske zone",
+    "totalVotes": "Ukupno glasova"
   },
   "details": "Detalji",
   "statistics": "Statistike"

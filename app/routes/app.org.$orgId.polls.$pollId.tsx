@@ -354,6 +354,7 @@ const DetailsTab = (props) => {
 
 const PollChart = (props) => {
   const data = useLoaderData<typeof loader>();
+  const { t } = useTranslation();
 
   const maxVotes = Math.max(...data.votes.map((e) => e._count));
 
@@ -397,7 +398,9 @@ const PollChart = (props) => {
         })}
       </div>
       <div className="flex justify-between gap-4 px-2">
-        <div className="flex-1 text-right">{`Ukupno glasova `}</div>
+        <div className="flex-1 text-right">
+          {t('poll-statistics-sidebar.totalVotes')}
+        </div>
         <div>{`${totalVotes}`}</div>
         <div className="w-20 text-right"></div>
       </div>

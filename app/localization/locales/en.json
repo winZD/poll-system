@@ -13,7 +13,7 @@
   "iframeTag": "Iframe tag",
   "QRCodeURL": "QR code URL",
   "addOption": "Add option",
-  "option":"Option...",
+  "option": "Option...",
   "table": {
     "pollName": "Poll name",
     "createdBy": "Poll created by",
@@ -32,7 +32,7 @@
     "region": "Region",
     "country": "Country",
     "postal": "Postal",
-    "timezone": "Timezone"
+    "timezone": "Total votes"
   },
   "details": "Details",
   "statistics": "Statistics"
