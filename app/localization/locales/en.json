@@ -20,6 +20,9 @@
   "username":"Username",
   "role":"Role",
   "changePassword":"Change password",
+  "userStatus":"Status",
+  "admin":"Admin",
+  "user":"User",
   "table": {
     "pollName": "Poll name",
     "createdBy": "Poll created by",

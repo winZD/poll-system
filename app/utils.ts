@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import numbro from 'numbro';
-import { statusValues } from './components/models';
+import { roleOptions, roleValues, statusValues } from './components/models';
 import i18next from 'i18next';
 
 export const getStatusOptions = (): Array<{
@@ -10,6 +10,13 @@ export const getStatusOptions = (): Array<{
   { value: statusValues.DRAFT, label: i18next.t('status.DRAFT') },
   { value: statusValues.ACTIVE, label: i18next.t('status.ACTIVE') },
   { value: statusValues.INACTIVE, label: i18next.t('status.INACTIVE') },
+];
+export const getRoleOptions = (): Array<{
+  value: keyof typeof roleValues;
+  label: string;
+}> => [
+  { value: roleValues.ADMIN, label: i18next.t('admin') },
+  { value: roleValues.USER, label: i18next.t('user') },
 ];
 
 export const formatter = {

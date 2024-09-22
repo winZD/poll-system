@@ -27,6 +27,7 @@ import { MdUpdate } from 'react-icons/md';
 import { getUserFromRequest } from '~/auth';
 import { useAppLoader } from '~/loaders';
 import { useTranslation } from 'react-i18next';
+import { getRoleOptions, getStatusOptions } from '~/utils';
 
 const schema = zod.object({
   name: zod.string().min(1, 'Obvezan podatak'),
@@ -110,11 +111,15 @@ export default function Index() {
           <InputField label={t('username')} name="name" />
           {isAdmin && (
             <>
-              <SelectField label={t('role')} name="role" data={roleOptions} />
               <SelectField
-                label={t('status')}
+                label={t('role')}
+                name="role"
+                data={getRoleOptions()}
+              />
+              <SelectField
+                label={t('userStatus')}
                 name="status"
-                data={statusOptions.filter(
+                data={getStatusOptions().filter(
                   (e) => e.value !== statusValues.DRAFT,
                 )}
               />
@@ -127,7 +132,7 @@ export default function Index() {
             className="flex items-center gap-2 self-end border p-2"
           >
             <MdUpdate />
-            {t('changePasword')}
+            {t('changePassword')}
           </NavLink>
 
           <button

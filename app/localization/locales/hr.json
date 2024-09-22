@@ -20,6 +20,9 @@
    "username":"Ime korisnika",
    "role":"Uloga",
    "changePassword":"Promijeni lozinku",
+   "userStatus":"Status",
+   "admin":"Admin",
+   "user":"Korisnik",
   "table": {
     "pollName": "Naziv ankete",
     "createdBy": "Anketu kreirao",
