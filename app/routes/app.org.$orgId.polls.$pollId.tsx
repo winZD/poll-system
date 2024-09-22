@@ -13,13 +13,13 @@ import {
   redirectWithError,
   redirectWithSuccess,
 } from 'remix-toast';
-import { getStatusOptions, statusSchema } from '~/components/models';
+import { statusSchema } from '~/components/models';
 import { FormContent } from '~/components/Form/FormContent';
 import { Button } from '~/components/Button';
 import { useFieldArray } from 'react-hook-form';
 import FormInput from '~/components/Form/FormInput';
 import { ulid } from 'ulid';
-import { assert } from '~/utils';
+import { assert, getStatusOptions } from '~/utils';
 import { HiOutlineTrash } from 'react-icons/hi2';
 import { MdAdd, MdContentCopy, MdSave } from 'react-icons/md';
 import { toast } from 'react-toastify';

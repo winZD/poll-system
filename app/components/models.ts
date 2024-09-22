@@ -23,22 +23,13 @@ export const rolesMapped: RolesMappedType = {
 
 export const statusSchema = zod.enum(['DRAFT', 'ACTIVE', 'INACTIVE']);
 export const statusValues = statusSchema.Values;
-/* export const statusOptions: Array<{
+export const statusOptions: Array<{
   value: keyof typeof statusValues;
   label: string;
 }> = [
   { value: statusValues.DRAFT, label: i18next.t('status.DRAFT') },
   { value: statusValues.ACTIVE, label: 'Aktivan' },
   { value: statusValues.INACTIVE, label: 'Neaktivan' },
-];
- */
-export const getStatusOptions = (): Array<{
-  value: keyof typeof statusValues;
-  label: string;
-}> => [
-  { value: statusValues.DRAFT, label: i18next.t('status.DRAFT') },
-  { value: statusValues.ACTIVE, label: i18next.t('status.ACTIVE') },
-  { value: statusValues.INACTIVE, label: i18next.t('status.INACTIVE') },
 ];
 
 type StatusMappedType = {

@@ -1,5 +1,16 @@
 import { format } from 'date-fns';
 import numbro from 'numbro';
+import { statusValues } from './components/models';
+import i18next from 'i18next';
+
+export const getStatusOptions = (): Array<{
+  value: keyof typeof statusValues;
+  label: string;
+}> => [
+  { value: statusValues.DRAFT, label: i18next.t('status.DRAFT') },
+  { value: statusValues.ACTIVE, label: i18next.t('status.ACTIVE') },
+  { value: statusValues.INACTIVE, label: i18next.t('status.INACTIVE') },
+];
 
 export const formatter = {
   number: {
