@@ -8,12 +8,6 @@ const PermissionsForm = ({ className = '', ...rest }) => {
 
   const { t } = useTranslation();
 
-  const permissionsLabeled = {
-    C: t('perms.C'), // Translates to 'Kreiranje' or equivalent
-    U: t('perms.U'), // Translates to 'Ažuriranje'
-    D: t('perms.D'), // Translates to 'Brisanje'
-  };
-
   const permissions = watch('permissions');
 
   return (
@@ -40,7 +34,7 @@ const PermissionsForm = ({ className = '', ...rest }) => {
                 )
               }
             />
-            {`${permissionsLabeled[e]} (${e})`}
+            {`${t(`perms.${e}`)} (${e})`}
           </label>
         ))}
       </div>
