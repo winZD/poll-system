@@ -154,7 +154,7 @@ const Index = () => {
           </div>
         </div>
         <div className="border-primary-200 flex flex-1 flex-col overflow-hidden border">
-          {selectedTab === 'details' ? <PollDetails /> : <PollStatistics />}
+          {selectedTab === 'details' ? <DetailsTab /> : <StatisticsTab />}
         </div>
       </div>
     </Modal>
@@ -163,7 +163,7 @@ const Index = () => {
 
 export default Index;
 
-const PollDetails = (props) => {
+const DetailsTab = (props) => {
   const data = useLoaderData<typeof loader>();
 
   const { User } = useAppLoader();
@@ -354,6 +354,8 @@ const PollDetails = (props) => {
 const PollChart = (props) => {
   const data = useLoaderData<typeof loader>();
 
+  const maxVotes = Math.max(...data.votes.map((e) => e._count));
+
   const totalVotes = data.poll.Votes.length;
 
   return (
@@ -363,8 +365,7 @@ const PollChart = (props) => {
       <div className="flex flex-col gap-2">
         {data.poll.PollQuestions.map((e) => {
           const questionVotes =
-            data.poll.Votes.filter((v) => v.pollQuestionId === e.id)?.length ||
-            0;
+            data.votes.find((v) => v.pollQuestionId === e.id)?._count || 0;
 
           const percent = (questionVotes / totalVotes) * 100;
 
@@ -372,13 +373,16 @@ const PollChart = (props) => {
             <div className="flex items-center justify-between gap-4">
               <div className="relative flex flex-1 justify-between gap-16 overflow-hidden rounded-lg bg-slate-100 px-2 py-1">
                 <div
-                  className="absolute bottom-0 left-0 top-0 bg-green-500 opacity-20"
+                  className={`absolute bottom-0 left-0 top-0 ${maxVotes === questionVotes ? 'bg-green-400' : 'bg-green-200'}`}
                   style={{ width: `${percent}%` }}
                 />
-                <div key={e.id} className={``}>
+                <div
+                  key={e.id}
+                  className={`z-10 ${maxVotes === questionVotes ? 'font-semibold' : ''}`}
+                >
                   {e.name}
                 </div>
-                <div>{questionVotes}</div>
+                <div className="z-10">{questionVotes}</div>
               </div>
               <div className="w-20 text-right">
                 {percent.toLocaleString('hr-HR', {
@@ -400,7 +404,7 @@ const PollChart = (props) => {
   );
 };
 
-const PollStatistics = (props) => {
+const StatisticsTab = (props) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const selectedSidebar = searchParams.get('statistics-sidebar') || 'poll'; // details | statistics
