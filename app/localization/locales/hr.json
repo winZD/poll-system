@@ -14,13 +14,18 @@
   "QRCodeURL": "QR kod URL",
   "addOption": "Dodaj opciju",
   "option": "Opcija...",
+  "addUser": "Dodaj korisnika",
 
   "table": {
     "pollName": "Naziv ankete",
     "createdBy": "Anketu kreirao",
     "createdTime": "Vrijeme kreiranja",
     "expirationTime": "Vrijeme završetka",
-    "status": "Status"
+    "status": "Status",
+    "username":"Ime korisnika",
+    "email":"E-mail",
+    "role":"Uloga",
+    "permissions":"Ovlasti"
   },
   "status": {
     "ACTIVE": "AKTIVAN",

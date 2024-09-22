@@ -6,6 +6,7 @@ import { AgGrid } from '~/components/AgGrid';
 import { db } from '~/db';
 import { rolesMapped, statusClass, statusMapped } from '~/components/models';
 import { useAppLoader } from '~/loaders';
+import { useTranslation } from 'react-i18next';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId } = params;
@@ -25,6 +26,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 export default function Index() {
   const users = useLoaderData<typeof loader>();
 
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
 
   const { User } = useAppLoader();
@@ -33,41 +36,41 @@ export default function Index() {
     () => [
       {
         field: 'name',
-        headerName: 'Ime korisnika',
+        headerName: t('table.username'),
         width: 200,
       },
       {
         field: 'email',
-        headerName: 'Email',
+        headerName: t('table.email'),
         width: 300,
       },
       {
         field: 'role',
-        headerName: 'Uloga',
+        headerName: t('table.role'),
         width: 120,
         valueFormatter: ({ value }) => rolesMapped[value],
         cellRenderer: ({ value }) => <div className="uppercase">{value}</div>,
       },
       {
         field: 'permissions',
-        headerName: 'Ovlasti',
+        headerName: t('table.permissions'),
         width: 120,
       },
       {
         field: 'status',
-        headerName: 'Status',
+        headerName: t('table.status'),
 
         flex: 1,
         cellRenderer: ({ value }) => (
           <div className="flex items-center gap-2">
             <div className={`size-4 rounded-full ${statusClass[value]} `} />
-            <div>{statusMapped[value]}</div>
+            <div>{t(`status.${value}`)}</div>
           </div>
         ),
       },
     ],
 
-    [],
+    [t],
   );
 
   return (
@@ -79,7 +82,7 @@ export default function Index() {
               to="create"
               className="m-2 self-start rounded bg-blue-500 px-4 py-1 text-white"
             >
-              + Dodaj korisnika
+              + {t('addUser')}
             </NavLink>
           </div>
         )}

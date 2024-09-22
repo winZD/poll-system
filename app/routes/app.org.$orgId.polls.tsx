@@ -135,7 +135,7 @@ export default function Index() {
           ]
         : []),
     ],
-    [t, i18n.resolvedLanguage],
+    [t],
   );
 
   return (

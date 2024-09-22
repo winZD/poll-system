@@ -14,12 +14,17 @@
   "QRCodeURL": "QR code URL",
   "addOption": "Add option",
   "option": "Option...",
+  "addUser": "Add user",
   "table": {
     "pollName": "Poll name",
     "createdBy": "Poll created by",
     "createdTime": "Created time",
     "expirationTime": "Expiration time",
-    "status": "Status"
+    "status": "Status",
+    "username":"Username",
+    "email":"E-mail",
+    "role":"Role",
+    "permissions":"Permissions"
   },
   "status": {
     "ACTIVE": "ACTIVE",
