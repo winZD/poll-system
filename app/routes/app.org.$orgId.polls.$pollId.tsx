@@ -179,13 +179,13 @@ const DetailsTab = (props) => {
       navigator.clipboard
         .writeText(iframeTag)
         .then(() => {
-          toast.success('Spremljeno u međuspremnik!', {
+          toast.success(t('clipboard'), {
             position: 'bottom-center',
           });
         })
         .catch((err) => {
           console.error('Failed to copy text: ', err);
-          toast.error('Neuspješno kopiranje u međuspremnik.', {
+          toast.error(t('errorClipboard'), {
             position: 'bottom-center',
           });
         });
