@@ -27,7 +27,7 @@
   "updatePassword":"Ažuriraj lozinku",
   "newPassword":"Nova lozinka",
   "clipboard":"Spremljeno u međuspremnik!",
-  "errorClipboard":"Nuspjelo spremanje u clipboard!",
+  "errorClipboard":"Neuspjelo spremanje u clipboard!",
   "perms": {
     "C": "Kreiranje",
     "U": "Ažuriranje",
