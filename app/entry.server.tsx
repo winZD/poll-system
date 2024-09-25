@@ -114,7 +114,7 @@ async function handleBrowserRequest(
   let instance = createInstance();
   const cookieHeader = request.headers.get('Cookie') || '';
   const cookies = await parse(cookieHeader);
-  console.log(cookies['lng']);
+
   let lng = cookies['lng'] ? cookies['lng'] : await i18next.getLocale(request); //locale from request
 
   let ns = i18next.getRouteNamespaces(remixContext);

@@ -46,8 +46,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     }),
   );
 
-  console.log(formData);
-
   return json({}, { headers });
 };
 
@@ -60,24 +58,7 @@ export default function Index() {
   return (
     <div className="flex w-[1280px] flex-1 flex-col self-center">
       <header className="flex items-center justify-end gap-8 border-b p-2">
-        <NavLink
-          to={`users/${User.id}`}
-          className="rounded-full bg-slate-100 px-4 py-2 text-center hover:bg-slate-200"
-        >{`${User.name} - ${User.role}@${User.Org?.name}`}</NavLink>
-        <NavLink
-          to={'/logout'}
-          className={
-            'flex items-center justify-center gap-2 rounded-full bg-red-100 px-4 py-2 font-bold text-red-500 hover:bg-red-200'
-          }
-        >
-          <div>{t('logout')}</div>
-          <MdOutlineLogout />
-        </NavLink>
         <div className="flex items-center rounded-md border border-gray-300 shadow-sm hover:bg-gray-300">
-          {/*  <div className="rounded-lg bg-green-800 p-1">en</div>
-          <div className="p-1">/</div>
-          <div className="rounded-lg bg-red-800 p-1">hr</div> */}
-
           {i18n.supportedLngs.map((lang) => (
             <button
               key={lang}
@@ -94,23 +75,19 @@ export default function Index() {
             </button>
           ))}
         </div>
-        {/*  <select
-          className="rounded border-slate-200"
-          onChange={(e) => {
-            e.preventDefault();
-            submit({ language: e.target.value }, { method: 'POST' });
-              toast.success(
-              `Promijenili ste jezik na ${e.target.value.toUpperCase()}`,
-            );
-          }}
-          value={lng}
+        <NavLink
+          to={`users/${User.id}`}
+          className="rounded-full bg-slate-100 px-4 py-2 text-center hover:bg-slate-200"
+        >{`${User.name} - ${User.role}@${User.Org?.name}`}</NavLink>
+        <NavLink
+          to={'/logout'}
+          className={
+            'flex items-center justify-center gap-2 rounded-full bg-red-100 px-4 py-2 font-bold text-red-500 hover:bg-red-200'
+          }
         >
-          {i18n.supportedLngs.map((option) => (
-            <option key={option} value={option}>
-              {option.toUpperCase()}
-            </option>
-          ))}
-        </select> */}
+          <div>{t('logout')}</div>
+          <MdOutlineLogout />
+        </NavLink>
       </header>
       <div className="flex flex-1">
         <aside className="flex w-52 flex-col border-r">
