@@ -17,6 +17,7 @@ import i18n from '~/localization/i18n';
 import { parse } from 'cookie';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import i18next from '~/localization/i18n.server';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await getUserFromRequest(request);
@@ -25,8 +26,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
   // Get the 'lng' cookie from the request
   const cookieHeader = request.headers.get('Cookie');
-  const cookies = parse(cookieHeader || '');
-  const lng = cookies.lng;
+  const cookies = await parse(cookieHeader || '');
+  const lng = cookies.lng || (await i18next.getLocale(request));
   return json({ lng });
 }
 

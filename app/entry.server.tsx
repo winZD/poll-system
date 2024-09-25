@@ -22,6 +22,7 @@ import Backend from 'i18next-fs-backend';
 import i18n from './localization/i18n'; // your i18n configuration file
 import { resolve } from 'node:path';
 import { resources } from './localization/resources';
+import { parse } from 'cookie';
 
 const ABORT_DELAY = 5_000;
 
@@ -111,7 +112,11 @@ async function handleBrowserRequest(
     : 'onShellReady';
 
   let instance = createInstance();
-  let lng = await i18next.getLocale(request); //locale from request
+  const cookieHeader = request.headers.get('Cookie') || '';
+  const cookies = await parse(cookieHeader);
+  console.log(cookies['lng']);
+  let lng = cookies['lng'] ? cookies['lng'] : await i18next.getLocale(request); //locale from request
+
   let ns = i18next.getRouteNamespaces(remixContext);
 
   await instance
@@ -119,7 +124,7 @@ async function handleBrowserRequest(
     .use(Backend) // Setup our backend
     .init({
       ...i18n, // spread the configuration
-      lng: 'hr', // The locale we detected above
+      lng, // The locale we detected above
       fallbackLng: 'en',
       ns, // The namespaces the routes about to render wants to use
       backend: { loadPath: resolve('./public/locales/{{lng}}/{{ns}}.json') },
