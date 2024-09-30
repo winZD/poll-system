@@ -28,6 +28,7 @@
   "newPassword": "Nova lozinka",
   "clipboard": "Spremljeno u međuspremnik!",
   "errorClipboard": "Neuspjelo spremanje u clipboard!",
+  "orgPollByIdApi":"Api za anketu po ID-u",
   "perms": {
     "C": "Kreiranje",
     "U": "Ažuriranje",
