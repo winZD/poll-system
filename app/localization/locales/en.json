@@ -24,14 +24,15 @@
   "admin": "Admin",
   "user": "User",
   "permissions": "Permissions",
-  "updatePassword":"Update password",
-  "newPassword":"New password",
-  "clipboard":"Saved to clipboard!",
-  "errorClipboard":"Failed saving to clipboard!",
+  "updatePassword": "Update password",
+  "newPassword": "New password",
+  "clipboard": "Saved to clipboard!",
+  "errorClipboard": "Failed saving to clipboard!",
   "perms": {
     "C": "Creating",
     "U": "Updating",
-    "D": "Deleting"
+    "D": "Deleting",
+    "R": "API calls"
   },
   "table": {
     "pollName": "Poll name",

@@ -7,6 +7,7 @@ import crypto from 'crypto'; // If using ES Modules
 import { jsonWithError, jsonWithSuccess } from 'remix-toast';
 import { ulid } from 'ulid';
 import { getClientIPAddress } from '~/functions/get-client-ip-address';
+import { getPollData } from '~/functions/getPollData';
 
 const schema = zod.object({
   name: zod.string().min(1),
@@ -17,13 +18,7 @@ const schema = zod.object({
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { id } = params;
 
-  const poll = await db.pollTable.findUniqueOrThrow({
-    where: { id },
-    include: {
-      PollQuestions: true,
-      Org: true,
-    },
-  });
+  const { poll, votes } = await getPollData({ id: id as string });
 
   const userAgent = request.headers.get('user-agent'); // Get user agent
   const forwardedFor = request.headers.get('x-forwarded-for'); // Get forwarded IP
@@ -39,13 +34,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     .digest('hex'); // Output as a hex string
 
   const existingVote = await db.votesTable.findFirst({
-    where: { orgId: poll.orgId, pollId: poll.id, fingerPrint },
-  });
-
-  const votes = await db.votesTable.groupBy({
-    by: ['pollQuestionId'],
-    where: { orgId: poll.orgId, pollId: poll.id },
-    _count: true,
+    where: { pollId: id, fingerPrint },
   });
 
   return json({ poll, existingVote: existingVote?.pollQuestionId, votes });
@@ -127,7 +116,7 @@ export default function Index() {
   return (
     <>
       <div className="m-auto flex flex-col rounded border shadow-lg">
-        <div className="border-b p-4 text-center">{poll.Org.name}</div>
+        {/* <div className="border-b p-4 text-center">{poll.Org.name}</div> */}
         <div className="flex flex-col gap-6 px-8 py-4">
           <div className="text-center font-semibold">{poll.name}</div>
 
@@ -139,7 +128,7 @@ export default function Index() {
                   submit(
                     {
                       pollQuestionId: 'null',
-                      orgId: poll.orgId,
+                      // orgId: poll.orgId,
                       pollId: poll.id,
                     },
                     { method: 'DELETE' },
@@ -162,8 +151,8 @@ export default function Index() {
                     submit(
                       {
                         pollQuestionId: e.id,
-                        orgId: e.orgId,
-                        pollId: e.pollId,
+                        // orgId: e.orgId,
+                        pollId: poll.id,
                       },
                       { method: 'POST' },
                     );

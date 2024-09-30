@@ -14,7 +14,7 @@ const PermissionsForm = ({ className = '', ...rest }) => {
     <div className="flex flex-col">
       <label className="">{t('permissions')}</label>
       <div className="flex flex-col">
-        {['C', 'U', 'D'].map((e, index) => (
+        {['C', 'U', 'D', 'R'].map((e, index) => (
           <label
             key={index}
             className={`flex items-center gap-2 ${rest.disabled ? 'text-zinc-400' : ''}`}

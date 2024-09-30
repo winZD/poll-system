@@ -24,14 +24,15 @@
   "admin": "Admin",
   "user": "Korisnik",
   "permissions": "Ovlasti",
-  "updatePassword":"Ažuriraj lozinku",
-  "newPassword":"Nova lozinka",
-  "clipboard":"Spremljeno u međuspremnik!",
-  "errorClipboard":"Neuspjelo spremanje u clipboard!",
+  "updatePassword": "Ažuriraj lozinku",
+  "newPassword": "Nova lozinka",
+  "clipboard": "Spremljeno u međuspremnik!",
+  "errorClipboard": "Neuspjelo spremanje u clipboard!",
   "perms": {
     "C": "Kreiranje",
     "U": "Ažuriranje",
-    "D": "Brisanje"
+    "D": "Brisanje",
+    "R": "API pozivi"
   },
   "table": {
     "pollName": "Naziv ankete",

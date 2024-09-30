@@ -1,7 +1,11 @@
+import { useLoaderData } from '@remix-run/react';
 import { useTranslation } from 'react-i18next';
+import { PollLoaderType } from '~/routes/poll.$id_.tv';
 
-export const PollChartWithVotes = ({ poll, votes }) => {
+export const PollChartWithVotes = ({}: {}) => {
   const { t } = useTranslation();
+
+  const { poll, votes } = useLoaderData<PollLoaderType>();
 
   const maxVotes = Math.max(...votes.map((e) => e._count)) || 0;
 

@@ -2,29 +2,20 @@ import { LoaderFunctionArgs } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { QRCodeSVG } from 'qrcode.react';
 import { PollChartWithVotes } from '~/components/PollChartWithVotes';
-import { db } from '~/db';
+import { getPollData } from '~/functions/getPollData';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  console.log(params);
   const { id } = params;
 
-  const poll = await db.pollTable.findUniqueOrThrow({
-    where: { id },
-    include: {
-      Org: true,
-      PollQuestions: true,
-    },
-  });
-  const votes = await db.votesTable.groupBy({
-    by: ['pollQuestionId'],
-    where: { pollId: id },
-    _count: true,
-  });
+  const { poll, votes } = await getPollData({ id: id as string });
+
   return { poll, votes };
 }
 
+export type PollLoaderType = typeof loader;
+
 const Index = () => {
-  const { poll, votes } = useLoaderData<typeof loader>();
+  const { poll } = useLoaderData<typeof loader>();
 
   return (
     <div className="flex aspect-video w-[1920px] flex-col justify-end border-2 p-8">
@@ -33,7 +24,7 @@ const Index = () => {
       </div> */}
 
       <div className="flex items-center justify-end gap-16 text-lg">
-        <PollChartWithVotes poll={poll} votes={votes} />
+        <PollChartWithVotes />
         <QRCodeSVG size={128} value={poll.iframeSrc} />
       </div>
     </div>
