@@ -87,6 +87,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
                 org: data.org,
                 postal: data.postal,
                 timezone: data.timezone,
+                userAgent: userAgent,
               },
             });
           } catch (e) {
