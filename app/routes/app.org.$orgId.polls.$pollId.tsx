@@ -47,6 +47,7 @@ const schema = zod.object({
     }),
   ),
   expiresAt: zod.coerce.date().nullish(),
+  orgPollByIdApi: zod.string(),
 });
 
 type FormData = zod.infer<typeof schema>;
@@ -66,11 +67,14 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId, pollId } = params;
   const url = new URL(request.url);
   const baseUrl = `${url.protocol}//${url.host}`;
+  console.log(params);
 
   const { poll, votes } = await getPollData({
     pollId: pollId as string,
     orgId: orgId as string,
   });
+  //Testing api through input
+  // const orgPollByIdApi = `${baseUrl}/api/${orgId}/${pollId}/${poll?.User.id}`;
 
   if (!poll) return redirectWithError('..', 'Nepostojeća anketa');
 
@@ -169,6 +173,8 @@ const DetailsTab = (props) => {
   const data = useLoaderData<typeof loader>();
   const { t } = useTranslation();
 
+  const { orgId, pollId } = useParams();
+
   const { User } = useAppLoader();
 
   // console.log('errors', formMethods.formState.errors);
@@ -208,6 +214,7 @@ const DetailsTab = (props) => {
       iframeTag: `<iframe src="${data.baseUrl}/poll/${data?.poll.id}" style="height:100%;width:100%;" frameborder="0" scrolling="no"/>`,
       qrCodeUrl: `${data.baseUrl}/poll/${data?.poll.id}/tv`,
       expiresAt: data.poll.expiresAt ? new Date(data.poll.expiresAt) : null,
+      orgPollByIdApi: `${data.baseUrl}/api/${orgId}/${data.poll.id}/${User.id}`,
     },
   });
 
@@ -217,8 +224,6 @@ const DetailsTab = (props) => {
     control: formMethods.control,
     name: 'PollQuestions',
   });
-
-  const { orgId, pollId } = useParams();
 
   return (
     <HookForm
@@ -290,6 +295,22 @@ const DetailsTab = (props) => {
                 className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
                 type="button"
                 onClick={() => window.open(values?.qrCodeUrl, '_blank')}
+              >
+                <ImNewTab />
+              </button>
+            </div>
+            <div className="flex items-end justify-between gap-x-2">
+              <div className="flex-1">
+                <InputField
+                  readOnly
+                  label={t('orgPollByIdApi')}
+                  name="orgPollByIdApi"
+                />
+              </div>
+              <button
+                className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
+                type="button"
+                onClick={() => window.open(values?.orgPollByIdApi, '_blank')}
               >
                 <ImNewTab />
               </button>
