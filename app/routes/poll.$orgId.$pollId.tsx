@@ -9,16 +9,13 @@ import { ulid } from 'ulid';
 import { getClientIPAddress } from '~/functions/get-client-ip-address';
 import { getPollData } from '~/functions/getPollData';
 
-const schema = zod.object({
-  name: zod.string().min(1),
-  email: zod.string().email('Neispravan email').min(1),
-  password: zod.string().min(1),
-});
-
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { id } = params;
+  const { orgId, pollId } = params;
 
-  const { poll, votes } = await getPollData({ id: id as string });
+  const { poll, votes } = await getPollData({
+    pollId: pollId as string,
+    orgId: orgId as string,
+  });
 
   const userAgent = request.headers.get('user-agent'); // Get user agent
   const forwardedFor = request.headers.get('x-forwarded-for'); // Get forwarded IP
@@ -34,7 +31,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     .digest('hex'); // Output as a hex string
 
   const existingVote = await db.votesTable.findFirst({
-    where: { pollId: id, fingerPrint },
+    where: { pollId, fingerPrint },
   });
 
   return json({ poll, existingVote: existingVote?.pollQuestionId, votes });

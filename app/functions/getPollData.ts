@@ -1,9 +1,15 @@
 import { db } from '~/db';
 
-export async function getPollData({ id }: { id: string }) {
+export async function getPollData({
+  orgId,
+  pollId,
+}: {
+  orgId: string;
+  pollId: string;
+}) {
   // Query to fetch poll details using Prisma queryRaw
   const poll = await db.pollTable.findUniqueOrThrow({
-    where: { id },
+    where: { id: pollId, orgId },
     select: {
       id: true,
       createdAt: true,
@@ -18,7 +24,7 @@ export async function getPollData({ id }: { id: string }) {
   // Group votes by poll question and count
   const votes = await db.votesTable.groupBy({
     by: ['pollQuestionId'],
-    where: { pollId: id },
+    where: { pollId },
     _count: true,
   });
   return { poll, votes };

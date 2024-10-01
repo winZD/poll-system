@@ -7,7 +7,7 @@ import { HookForm } from '~/components/Form/Form';
 import InputField from '~/components/Form/FormInput';
 import SelectField from '~/components/Form/SelectForm';
 import { db } from '~/db';
-import { useLoaderData, useSearchParams } from '@remix-run/react';
+import { useLoaderData, useParams, useSearchParams } from '@remix-run/react';
 import {
   jsonWithError,
   redirectWithError,
@@ -29,6 +29,7 @@ import { useAppLoader } from '~/loaders';
 import { FormDate } from '~/components/Form/FormDate';
 import { useTranslation } from 'react-i18next';
 import { PollChartWithVotes } from '~/components/PollChartWithVotes';
+import { getPollData } from '~/functions/getPollData';
 
 const schema = zod.object({
   name: zod.string().min(1),
@@ -66,18 +67,18 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const baseUrl = `${url.protocol}//${url.host}`;
 
-  const poll = await db.pollTable.findUnique({
-    where: { orgId, id: pollId },
-    include: { PollQuestions: true, Votes: true },
-  });
-
-  const votes = await db.votesTable.groupBy({
-    by: ['pollQuestionId'],
-    where: { pollId },
-    _count: true,
+  const { poll, votes } = await getPollData({
+    pollId: pollId as string,
+    orgId: orgId as string,
   });
 
   if (!poll) return redirectWithError('..', 'Nepostojeća anketa');
+
+  // const votes = await db.votesTable.groupBy({
+  //   by: ['pollQuestionId'],
+  //   where: { pollId },
+  //   _count: true,
+  // });
 
   return json({ poll, baseUrl, votes });
 }
@@ -217,6 +218,8 @@ const DetailsTab = (props) => {
     name: 'PollQuestions',
   });
 
+  const { orgId, pollId } = useParams();
+
   return (
     <HookForm
       formMethods={formMethods}
@@ -302,7 +305,7 @@ const DetailsTab = (props) => {
                   append({
                     id: ulid(),
                     name: '',
-                    orgId: data?.poll.orgId,
+                    orgId: orgId as string,
                     pollId: data?.poll.id,
                   })
                 }
@@ -383,7 +386,7 @@ const StatisticsTab = (props) => {
       </div>
       <div className="flex flex-1 flex-col overflow-hidden px-16">
         {selectedSidebar === 'poll' ? (
-          <PollChartWithVotes poll={poll} votes={votes} />
+          <PollChartWithVotes />
         ) : (
           <SidebarStatisticElement />
         )}
@@ -393,7 +396,7 @@ const StatisticsTab = (props) => {
 };
 
 const SidebarStatisticElement = () => {
-  const { poll } = useLoaderData<typeof loader>();
+  const { poll, votes } = useLoaderData<typeof loader>();
 
   const options = ['city', 'region', 'country', 'postal', 'timezone'] as const;
 
@@ -407,7 +410,7 @@ const SidebarStatisticElement = () => {
 
   if (!option) return null;
 
-  const values = poll.Votes.map((e) => e[option]).filter((e) => !!e);
+  const values = votes.map((e) => e[option]).filter((e) => !!e);
 
   const occurrences = values.reduce((acc, value) => {
     acc[value] = (acc[value] || 0) + 1;

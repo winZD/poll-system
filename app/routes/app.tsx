@@ -36,6 +36,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
             User.permissions.includes('U') || User.role === roleValues.ADMIN,
           canDelete:
             User.permissions.includes('D') || User.role === roleValues.ADMIN,
+          canReadApi:
+            User.permissions.includes('R') || User.role === roleValues.ADMIN,
         },
       });
     } else {
@@ -70,6 +72,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
                 User.role === roleValues.ADMIN,
               canDelete:
                 User.permissions.includes('D') ||
+                User.role === roleValues.ADMIN,
+              canReadApi:
+                User.permissions.includes('R') ||
                 User.role === roleValues.ADMIN,
             },
           },

@@ -5,9 +5,12 @@ import { PollChartWithVotes } from '~/components/PollChartWithVotes';
 import { getPollData } from '~/functions/getPollData';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { id } = params;
+  const { pollId, orgId } = params;
 
-  const { poll, votes } = await getPollData({ id: id as string });
+  const { poll, votes } = await getPollData({
+    pollId: pollId as string,
+    orgId: orgId as string,
+  });
 
   return { poll, votes };
 }

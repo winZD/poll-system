@@ -1,6 +1,6 @@
 import { useLoaderData } from '@remix-run/react';
 import { useTranslation } from 'react-i18next';
-import { PollLoaderType } from '~/routes/poll.$id_.tv';
+import { PollLoaderType } from '~/routes/app_.org.$orgId.polls.$pollId.footer';
 
 export const PollChartWithVotes = ({}: {}) => {
   const { t } = useTranslation();
