@@ -19,6 +19,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     const User = await db.userTable.findFirst({
       where: { id: at.userId },
     });
+    //TODO: chec also refresh token
     if (User?.id) {
       const { poll, votes } = await getPollData({
         pollId: pollId as string,
