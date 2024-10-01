@@ -9,6 +9,7 @@ export const useAppLoader = () => {
       canCreate: boolean;
       canUpdate: boolean;
       canDelete: boolean;
+      canReadApi: boolean;
     };
   }>('routes/app');
 

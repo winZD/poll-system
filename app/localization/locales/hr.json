@@ -28,7 +28,7 @@
   "newPassword": "Nova lozinka",
   "clipboard": "Spremljeno u međuspremnik!",
   "errorClipboard": "Neuspjelo spremanje u clipboard!",
-  "orgPollByIdApi":"Api za anketu po ID-u",
+  "orgPollByIdApi": "Api za anketu po ID-u",
   "perms": {
     "C": "Kreiranje",
     "U": "Ažuriranje",
@@ -60,5 +60,6 @@
     "timezone": "Vremenske zone"
   },
   "details": "Detalji",
-  "statistics": "Statistike"
+  "statistics": "Statistike",
+  "footer": "TV prikaz"
 }

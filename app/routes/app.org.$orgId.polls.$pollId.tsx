@@ -48,6 +48,7 @@ const schema = zod.object({
   ),
   expiresAt: zod.coerce.date().nullish(),
   orgPollByIdApi: zod.string(),
+  poolFooter: zod.string(),
 });
 
 type FormData = zod.infer<typeof schema>;
@@ -132,7 +133,7 @@ const Index = () => {
 
   return (
     <Modal title={t('updatePoll')}>
-      <div className="flex h-[660px] w-[1000px] flex-1 flex-col self-stretch overflow-hidden p-4">
+      <div className="flex h-[810px] w-[1000px] flex-1 flex-col self-stretch overflow-hidden p-4">
         <div className="flex self-start font-semibold text-slate-900">
           <div
             onClick={() => {
@@ -215,6 +216,7 @@ const DetailsTab = (props) => {
       qrCodeUrl: `${data.baseUrl}/poll/${data?.poll.id}/tv`,
       expiresAt: data.poll.expiresAt ? new Date(data.poll.expiresAt) : null,
       orgPollByIdApi: `${data.baseUrl}/api/${orgId}/${data.poll.id}/${User.id}`,
+      poolFooter: `${data.baseUrl}/app/org/${orgId}/polls/${data.poll.id}/footer`,
     },
   });
 
@@ -299,18 +301,32 @@ const DetailsTab = (props) => {
                 <ImNewTab />
               </button>
             </div>
+            {User.canReadApi && (
+              <div className="flex items-end justify-between gap-x-2">
+                <div className="flex-1">
+                  <InputField
+                    readOnly
+                    label={t('orgPollByIdApi')}
+                    name="orgPollByIdApi"
+                  />
+                </div>
+                <button
+                  className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
+                  type="button"
+                  onClick={() => window.open(values?.orgPollByIdApi, '_blank')}
+                >
+                  <ImNewTab />
+                </button>
+              </div>
+            )}
             <div className="flex items-end justify-between gap-x-2">
               <div className="flex-1">
-                <InputField
-                  readOnly
-                  label={t('orgPollByIdApi')}
-                  name="orgPollByIdApi"
-                />
+                <InputField readOnly label={t('footer')} name="poolFooter" />
               </div>
               <button
                 className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
                 type="button"
-                onClick={() => window.open(values?.orgPollByIdApi, '_blank')}
+                onClick={() => window.open(values?.poolFooter, '_blank')}
               >
                 <ImNewTab />
               </button>
