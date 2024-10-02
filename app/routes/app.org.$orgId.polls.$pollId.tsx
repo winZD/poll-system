@@ -41,7 +41,6 @@ const schema = zod.object({
   PollQuestions: zod.array(
     zod.object({
       id: zod.string(),
-      orgId: zod.string(),
       pollId: zod.string(),
       name: zod.string().min(1, 'Obvezan podatak'),
     }),
@@ -118,7 +117,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     await tx.votesTable.deleteMany({ where: { orgId, pollId } });
     await tx.pollQuestionTable.deleteMany({ where: { orgId, pollId } });
-    await tx.pollQuestionTable.createMany({ data: data.PollQuestions });
+    await tx.pollQuestionTable.createMany({
+      data: data.PollQuestions.map((e) => ({ ...e, orgId })),
+    });
   });
 
   return redirectWithSuccess('..', 'Uspješno ste ažurirali anketu');
@@ -342,7 +343,6 @@ const DetailsTab = (props) => {
                   append({
                     id: ulid(),
                     name: '',
-                    orgId: orgId as string,
                     pollId: data?.poll.id,
                   })
                 }

@@ -17,7 +17,7 @@ export async function getPollData({
       name: true,
       iframeSrc: true,
       status: true,
-      PollQuestions: { select: { id: true, name: true } },
+      PollQuestions: { select: { id: true, name: true, pollId: true } },
     },
   });
 
