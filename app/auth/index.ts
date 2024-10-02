@@ -42,7 +42,10 @@ export const getUserFromRequest = async (request: Request) => {
   }
 };
 
-export const verifyToken = (token: string): TToken | null => {
+export const verifyToken = (
+  token: string | undefined | null,
+): TToken | null => {
+  if (!token) return null;
   try {
     return jwt.verify(token, process.env.COOKIE_JWT_SECRET as string, {
       algorithms: ['HS256'],
