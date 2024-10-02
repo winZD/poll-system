@@ -1,8 +1,8 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
-import { json, useLoaderData, useSubmit } from '@remix-run/react';
+import { json, useLoaderData, useParams, useSubmit } from '@remix-run/react';
 import * as zod from 'zod';
 import { db } from '~/db';
-import { toHrDateString } from '~/utils';
+import { assert, toHrDateString } from '~/utils';
 import crypto from 'crypto'; // If using ES Modules
 import { jsonWithError, jsonWithSuccess } from 'remix-toast';
 import { ulid } from 'ulid';
@@ -111,6 +111,10 @@ export default function Index() {
 
   const submit = useSubmit();
 
+  const { orgId, pollId } = useParams();
+
+  assert(orgId && pollId);
+
   return (
     <>
       <div className="m-auto flex flex-col rounded border shadow-lg">
@@ -126,7 +130,7 @@ export default function Index() {
                   submit(
                     {
                       pollQuestionId: 'null',
-                      // orgId: poll.orgId,
+                      orgId: orgId,
                       pollId: poll.id,
                     },
                     { method: 'DELETE' },
@@ -149,7 +153,7 @@ export default function Index() {
                     submit(
                       {
                         pollQuestionId: e.id,
-                        // orgId: e.orgId,
+                        orgId: orgId,
                         pollId: poll.id,
                       },
                       { method: 'POST' },
