@@ -211,9 +211,9 @@ const DetailsTab = (props) => {
     defaultValues: {
       ...data.poll,
       status: data?.poll.status as any,
-      defaultIframeSrc: `${data.baseUrl}/poll/${data?.poll.id}`,
-      iframeTag: `<iframe src="${data.baseUrl}/poll/${data?.poll.id}" style="height:100%;width:100%;" frameborder="0" scrolling="no"/>`,
-      qrCodeUrl: `${data.baseUrl}/poll/${data?.poll.id}/tv`,
+      defaultIframeSrc: `${data.baseUrl}/poll/${orgId}/${data?.poll.id}`,
+      iframeTag: `<iframe src="${data.baseUrl}/poll/${orgId}/${data?.poll.id}" style="height:100%;width:100%;" frameborder="0" scrolling="no"/>`,
+      /*  qrCodeUrl: `${data.baseUrl}/poll/${data?.poll.id}/tv`, */
       expiresAt: data.poll.expiresAt ? new Date(data.poll.expiresAt) : null,
       orgPollByIdApi: `${data.baseUrl}/api/${orgId}/${data.poll.id}/${User.id}`,
       poolFooter: `${data.baseUrl}/app/org/${orgId}/polls/${data.poll.id}/footer`,
