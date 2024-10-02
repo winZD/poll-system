@@ -37,7 +37,7 @@ const schema = zod.object({
   defaultIframeSrc: zod.string().min(3, 'Obvezan podatak'),
   iframeTag: zod.string().min(3, 'Obvezan podatak'),
   iframeSrc: zod.string().min(3, 'Obvezan podatak'),
-  qrCodeUrl: zod.string().min(3, 'Obvezan podatak'),
+  /* qrCodeUrl: zod.string().min(3, 'Obvezan podatak'), */
   PollQuestions: zod.array(
     zod.object({
       id: zod.string(),
@@ -285,7 +285,7 @@ const DetailsTab = (props) => {
               </button>
             </div>
 
-            <div className="flex items-end justify-between gap-x-2">
+            {/* <div className="flex items-end justify-between gap-x-2">
               <div className="flex-1">
                 <InputField
                   readOnly={!User.canUpdate}
@@ -300,7 +300,7 @@ const DetailsTab = (props) => {
               >
                 <ImNewTab />
               </button>
-            </div>
+            </div> */}
             {User.canReadApi && (
               <div className="flex items-end justify-between gap-x-2">
                 <div className="flex-1">
