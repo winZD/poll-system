@@ -3,33 +3,16 @@ import { useLoaderData } from '@remix-run/react';
 import { QRCodeSVG } from 'qrcode.react';
 import { PollChartWithVotes } from '~/components/PollChartWithVotes';
 import { getPollData } from '~/functions/getPollData';
-import { parse } from 'cookie';
-import { redirectWithError, redirectWithWarning } from 'remix-toast';
-import { verifyToken } from '~/auth';
-import { db } from '~/db';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { pollId, orgId } = params;
-  //TESTING SECURITY
-  const cookies = parse(request.headers.get('Cookie') ?? '');
 
-  const at = verifyToken(cookies['at']);
+  const { poll, votes } = await getPollData({
+    pollId: pollId as string,
+    orgId: orgId as string,
+  });
 
-  if (at) {
-    const User = await db.userTable.findFirst({
-      where: { id: at.userId },
-    });
-    //TODO: chec also refresh token
-    if (User?.id) {
-      const { poll, votes } = await getPollData({
-        pollId: pollId as string,
-        orgId: orgId as string,
-      });
-      return { poll, votes };
-    }
-  }
-
-  return redirectWithWarning('/login', 'Niste prijavljeni');
+  return { poll, votes };
 }
 
 export type PollLoaderType = typeof loader;
