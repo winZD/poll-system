@@ -289,7 +289,7 @@ const DetailsTab = (props) => {
               <div className="flex-1">
                 <InputField
                   readOnly={!User.canUpdate}
-                  label={t('QRCodeUR')}
+                  label={t('QRCodeURL')}
                   name="qrCodeUrl"
                 />
               </div>
