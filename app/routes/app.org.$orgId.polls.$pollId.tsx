@@ -260,7 +260,7 @@ const DetailsTab = (props) => {
               <div className="flex-1">
                 <InputField
                   readOnly
-                  label={t('pollURL')}
+                  label={t('pollPreview')}
                   name="defaultIframeSrc"
                 />
               </div>

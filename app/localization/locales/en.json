@@ -9,7 +9,7 @@
   "updatePoll": "Update poll",
   "pollStatus": "Status",
   "pollExpirationTime": "Poll expiration date and time",
-  "pollURL": "Poll URL",
+  "pollPreview": "Pregled ankete",
   "iframeTag": "Iframe tag",
   "QRCodeURL": "QR code URL",
   "addOption": "Add option",

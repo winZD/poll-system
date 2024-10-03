@@ -9,7 +9,7 @@
   "updatePoll": "Ažuriraj anketu",
   "pollStatus": "Status",
   "pollExpirationTime": "Datum i vrijeme kraja ankete",
-  "pollURL": "URL ankete",
+  "pollPreview": "Pregled ankete",
   "iframeTag": "Iframe tag",
   "QRCodeURL": "QR kod URL",
   "addOption": "Dodaj opciju",
