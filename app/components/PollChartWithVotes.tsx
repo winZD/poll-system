@@ -1,15 +1,16 @@
 import { useLoaderData } from '@remix-run/react';
 import { useTranslation } from 'react-i18next';
-import { PollLoaderType } from '~/routes/app_.org.$orgId.polls.$pollId.footer';
+import { PollLoaderType } from '~/routes/app.org.$orgId.polls.$pollId';
 
 export const PollChartWithVotes = ({}: {}) => {
   const { t } = useTranslation();
 
-  const { poll, votes } = useLoaderData<PollLoaderType>();
+  const { poll } = useLoaderData<PollLoaderType>();
 
-  const maxVotes = Math.max(...votes.map((e) => e._count)) || 0;
+  const maxVotes =
+    Math.max(...poll.PollQuestions.map((e) => e.votes.total || 0)) || 0;
 
-  const totalVotes = votes.reduce((acc, current) => acc + current._count, 0);
+  const totalVotes = poll.totalVotes;
 
   return (
     <div className="flex flex-col gap-8">
@@ -17,8 +18,7 @@ export const PollChartWithVotes = ({}: {}) => {
 
       <div className="flex flex-col gap-2">
         {poll.PollQuestions.map((e) => {
-          const questionVotes =
-            votes.find((v) => v.pollQuestionId === e.id)?._count || 0;
+          const questionVotes = e.votes.total || 0;
 
           const percent = (questionVotes / totalVotes || 0) * 100;
 

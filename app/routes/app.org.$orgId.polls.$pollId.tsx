@@ -13,7 +13,7 @@ import {
   redirectWithError,
   redirectWithSuccess,
 } from 'remix-toast';
-import { statusSchema } from '~/components/models';
+import { statusSchema, statusValues } from '~/components/models';
 import { FormContent } from '~/components/Form/FormContent';
 import { Button } from '~/components/Button';
 import { useFieldArray } from 'react-hook-form';
@@ -57,20 +57,19 @@ const resolver = zodResolver(schema);
 
 const sidebars = [
   'poll',
-  'city',
-  'region',
-  'country',
-  'postal',
-  'timezone',
+  'cities',
+  'regions',
+  'countries',
+  // 'postal',
+  // 'timezone',
 ] as const;
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId, pollId } = params;
   const url = new URL(request.url);
   const baseUrl = `${url.protocol}//${url.host}`;
-  console.log(params);
 
-  const { poll, votes } = await getPollData({
+  const { poll } = await getPollData({
     pollId: pollId as string,
     orgId: orgId as string,
   });
@@ -85,8 +84,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   //   _count: true,
   // });
 
-  return json({ poll, baseUrl, votes });
+  return json({ poll, baseUrl });
 }
+export type PollLoaderType = typeof loader;
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const {
@@ -135,7 +135,7 @@ const Index = () => {
 
   return (
     <Modal title={t('updatePoll')}>
-      <div className="flex h-[810px] w-[1000px] flex-1 flex-col self-stretch overflow-hidden p-4">
+      <div className="flex h-[960px] w-[1000px] flex-1 flex-col self-stretch overflow-hidden p-4">
         <div className="flex self-start font-semibold text-slate-900">
           <div
             onClick={() => {
@@ -230,6 +230,8 @@ const DetailsTab = (props) => {
     name: 'PollQuestions',
   });
 
+  const editable = data.poll.status === statusValues.DRAFT && User.canUpdate;
+
   return (
     <HookForm
       formMethods={formMethods}
@@ -240,20 +242,20 @@ const DetailsTab = (props) => {
         <div className="flex gap-8 pb-16">
           <div className="flex w-96 flex-col gap-2">
             <SelectField
-              disabled={!User.canUpdate}
+              // disabled={!editable}
               label={t('pollStatus')}
               name="status"
               data={getStatusOptions()}
             />
             {/* TODO: add date/time from and date/time to of poll duration */}
             <InputField
-              readOnly={!User.canUpdate}
+              readOnly={!editable}
               label={t('pollName')}
               name="name"
             />
 
             <FormDate
-              readOnly={!User.canUpdate}
+              readOnly={!editable}
               label={t('pollExpirationTime')}
               name="expiresAt"
             />
@@ -291,7 +293,7 @@ const DetailsTab = (props) => {
             <div className="flex items-end justify-between gap-x-2">
               <div className="flex-1">
                 <InputField
-                  readOnly={!User.canUpdate}
+                  readOnly={!editable}
                   label={t('QRCodeURL')}
                   name="qrCodeUrl"
                 />
@@ -373,7 +375,7 @@ const DetailsTab = (props) => {
           </div>
           <div className="border" />
           <div className="flex min-w-96 flex-1 flex-col gap-4 pt-6">
-            {User.canUpdate && (
+            {editable && (
               <Button
                 type="button"
                 className="flex w-96 items-center justify-center gap-2 font-semibold"
@@ -398,10 +400,10 @@ const DetailsTab = (props) => {
                       key={field.id}
                       label=""
                       placeholder={t('option')}
-                      readOnly={!User.canUpdate}
+                      readOnly={!editable}
                     />
                   </div>
-                  {User.canUpdate && (
+                  {editable && (
                     <button
                       className=""
                       type="button"
@@ -433,8 +435,6 @@ const DetailsTab = (props) => {
 
 const StatisticsTab = (props) => {
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const { poll, votes } = useLoaderData<typeof loader>();
 
   const selectedSidebar = searchParams.get('statistics-sidebar') || 'poll'; // details | statistics
 
@@ -471,13 +471,13 @@ const StatisticsTab = (props) => {
 };
 
 const SidebarStatisticElement = () => {
-  const { poll, votes } = useLoaderData<typeof loader>();
+  const { poll } = useLoaderData<typeof loader>();
 
-  const options = ['city', 'region', 'country', 'postal', 'timezone'] as const;
+  const options = ['countries', 'regions', 'cities'] as const;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const selectedSidebar = searchParams.get('statistics-sidebar') || ''; // details | statistics
+  const selectedSidebar = searchParams.get('statistics-sidebar') || '';
 
   const option = options.includes(selectedSidebar as any)
     ? selectedSidebar
@@ -485,45 +485,17 @@ const SidebarStatisticElement = () => {
 
   if (!option) return null;
 
-  const values = votes.map((e) => e[option]).filter((e) => !!e);
-
-  const occurrences = values.reduce((acc, value) => {
-    acc[value] = (acc[value] || 0) + 1;
-    return acc;
-  }, {});
-  const sortedOccurrences = Object.entries(occurrences).sort(
-    (a: any, b: any) => b[1] - a[1],
-  );
+  const distinctValues = [
+    ...new Set(
+      poll.PollQuestions.flatMap((e) => e.votes[option]).map((e) => e.name),
+    ),
+  ];
 
   return (
     <div className="flex flex-col gap-2 overflow-auto px-4">
-      {sortedOccurrences.map((e: any) => {
-        const valueVotes = e[1];
-
-        const percent = (valueVotes / values.length) * 100;
-
-        return (
-          <div className="flex items-center justify-between gap-4">
-            <div className="relative flex flex-1 justify-between gap-16 overflow-hidden rounded-lg bg-slate-100 px-2 py-1">
-              <div
-                className="absolute bottom-0 left-0 top-0 bg-green-500 opacity-20"
-                style={{ width: `${percent}%` }}
-              />
-              <div key={e.id} className={``}>
-                {e[0]}
-              </div>
-              <div>{valueVotes}</div>
-            </div>
-            <div className="w-20 text-right">
-              {percent.toLocaleString('hr-HR', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-              %
-            </div>
-          </div>
-        );
-      })}
+      {distinctValues.map((e) => (
+        <div>{e}</div>
+      ))}
     </div>
   );
 };

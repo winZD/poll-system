@@ -29,8 +29,8 @@
   "clipboard": "Spremljeno u međuspremnik!",
   "errorClipboard": "Neuspjelo spremanje u clipboard!",
   "orgPollByIdApi": "API za dohvat ankete",
-  "orgPollsApi":"API za dohvat svih anketa organizacije",
-  "statisticsApi":"API za statistiku ankete",
+  "orgPollsApi": "API za dohvat svih anketa organizacije",
+  "statisticsApi": "API za statistiku ankete",
   "perms": {
     "C": "Kreiranje",
     "U": "Ažuriranje",
@@ -55,9 +55,9 @@
   },
   "poll-statistics-sidebar": {
     "poll": "Anketa",
-    "city": "Gradovi",
-    "region": "Regije",
-    "country": "Zemlje",
+    "cities": "Gradovi",
+    "regions": "Regije",
+    "countries": "Zemlje",
     "postal": "Poštanski brojevi",
     "timezone": "Vremenske zone"
   },

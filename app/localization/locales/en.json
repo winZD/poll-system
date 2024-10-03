@@ -29,8 +29,8 @@
   "clipboard": "Saved to clipboard!",
   "errorClipboard": "Failed saving to clipboard!",
   "orgPollByIdApi": "API to retrieve poll",
-  "orgPollsApi":"API to retrieve all organization polls",
-  "statisticsApi":"API for poll statistics",
+  "orgPollsApi": "API to retrieve all organization polls",
+  "statisticsApi": "API for poll statistics",
   "perms": {
     "C": "Creating",
     "U": "Updating",
@@ -55,9 +55,9 @@
   },
   "poll-statistics-sidebar": {
     "poll": "Poll",
-    "city": "City",
-    "region": "Region",
-    "country": "Country",
+    "cities": "City",
+    "regions": "Region",
+    "countries": "Country",
     "postal": "Postal",
     "timezone": "Total votes"
   },

@@ -9,15 +9,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const baseUrl = `${url.protocol}//${url.host}`;
 
-  const { poll, votes } = await getPollData({
+  const { poll } = await getPollData({
     pollId: pollId as string,
     orgId: orgId as string,
   });
 
-  return { poll, votes, baseUrl };
+  return { poll, baseUrl };
 }
-
-export type PollLoaderType = typeof loader;
 
 const Index = () => {
   const { baseUrl } = useLoaderData<typeof loader>();

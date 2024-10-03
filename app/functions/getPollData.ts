@@ -22,10 +22,51 @@ export async function getPollData({
   });
 
   // Group votes by poll question and count
-  const votes = await db.votesTable.groupBy({
+  const voteCount = await db.votesTable.groupBy({
     by: ['pollQuestionId'],
     where: { pollId },
     _count: true,
   });
-  return { poll, votes };
+
+  const countryGroup = await db.votesTable.groupBy({
+    by: ['pollQuestionId', 'country'],
+    where: { pollId },
+    _count: true,
+  });
+  const regionGroup = await db.votesTable.groupBy({
+    by: ['pollQuestionId', 'region'],
+    where: { pollId },
+    _count: true,
+  });
+  const cityGroup = await db.votesTable.groupBy({
+    by: ['pollQuestionId', 'city'],
+    where: { pollId },
+    _count: true,
+  });
+
+  // console.log({ temp: groupedVotes });
+
+  return {
+    poll: {
+      ...poll,
+      PollQuestions: poll.PollQuestions.map((pq) => {
+        return {
+          ...pq,
+          votes: {
+            total: voteCount.find((e) => e.pollQuestionId === pq.id)?._count,
+            cities: cityGroup
+              .filter((e) => e.pollQuestionId === pq.id)
+              .map((e) => ({ ...e, name: e.city })),
+            countries: countryGroup
+              .filter((e) => e.pollQuestionId === pq.id)
+              .map((e) => ({ ...e, name: e.country })),
+            regions: regionGroup
+              .filter((e) => e.pollQuestionId === pq.id)
+              .map((e) => ({ ...e, name: e.region })),
+          },
+        };
+      }),
+      totalVotes: voteCount.reduce((acc, current) => acc + current._count, 0),
+    },
+  };
 }

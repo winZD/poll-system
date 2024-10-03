@@ -12,7 +12,7 @@ import { getPollData } from '~/functions/getPollData';
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId, pollId } = params;
 
-  const { poll, votes } = await getPollData({
+  const { poll } = await getPollData({
     pollId: pollId as string,
     orgId: orgId as string,
   });
@@ -34,7 +34,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     where: { pollId, fingerPrint },
   });
 
-  return json({ poll, existingVote: existingVote?.pollQuestionId, votes });
+  return json({
+    poll,
+    existingVote: existingVote?.pollQuestionId,
+  });
 }
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -104,10 +107,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
-  const { poll, existingVote, votes } = useLoaderData<typeof loader>();
+  const { poll, existingVote } = useLoaderData<typeof loader>();
 
-  const ukupnoGlasova = votes.reduce((acc, current) => acc + current._count, 0);
-  const maxBrojGlasova = Math.max(...votes.map((e) => e._count));
+  const ukupnoGlasova = poll.totalVotes || 0;
+  const maxBrojGlasova = Math.max(
+    ...poll.PollQuestions.map((e) => e.votes.total || 0),
+  );
 
   const submit = useSubmit();
 
