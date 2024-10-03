@@ -47,6 +47,7 @@ const schema = zod.object({
   ),
   expiresAt: zod.coerce.date().nullish(),
   orgPollByIdApi: zod.string(),
+  orgPollsApi: zod.string(),
   poolFooter: zod.string(),
 });
 
@@ -217,6 +218,7 @@ const DetailsTab = (props) => {
       qrCodeUrl: `${data.baseUrl}/poll/${data?.poll.id}/tv`,
       expiresAt: data.poll.expiresAt ? new Date(data.poll.expiresAt) : null,
       orgPollByIdApi: `${data.baseUrl}/api/${orgId}/${data.poll.id}/${User.id}`,
+      orgPollsApi: `${data.baseUrl}/api/${orgId}/polls/${User.id}`,
       poolFooter: `${data.baseUrl}/app/org/${orgId}/polls/${data.poll.id}/footer`,
     },
   });
@@ -303,22 +305,42 @@ const DetailsTab = (props) => {
               </button>
             </div>
             {User.canReadApi && (
-              <div className="flex items-end justify-between gap-x-2">
-                <div className="flex-1">
-                  <InputField
-                    readOnly
-                    label={t('orgPollByIdApi')}
-                    name="orgPollByIdApi"
-                  />
+              <>
+                <div className="flex items-end justify-between gap-x-2">
+                  <div className="flex-1">
+                    <InputField
+                      readOnly
+                      label={t('orgPollByIdApi')}
+                      name="orgPollByIdApi"
+                    />
+                  </div>
+                  <button
+                    className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
+                    type="button"
+                    onClick={() =>
+                      window.open(values?.orgPollByIdApi, '_blank')
+                    }
+                  >
+                    <ImNewTab />
+                  </button>
                 </div>
-                <button
-                  className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
-                  type="button"
-                  onClick={() => window.open(values?.orgPollByIdApi, '_blank')}
-                >
-                  <ImNewTab />
-                </button>
-              </div>
+                <div className="flex items-end justify-between gap-x-2">
+                  <div className="flex-1">
+                    <InputField
+                      readOnly
+                      label={t('orgPollsApi')}
+                      name="orgPollsApi"
+                    />
+                  </div>
+                  <button
+                    className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
+                    type="button"
+                    onClick={() => window.open(values?.orgPollsApi, '_blank')}
+                  >
+                    <ImNewTab />
+                  </button>
+                </div>
+              </>
             )}
             <div className="flex items-end justify-between gap-x-2">
               <div className="flex-1">

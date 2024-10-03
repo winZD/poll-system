@@ -28,7 +28,8 @@
   "newPassword": "New password",
   "clipboard": "Saved to clipboard!",
   "errorClipboard": "Failed saving to clipboard!",
-  "orgPollByIdApi": "Poll by id API",
+  "orgPollByIdApi": "API to retrieve poll",
+  "orgPollsApi":"API to retrieve all organization polls",
   "perms": {
     "C": "Creating",
     "U": "Updating",
