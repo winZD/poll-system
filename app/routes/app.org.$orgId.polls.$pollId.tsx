@@ -340,6 +340,22 @@ const DetailsTab = (props) => {
                     <ImNewTab />
                   </button>
                 </div>
+                <div className="flex items-end justify-between gap-x-2">
+                  <div className="flex-1">
+                    <InputField
+                      readOnly
+                      label={t('statisticsApi')}
+                      name="statisticsApi"
+                    />
+                  </div>
+                  <button
+                    className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
+                    type="button"
+                    onClick={() => window.open(values?.orgPollsApi, '_blank')}
+                  >
+                    <ImNewTab />
+                  </button>
+                </div>
               </>
             )}
             <div className="flex items-end justify-between gap-x-2">

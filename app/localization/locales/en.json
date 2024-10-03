@@ -30,6 +30,7 @@
   "errorClipboard": "Failed saving to clipboard!",
   "orgPollByIdApi": "API to retrieve poll",
   "orgPollsApi":"API to retrieve all organization polls",
+  "statisticsApi":"API for poll statistics",
   "perms": {
     "C": "Creating",
     "U": "Updating",
