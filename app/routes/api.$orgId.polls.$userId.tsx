@@ -1,6 +1,7 @@
 // app/routes/logout.js or .ts
 import { json } from '@remix-run/node';
 import { db } from '~/db';
+import { getPollData } from '~/functions/getPollData';
 
 export async function loader({ request, params }) {
   const { orgId, userId } = params;
@@ -13,8 +14,11 @@ export async function loader({ request, params }) {
 
   const polls = await db.pollTable.findMany({
     where: { orgId: orgId },
-    include: { Org: true, PollQuestions: true, Votes: true },
   });
 
-  return json(polls);
+  const result = await Promise.all(
+    polls.map((e) => getPollData({ orgId, pollId: e.id })),
+  );
+
+  return json(result);
 }

@@ -1,6 +1,7 @@
 // app/routes/logout.js or .ts
 import { json } from '@remix-run/node';
 import { db } from '~/db';
+import { getPollData } from '~/functions/getPollData';
 
 export async function loader({ request, params }) {
   const { orgId, pollId, userId } = params;
@@ -11,10 +12,7 @@ export async function loader({ request, params }) {
     return json(null);
   }
 
-  const poll = await db.pollTable.findUniqueOrThrow({
-    where: { id: pollId, orgId: orgId },
-    include: { Org: true, PollQuestions: true, Votes: true },
-  });
+  const poll = await getPollData({ orgId, pollId });
 
   return json(poll);
 }
