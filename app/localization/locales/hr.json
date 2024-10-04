@@ -30,7 +30,6 @@
   "errorClipboard": "Neuspjelo spremanje u clipboard!",
   "orgPollByIdApi": "API za dohvat ankete",
   "orgPollsApi": "API za dohvat svih anketa organizacije",
-  "statisticsApi": "API za statistiku ankete",
   "perms": {
     "C": "Kreiranje",
     "U": "Ažuriranje",
