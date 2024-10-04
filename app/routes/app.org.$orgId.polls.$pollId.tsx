@@ -471,7 +471,9 @@ const SidebarStatisticElement = () => {
 
   const distinctValues = [
     ...new Set(
-      poll.PollQuestions.flatMap((e) => e.votes[option]).map((e) => e.name),
+      poll.PollQuestions.flatMap((e) => e.votes[option])
+        .map((e) => e.name)
+        .filter(Boolean),
     ),
   ];
 
