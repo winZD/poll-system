@@ -23,7 +23,7 @@ export const PollChartWithVotes = ({}: {}) => {
           const percent = (questionVotes / totalVotes || 0) * 100;
 
           return (
-            <div className="flex items-center justify-between gap-4">
+            <div key={e.id} className="flex items-center justify-between gap-4">
               <div className="relative flex flex-1 justify-between gap-16 overflow-hidden rounded-lg bg-slate-100 px-2 py-1">
                 <div
                   className={`absolute bottom-0 left-0 top-0 ${maxVotes === questionVotes ? 'bg-green-400' : 'bg-green-200'}`}
