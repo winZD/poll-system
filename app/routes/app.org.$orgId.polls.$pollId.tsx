@@ -73,16 +73,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     pollId: pollId as string,
     orgId: orgId as string,
   });
-  //Testing api through input
-  // const orgPollByIdApi = `${baseUrl}/api/${orgId}/${pollId}/${poll?.User.id}`;
 
   if (!poll) return redirectWithError('..', 'Nepostojeća anketa');
-
-  // const votes = await db.votesTable.groupBy({
-  //   by: ['pollQuestionId'],
-  //   where: { pollId },
-  //   _count: true,
-  // });
 
   return json({ poll, baseUrl });
 }
