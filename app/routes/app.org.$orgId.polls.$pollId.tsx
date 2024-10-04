@@ -493,8 +493,8 @@ const SidebarStatisticElement = () => {
 
   return (
     <div className="flex flex-col gap-2 overflow-auto px-4">
-      {distinctValues.map((e) => (
-        <div>{e}</div>
+      {distinctValues.map((e, index) => (
+        <div key={index}>{e}</div>
       ))}
     </div>
   );
