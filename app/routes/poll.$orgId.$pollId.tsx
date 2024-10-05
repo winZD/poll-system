@@ -7,12 +7,12 @@ import crypto from 'crypto'; // If using ES Modules
 import { jsonWithError, jsonWithSuccess } from 'remix-toast';
 import { ulid } from 'ulid';
 import { getClientIPAddress } from '~/functions/get-client-ip-address';
-import { getPollData } from '~/functions/getPollData';
+import { getPollDetails } from '~/functions/getPollDetails';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId, pollId } = params;
 
-  const { poll } = await getPollData({
+  const { poll } = await getPollDetails({
     pollId: pollId as string,
     orgId: orgId as string,
   });

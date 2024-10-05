@@ -1,7 +1,7 @@
 // app/routes/logout.js or .ts
 import { json } from '@remix-run/node';
 import { db } from '~/db';
-import { getPollData } from '~/functions/getPollData';
+import { getPollDetails } from '~/functions/getPollDetails';
 
 export async function loader({ request, params }) {
   const { orgId, userId } = params;
@@ -17,7 +17,7 @@ export async function loader({ request, params }) {
   });
 
   const result = await Promise.all(
-    polls.map((e) => getPollData({ orgId, pollId: e.id })),
+    polls.map((e) => getPollDetails({ orgId, pollId: e.id })),
   );
 
   return json(result);

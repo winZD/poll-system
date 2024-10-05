@@ -1,6 +1,6 @@
 import { db } from '~/db';
 
-export async function getPollData({
+export async function getPollDetails({
   orgId,
   pollId,
 }: {

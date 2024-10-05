@@ -2,14 +2,14 @@ import { LoaderFunctionArgs } from '@remix-run/node';
 import { useLoaderData, useParams } from '@remix-run/react';
 import { QRCodeSVG } from 'qrcode.react';
 import { PollChartWithVotes } from '~/components/PollChartWithVotes';
-import { getPollData } from '~/functions/getPollData';
+import { getPollDetails } from '~/functions/getPollDetails';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { pollId, orgId } = params;
   const url = new URL(request.url);
   const baseUrl = `${url.protocol}//${url.host}`;
 
-  const { poll } = await getPollData({
+  const { poll } = await getPollDetails({
     pollId: pollId as string,
     orgId: orgId as string,
   });

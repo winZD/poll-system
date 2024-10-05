@@ -1,7 +1,7 @@
 // app/routes/logout.js or .ts
 import { json } from '@remix-run/node';
 import { db } from '~/db';
-import { getPollData } from '~/functions/getPollData';
+import { getPollDetails } from '~/functions/getPollDetails';
 
 export async function loader({ request, params }) {
   const { orgId, pollId, userId } = params;
@@ -12,7 +12,7 @@ export async function loader({ request, params }) {
     return json(null);
   }
 
-  const poll = await getPollData({ orgId, pollId });
+  const poll = await getPollDetails({ orgId, pollId });
 
   return json(poll);
 }

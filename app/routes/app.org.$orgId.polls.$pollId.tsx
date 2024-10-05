@@ -29,7 +29,7 @@ import { useAppLoader } from '~/loaders';
 import { FormDate } from '~/components/Form/FormDate';
 import { useTranslation } from 'react-i18next';
 import { PollChartWithVotes } from '~/components/PollChartWithVotes';
-import { getPollData } from '~/functions/getPollData';
+import { getPollDetails } from '~/functions/getPollDetails';
 
 const schema = zod.object({
   name: zod.string().min(1),
@@ -69,7 +69,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const baseUrl = `${url.protocol}//${url.host}`;
 
-  const { poll } = await getPollData({
+  const { poll } = await getPollDetails({
     pollId: pollId as string,
     orgId: orgId as string,
   });
@@ -108,11 +108,25 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       },
     });
 
-    await tx.votesTable.deleteMany({ where: { orgId, pollId } });
-    await tx.pollQuestionTable.deleteMany({ where: { orgId, pollId } });
-    await tx.pollQuestionTable.createMany({
-      data: data.PollQuestions.map((e) => ({ ...e, orgId })),
+    await tx.votesTable.deleteMany({
+      where: {
+        orgId,
+        pollQuestionId: { notIn: data.PollQuestions.map((e) => e.id) },
+      },
     });
+    await tx.pollQuestionTable.deleteMany({
+      where: { orgId, id: { notIn: data.PollQuestions.map((e) => e.id) } },
+    });
+
+    await Promise.all(
+      data.PollQuestions.map(async (e) =>
+        tx.pollQuestionTable.upsert({
+          where: { id: e.id },
+          create: { ...e, orgId },
+          update: { name: e.name },
+        }),
+      ),
+    );
   });
 
   return redirectWithSuccess('..', 'Uspješno ste ažurirali anketu');
