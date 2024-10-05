@@ -14,10 +14,11 @@ import React from 'react';
 import { ToastContainer, toast as notify } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { DialogProvider } from './components/Dialog';
-import i18next from './localization/i18n.server';
+
 import { useTranslation } from 'react-i18next';
 import { useChangeLanguage } from 'remix-i18next/react';
 import { parse } from 'cookie';
+import i18next from './i18n.server';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const cookieHeader = request.headers.get('Cookie') || '';

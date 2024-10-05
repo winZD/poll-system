@@ -30,6 +30,7 @@ import { FormDate } from '~/components/Form/FormDate';
 import { useTranslation } from 'react-i18next';
 import { PollChartWithVotes } from '~/components/PollChartWithVotes';
 import { getPollDetails } from '~/functions/getPollDetails';
+import i18next from '~/i18n.server';
 
 const schema = zod.object({
   name: zod.string().min(1),
@@ -128,8 +129,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       ),
     );
   });
-
-  return redirectWithSuccess('..', 'Uspješno ste ažurirali anketu');
+  const t = await i18next.getFixedT('en');
+  return redirectWithSuccess('..', t('poll'));
 };
 
 const Index = () => {

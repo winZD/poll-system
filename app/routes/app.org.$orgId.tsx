@@ -17,11 +17,11 @@ import { roleValues } from '~/components/models';
 import { useAppLoader } from '~/loaders';
 import { serialize } from 'cookie';
 
-import i18n from '~/localization/i18n';
 import { parse } from 'cookie';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
-import i18next from '~/localization/i18n.server';
+import i18next from '~/i18n.server';
+import i18n from '~/i18n';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await getUserFromRequest(request);

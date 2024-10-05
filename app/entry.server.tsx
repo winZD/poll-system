@@ -16,13 +16,13 @@ import { CronJob } from 'cron';
 import { db } from './db';
 import { statusValues } from './components/models';
 import { createInstance } from 'i18next';
-import i18next from './localization/i18n.server';
+import i18next from './i18n.server';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import Backend from 'i18next-fs-backend';
-import i18n from './localization/i18n'; // your i18n configuration file
+
 import { resolve } from 'node:path';
-import { resources } from './localization/resources';
 import { parse } from 'cookie';
+import i18n from './i18n';
 
 const ABORT_DELAY = 5_000;
 
@@ -125,10 +125,9 @@ async function handleBrowserRequest(
     .init({
       ...i18n, // spread the configuration
       lng, // The locale we detected above
-      fallbackLng: 'en',
+
       ns, // The namespaces the routes about to render wants to use
       backend: { loadPath: resolve('./public/locales/{{lng}}/{{ns}}.json') },
-      resources,
     });
 
   return new Promise((resolve, reject) => {
