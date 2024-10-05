@@ -6,7 +6,11 @@ import {
   useLoaderData,
   useSubmit,
 } from '@remix-run/react';
-import { MdOutlineLogout } from 'react-icons/md';
+import {
+  MdOutlineLogout,
+  MdOutlinePoll,
+  MdOutlineSupervisorAccount,
+} from 'react-icons/md';
 import { jsonWithSuccess, redirectWithWarning } from 'remix-toast';
 import { getUserFromRequest } from '~/auth';
 import { roleValues } from '~/components/models';
@@ -95,13 +99,19 @@ export default function Index() {
             to={'polls'}
             className={({ isActive }) => `p-4 ${isActive ? 'bg-blue-100' : ''}`}
           >
-            {t('polls')}
+            <div className="flex items-center gap-x-2">
+              <MdOutlinePoll size={20} />
+              {t('polls')}
+            </div>
           </NavLink>
           <NavLink
             to={'users'}
             className={({ isActive }) => `p-4 ${isActive ? 'bg-blue-100' : ''}`}
           >
-            {t('users')}
+            <div className="flex items-center gap-x-2">
+              <MdOutlineSupervisorAccount size={20} />
+              {t('users')}
+            </div>
           </NavLink>
         </aside>
         <div className="flex flex-1 flex-col">
