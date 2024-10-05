@@ -31,6 +31,7 @@ import { useTranslation } from 'react-i18next';
 import { PollChartWithVotes } from '~/components/PollChartWithVotes';
 import { getPollDetails } from '~/functions/getPollDetails';
 import i18next from '~/i18n.server';
+import { parse } from 'cookie';
 
 const schema = zod.object({
   name: zod.string().min(1),
@@ -88,10 +89,20 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     receivedValues: defaultValues,
   } = await getValidatedFormData<FormData>(request, resolver);
 
+  let localeFromReq = await i18next.getLocale(request);
+
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  const cookies = parse(cookieHeader);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
+
   if (errors) {
     console.log({ errors });
     // The keys "errors" and "defaultValues" are picked up automatically by useRemixForm
-    return jsonWithError({ errors, defaultValues }, 'Nepotpuni podaci');
+    return jsonWithError({ errors, defaultValues }, t('incompleteData'));
   }
 
   const { orgId, pollId } = params;
@@ -129,8 +140,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       ),
     );
   });
-  const t = await i18next.getFixedT('en');
-  return redirectWithSuccess('..', t('poll'));
+
+  return redirectWithSuccess('..', t('successPollUpdate'));
 };
 
 const Index = () => {
