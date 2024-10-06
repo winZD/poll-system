@@ -99,11 +99,13 @@ model VotesTable {
   city      String?
   region    String?
   country   String?
-  loc       String?
+  loc       String? //lat,lon
   org       String?
   postal    String?
   timezone  String?
   userAgent String?
+
+  createdAt DateTime @default(now())
 
   Poll         PollTable         @relation(name: "FK_Vote_Poll", fields: [pollId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   PollQuestion PollQuestionTable @relation(name: "FK_PollQuestionAnswer_PollQuestion", fields: [pollQuestionId], references: [id], onDelete: NoAction, onUpdate: NoAction)

@@ -20,7 +20,7 @@ export async function loader({ request }) {
       });
     }
   }
-  const headers = await createHeaderCookies('', '');
+  const headers = createHeaderCookies('', '');
 
   return redirect('/login', { headers });
 }
