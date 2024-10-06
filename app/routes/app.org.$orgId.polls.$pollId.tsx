@@ -39,7 +39,7 @@ const schema = zod.object({
   defaultIframeSrc: zod.string().min(3, 'Obvezan podatak'),
   iframeTag: zod.string().min(3, 'Obvezan podatak'),
   iframeSrc: zod.string().min(3, 'Obvezan podatak'),
-  qrCodeUrl: zod.string().min(3, 'Obvezan podatak'),
+  /*   qrCodeUrl: zod.string().min(3, 'Obvezan podatak'), */
   PollQuestions: zod.array(
     zod.object({
       id: zod.string(),
@@ -233,7 +233,7 @@ const DetailsTab = (props) => {
       status: data?.poll.status as any,
       defaultIframeSrc: `${data.baseUrl}/poll/${orgId}/${data?.poll.id}`,
       iframeTag: `<iframe src="${data.baseUrl}/poll/${orgId}/${data?.poll.id}" style="height:100%;width:100%;" frameborder="0" scrolling="no"/>`,
-      qrCodeUrl: `${data.baseUrl}/poll/${data?.poll.id}/tv`,
+      /*   qrCodeUrl: `${data.baseUrl}/poll/${data?.poll.id}/tv`, */
       expiresAt: data.poll.expiresAt ? new Date(data.poll.expiresAt) : null,
       orgPollByIdApi: `${data.baseUrl}/api/${orgId}/${data.poll.id}/${User.id}`,
       orgPollsApi: `${data.baseUrl}/api/${orgId}/polls/${User.id}`,
@@ -308,7 +308,7 @@ const DetailsTab = (props) => {
               </button>
             </div>
 
-            <div className="flex items-end justify-between gap-x-2">
+            {/*  <div className="flex items-end justify-between gap-x-2">
               <div className="flex-1">
                 <InputField
                   readOnly={!editable}
@@ -322,8 +322,8 @@ const DetailsTab = (props) => {
                 onClick={() => window.open(values?.qrCodeUrl, '_blank')}
               >
                 <ImNewTab />
-              </button>
-            </div>
+              </button> 
+            </div>*/}
             {User.canReadApi && (
               <>
                 <div className="flex items-end justify-between gap-x-2">
