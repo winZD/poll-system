@@ -11,7 +11,7 @@
   "pollExpirationTime": "Poll expiration date and time",
   "pollPreview": "Pregled ankete",
   "iframeTag": "Iframe tag",
-  "QRCodeURL": "QR code URL",
+  "qrCodeProviderUrl": "Third party provider URL",
   "addOption": "Add option",
   "option": "Option...",
   "addUser": "Add user",

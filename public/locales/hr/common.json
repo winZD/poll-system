@@ -11,7 +11,7 @@
   "pollExpirationTime": "Datum i vrijeme kraja ankete",
   "pollPreview": "Pregled ankete",
   "iframeTag": "Iframe tag",
-  "QRCodeURL": "QR kod URL",
+  "qrCodeProviderUrl": "Provider URL-a",
   "addOption": "Dodaj opciju",
   "option": "Opcija...",
   "addUser": "Dodaj korisnika",

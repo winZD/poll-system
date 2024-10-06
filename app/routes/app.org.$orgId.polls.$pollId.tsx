@@ -39,7 +39,7 @@ const schema = zod.object({
   defaultIframeSrc: zod.string().min(3, 'Obvezan podatak'),
   iframeTag: zod.string().min(3, 'Obvezan podatak'),
   iframeSrc: zod.string().min(3, 'Obvezan podatak'),
-  /*   qrCodeUrl: zod.string().min(3, 'Obvezan podatak'), */
+  qrCodeProviderUrl: zod.string().min(3, 'Obvezan podatak'),
   PollQuestions: zod.array(
     zod.object({
       id: zod.string(),
@@ -233,7 +233,7 @@ const DetailsTab = (props) => {
       status: data?.poll.status as any,
       defaultIframeSrc: `${data.baseUrl}/poll/${orgId}/${data?.poll.id}`,
       iframeTag: `<iframe src="${data.baseUrl}/poll/${orgId}/${data?.poll.id}" style="height:100%;width:100%;" frameborder="0" scrolling="no"/>`,
-      /*   qrCodeUrl: `${data.baseUrl}/poll/${data?.poll.id}/tv`, */
+      qrCodeProviderUrl: ``,
       expiresAt: data.poll.expiresAt ? new Date(data.poll.expiresAt) : null,
       orgPollByIdApi: `${data.baseUrl}/api/${orgId}/${data.poll.id}/${User.id}`,
       orgPollsApi: `${data.baseUrl}/api/${orgId}/polls/${User.id}`,
@@ -308,22 +308,22 @@ const DetailsTab = (props) => {
               </button>
             </div>
 
-            {/*  <div className="flex items-end justify-between gap-x-2">
+            <div className="flex items-end justify-between gap-x-2">
               <div className="flex-1">
                 <InputField
                   readOnly={!editable}
-                  label={t('QRCodeURL')}
-                  name="qrCodeUrl"
+                  label={t('qrCodeProviderUrl')}
+                  name="qrCodeProviderUrl"
                 />
               </div>
               <button
                 className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
                 type="button"
-                onClick={() => window.open(values?.qrCodeUrl, '_blank')}
+                onClick={() => window.open(values?.qrCodeProviderUrl, '_blank')}
               >
                 <ImNewTab />
-              </button> 
-            </div>*/}
+              </button>
+            </div>
             {User.canReadApi && (
               <>
                 <div className="flex items-end justify-between gap-x-2">
