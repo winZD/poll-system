@@ -337,11 +337,11 @@ const DetailsTab = (props) => {
                   <button
                     className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
                     type="button"
-                    onClick={() =>
+                    /*   onClick={() =>
                       window.open(values?.orgPollByIdApi, '_blank')
-                    }
+                    } */
                   >
-                    <ImNewTab />
+                    <MdContentCopy />
                   </button>
                 </div>
                 <div className="flex items-end justify-between gap-x-2">
@@ -355,9 +355,9 @@ const DetailsTab = (props) => {
                   <button
                     className="flex size-[42px] items-center justify-center gap-2 self-end rounded bg-slate-200 text-xl hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
                     type="button"
-                    onClick={() => window.open(values?.orgPollsApi, '_blank')}
+                    /*  onClick={() => window.open(values?.orgPollsApi, '_blank')} */
                   >
-                    <ImNewTab />
+                    <MdContentCopy />
                   </button>
                 </div>
               </>
