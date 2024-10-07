@@ -18,10 +18,10 @@ import { rolesMapped, statusClass, statusMapped } from '~/components/models';
 import { toHrDateString } from '~/utils';
 import { useConfirmDialog } from '~/components/Dialog';
 import { useTranslation } from 'react-i18next';
+import { parse } from 'cookie';
+import i18next from '~/i18n.server';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  // return redirect("active-orgs");
-
   const { orgId } = params;
 
   const org = await db.orgTable.findUniqueOrThrow({
@@ -45,6 +45,16 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const action = formData.get('action')?.toString();
   const orgId = formData.get('orgId')?.toString();
 
+  let localeFromReq = await i18next.getLocale(request);
+
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  const cookies = parse(cookieHeader);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
+
   if (action === 'DEACTIVATE') {
     await db.$transaction(async (tx) => {
       await tx.orgTable.update({
@@ -57,7 +67,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         data: { status: 'INACTIVE' },
       });
     });
-    return jsonWithSuccess({}, 'Uspješno deaktivirana organizacija');
+    return jsonWithSuccess({}, t('deactivatedOrganization'));
   }
   if (action === 'ACTIVATE') {
     await db.$transaction(async (tx) => {
@@ -66,7 +76,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         data: { status: 'ACTIVE' },
       });
     });
-    return jsonWithSuccess({}, 'Uspješno aktivirana organizacija');
+    return jsonWithSuccess({}, t('activatedOrganization'));
   }
 };
 

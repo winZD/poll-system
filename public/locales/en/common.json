@@ -39,6 +39,13 @@
   "deactivate":"Deactivate",
   "activateOrganization":"Activate organization",
   "cancel":"Cancel",
+  "deactivatedOrganization":"Successfully deactivated organization",
+  "activatedOrganization":"Successfully activated organization",
+  "noUser":"User does not exist",
+  "noAuthority":"You have no authority",
+  "incorrectData":"Incorrect data",
+  "userUpdated":"You have successfully updated the user",
+  "email":"E-mail",
   "perms": {
     "C": "Creating",
     "U": "Updating",

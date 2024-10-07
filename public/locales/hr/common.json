@@ -39,6 +39,13 @@
   "deactivate":"Deaktiviraj",
   "activateOrganization":"Aktiviraj lokalizacija",
   "cancel":"Odustani",
+  "deactivatedOrganization":"Uspješno deaktivirana organizacija",
+  "activatedOrganization":"Uspješno aktivirana organizacija",
+  "noUser":"Nepostojeći korisnik",
+  "noAuthority":"Nemate ovlasti",
+  "incorrectData":"Neispravni podaci",
+  "userUpdated":"Uspješno ste ažurirali korisnika",
+  "email":"E-mail",
   "perms": {
     "C": "Kreiranje",
     "U": "Ažuriranje",
