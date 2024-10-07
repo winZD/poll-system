@@ -90,7 +90,7 @@ export default function Index() {
             'flex items-center justify-center gap-2 rounded-full bg-red-100 px-4 py-2 font-bold text-red-500 hover:bg-red-200'
           }
         >
-          <div>Odjava</div>
+          <div>{t('logout')}</div>
           <MdOutlineLogout />
         </NavLink>
       </header>
@@ -104,7 +104,7 @@ export default function Index() {
             to="register"
             className="m-2 self-start rounded border border-blue-500 px-4 py-1 text-zinc-900"
           >
-            + Dodaj organizaciju
+            {'+ ' + t('addOrganization')}
           </NavLink>
 
           <div className="flex flex-col">

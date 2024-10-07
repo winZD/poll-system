@@ -32,6 +32,8 @@
   "orgPollsApi": "API to retrieve all organization polls",
   "incompleteData":"Incomplete data",
   "successPollUpdate":"You have successfully updated the poll",
+  "addOrganization":"Add organization",
+  "deactivateOrganization":"Deactivate organization",
   "perms": {
     "C": "Creating",
     "U": "Updating",

@@ -32,6 +32,8 @@
   "orgPollsApi": "API za dohvat svih anketa organizacije",
   "incompleteData":"Nepotpuni podaci",
   "successPollUpdate":"Uspješno ste ažurirali anketu",
+  "addOrganization":"Dodaj organizaciju",
+  "deactivateOrganization":"Deaktiviraj organizaciju",
   "perms": {
     "C": "Kreiranje",
     "U": "Ažuriranje",

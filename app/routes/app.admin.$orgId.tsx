@@ -17,6 +17,7 @@ import { db } from '~/db';
 import { rolesMapped, statusClass, statusMapped } from '~/components/models';
 import { toHrDateString } from '~/utils';
 import { useConfirmDialog } from '~/components/Dialog';
+import { useTranslation } from 'react-i18next';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // return redirect("active-orgs");
@@ -71,6 +72,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 export default function Index() {
   const org = useLoaderData<typeof loader>();
+  const { t } = useTranslation();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -99,7 +101,7 @@ export default function Index() {
               })
             }
           >
-            Deaktiviraj organizaciju
+            {t('deactivateOrganization')}
           </Button>
         ) : (
           <Button
