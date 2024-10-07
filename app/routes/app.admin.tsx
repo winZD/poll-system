@@ -1,14 +1,27 @@
-import { LoaderFunctionArgs } from '@remix-run/node';
-import { json, NavLink, Outlet, useLoaderData } from '@remix-run/react';
+import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
+import {
+  json,
+  NavLink,
+  Outlet,
+  useLoaderData,
+  useSubmit,
+} from '@remix-run/react';
 import { MdOutlineLogout } from 'react-icons/md';
 import { redirectWithWarning } from 'remix-toast';
 import { getUserFromRequest } from '~/auth';
 import { roleValues, statusClass } from '~/components/models';
 import { db } from '~/db';
+import i18n from '~/i18n';
 import { useAppLoader } from '~/loaders';
+import { serialize, parse } from 'cookie';
+import { useTranslation } from 'react-i18next';
+import i18next from '~/i18n.server';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  // const token = decode
+  // Get the 'lng' cookie from the request
+  const cookieHeader = request.headers.get('Cookie');
+  const cookies = await parse(cookieHeader || '');
+  const lng = cookies.lng || (await i18next.getLocale(request));
 
   const user = await getUserFromRequest(request);
   if (user?.Org.role === roleValues.USER) {
@@ -20,17 +33,56 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     orderBy: [{ status: 'asc' }, { name: 'asc' }],
   });
 
-  return json(orgs);
+  return json({ orgs, lng });
 }
+
+export const action = async ({ request, params }: ActionFunctionArgs) => {
+  const formData = await request.formData();
+  const language = formData.get('language')?.toString() || '';
+
+  const headers = new Headers();
+  headers.append(
+    'Set-Cookie',
+    serialize('lng', language, {
+      path: '/',
+      sameSite: 'lax',
+      httpOnly: true,
+      maxAge: 365 * 24 * 60 * 60, // 1 year in seconds (31,536,000 seconds)
+    }),
+  );
+
+  return json({}, { headers });
+};
 
 export default function Index() {
   const data = useAppLoader();
 
-  const orgs = useLoaderData<typeof loader>();
+  const submit = useSubmit();
+
+  const { t } = useTranslation();
+
+  const { orgs, lng } = useLoaderData<typeof loader>();
 
   return (
     <div className="flex w-[1280px] flex-1 flex-col self-center">
       <header className="flex items-center justify-end gap-8 border-b p-2">
+        <div className="flex items-center rounded-md border border-gray-300 shadow-sm hover:bg-gray-300">
+          {i18n.supportedLngs.map((lang) => (
+            <button
+              key={lang}
+              className={`px-3 py-1 ${
+                lang === lng
+                  ? 'rounded-md bg-blue-500 text-white hover:bg-blue-800'
+                  : 'text-gray-700 hover:bg-gray-300'
+              }`}
+              onClick={() =>
+                submit({ language: lang }, { method: 'post', navigate: false })
+              }
+            >
+              {lang.toUpperCase()}
+            </button>
+          ))}
+        </div>
         <div className="text-center">{`${data.User.name} - ${data.User.role}@${data.User.Org.name}`}</div>
         <NavLink
           to={'/logout'}
