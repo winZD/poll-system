@@ -34,6 +34,11 @@
   "successPollUpdate":"Uspješno ste ažurirali anketu",
   "addOrganization":"Dodaj organizaciju",
   "deactivateOrganization":"Deaktiviraj organizaciju",
+  "deactivation":"Deaktivacija",
+  "deactivationMsg":"Deaktivacijom ćete ujedno otkazati sve aktive ankete",
+  "deactivate":"Deaktiviraj",
+  "activateOrganization":"Aktiviraj lokalizacija",
+  "cancel":"Odustani",
   "perms": {
     "C": "Kreiranje",
     "U": "Ažuriranje",

@@ -34,6 +34,11 @@
   "successPollUpdate":"You have successfully updated the poll",
   "addOrganization":"Add organization",
   "deactivateOrganization":"Deactivate organization",
+  "deactivation":"Deactivation",
+  "deactivationMsg":"By deactivating, you will also cancel all active polls",
+  "deactivate":"Deactivate",
+  "activateOrganization":"Activate organization",
+  "cancel":"Cancel",
   "perms": {
     "C": "Creating",
     "U": "Updating",

@@ -90,9 +90,9 @@ export default function Index() {
             className="border-red-500 bg-transparent font-semibold text-red-500 hover:border-red-700 hover:bg-transparent hover:text-red-700"
             onClick={() =>
               openDialog({
-                title: `Deaktivacija ${org.name}`,
-                message: 'Deaktivacijom ćete ujedno otkazati sve aktive ankete',
-                buttonText: 'Deaktiviraj',
+                title: `${t('deactivation')} ${org.name}`,
+                message: t('deactivationMsg'),
+                buttonText: t('deactivate'),
                 onConfirm: () =>
                   submit(
                     { action: 'DEACTIVATE', orgId: org.id },
@@ -110,7 +110,7 @@ export default function Index() {
               submit({ action: 'ACTIVATE', orgId: org.id }, { method: 'post' })
             }
           >
-            Aktiviraj organizaciju
+            {t('activateOrganization')}
           </Button>
         )}
 

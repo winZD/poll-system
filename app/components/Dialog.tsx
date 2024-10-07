@@ -1,6 +1,7 @@
 // context/DialogContext.tsx
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { FocusScope } from 'react-aria';
+import { useTranslation } from 'react-i18next';
 import { IoWarningOutline } from 'react-icons/io5';
 
 type DialogConfig = {
@@ -26,6 +27,7 @@ export const useConfirmDialog = () => {
 };
 
 export const DialogProvider = ({ children }: { children: ReactNode }) => {
+  const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogConfig, setDialogConfig] = useState<DialogConfig>({
     title: '',
@@ -67,7 +69,7 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
                   className="rounded px-4 py-2 hover:bg-gray-400"
                   onClick={closeDialog}
                 >
-                  Odustani
+                  {t('cancel')}
                 </button>
                 <button
                   className="rounded-lg bg-gray-600 px-4 py-2 text-white hover:bg-gray-400"
