@@ -131,7 +131,7 @@ export default function Index() {
                 selectedTab === 'korisnici' ? 'bg-slate-200' : ''
               }`}
             >
-              Korisnici
+              {t('users')}
             </div>
             <div
               onClick={() => {
@@ -143,7 +143,7 @@ export default function Index() {
                 selectedTab === 'ankete' ? 'bg-slate-200' : ''
               }`}
             >
-              Ankete
+              {t('polls')}
             </div>
           </div>
 
@@ -159,34 +159,36 @@ export default function Index() {
 const UsersTable = (props) => {
   const org = useLoaderData<typeof loader>();
 
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
 
   const columnDefs = React.useMemo<ColDef<(typeof org.Users)[0]>[]>(
     () => [
       {
         field: 'name',
-        headerName: 'Ime',
+        headerName: t('table.username'),
         width: 200,
       },
       {
         field: 'email',
-        headerName: 'Email',
+        headerName: t('table.email'),
         width: 300,
       },
       {
         field: 'role',
-        headerName: 'Uloga',
+        headerName: t('table.role'),
         width: 120,
         valueFormatter: ({ value }) => rolesMapped[value],
       },
       {
         field: 'permissions',
-        headerName: 'Ovlasti',
+        headerName: t('table.permissions'),
         width: 120,
       },
       {
         field: 'status',
-        headerName: 'Status',
+        headerName: t('table.status'),
         width: 120,
         cellRenderer: ({ value }) => (
           <div className="flex items-center gap-2">
@@ -196,7 +198,7 @@ const UsersTable = (props) => {
         ),
       },
     ],
-    [],
+    [t],
   );
 
   return (
@@ -213,7 +215,7 @@ const UsersTable = (props) => {
 
 const PollsTable = (props) => {
   const org = useLoaderData<typeof loader>();
-
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -221,13 +223,13 @@ const PollsTable = (props) => {
     () => [
       {
         field: 'name',
-        headerName: 'Naziv anketa',
+        headerName: t('table.pollName'),
         width: 200,
       },
 
       {
         field: 'status',
-        headerName: 'Status',
+        headerName: t('table.status'),
         width: 120,
         cellRenderer: ({ value }) => (
           <div className="flex items-center gap-2">
@@ -238,23 +240,23 @@ const PollsTable = (props) => {
       },
       {
         field: 'User.name',
-        headerName: 'Anketu kreirao',
+        headerName: t('table.createdBy'),
         width: 200,
       },
       {
         field: 'createdAt',
-        headerName: 'Vrijeme kreiranja',
+        headerName: t('table.createdTime'),
         width: 200,
         valueFormatter: ({ value }) => toHrDateString(value),
       },
       {
         field: 'expiresAt',
-        headerName: 'Vrijeme završetka',
+        headerName: t('table.expirationTime'),
         width: 200,
         valueFormatter: ({ value }) => toHrDateString(value),
       },
     ],
-    [],
+    [t],
   );
 
   return (
