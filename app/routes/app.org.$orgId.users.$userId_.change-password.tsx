@@ -79,7 +79,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     },
   });
 
-  return redirectWithSuccess('..', 'Uspješno ste ažurirali lozinku');
+  return redirectWithSuccess('..', t('passwordUpdated'));
 };
 
 export default function Index() {
