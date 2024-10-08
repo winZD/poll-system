@@ -232,7 +232,7 @@ const DetailsTab = (props) => {
       ...data.poll,
       status: data?.poll.status as any,
       defaultIframeSrc: `${data.baseUrl}/poll/${orgId}/${data?.poll.id}`,
-      iframeTag: `<iframe src="${data.baseUrl}/poll/${orgId}/${data?.poll.id}" style="height:100%;width:100%;" frameborder="0" scrolling="no"/>`,
+      iframeTag: `<iframe src="${data.baseUrl}/poll/${orgId}/${data?.poll.id}" style="height:100%;width:100%;" frameborder="0" scrolling="no" allow="geolocation" />`,
       qrCodeProviderUrl: ``,
       expiresAt: data.poll.expiresAt ? new Date(data.poll.expiresAt) : null,
       orgPollByIdApi: `${data.baseUrl}/api/${orgId}/${data.poll.id}/${User.id}`,
