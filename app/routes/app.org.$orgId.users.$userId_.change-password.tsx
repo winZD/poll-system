@@ -48,6 +48,15 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
+  const localeFromReq = await i18next.getLocale(request);
+
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  const cookies = parse(cookieHeader);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
   const {
     errors,
     data,
@@ -56,7 +65,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   if (errors) {
     // The keys "errors" and "defaultValues" are picked up automatically by useRemixForm
-    return jsonWithError({ errors, defaultValues }, 'Neispravni podaci');
+    return jsonWithError({ errors, defaultValues }, t('incorrectData'));
   }
 
   const { orgId, userId } = params;
