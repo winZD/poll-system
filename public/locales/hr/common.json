@@ -46,6 +46,10 @@
   "incorrectData":"Neispravni podaci",
   "userUpdated":"Uspješno ste ažurirali korisnika",
   "email":"E-mail",
+  "createdBy": "Anketu kreirao",
+  "createdTime": "Vrijeme kreiranja",
+  "expirationTime": "Vrijeme završetka",
+  "totalVotesNumber":"Ukupan broj glasova",
   "perms": {
     "C": "Kreiranje",
     "U": "Ažuriranje",

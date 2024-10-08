@@ -46,6 +46,11 @@
   "incorrectData":"Incorrect data",
   "userUpdated":"You have successfully updated the user",
   "email":"E-mail",
+  "createdBy": "Poll created by",
+  "createdTime": "Created time",
+  "expirationTime": "Expiration time",
+  "totalVotesNumber":"Total votes number",
+  "statusLabel":"Status",
   "perms": {
     "C": "Creating",
     "U": "Updating",

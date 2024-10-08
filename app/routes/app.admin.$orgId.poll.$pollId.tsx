@@ -4,6 +4,7 @@ import { Modal } from '~/components/Modal';
 import { format } from 'date-fns';
 import { db } from '~/db';
 import { statusMapped } from '~/components/models';
+import { useTranslation } from 'react-i18next';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId, pollId } = params;
@@ -25,27 +26,29 @@ export const action = async ({ request }: ActionFunctionArgs) => {};
 export default function Index() {
   const poll = useLoaderData<typeof loader>();
 
+  const { t } = useTranslation();
+
   const maxVotes = Math.max(...poll.PollQuestions.map((e) => e.Votes.length));
 
   return (
     <Modal title="Detalji ankete">
       <div className="flex flex-col gap-8 p-8">
         <div className="grid grid-cols-2 gap-x-8 self-start">
-          <div className="">Naziv ankete</div>
+          <div className="">{t('pollName')}</div>
           <div className="font-semibold">{poll.name}</div>
 
-          <div className="">Status</div>
+          <div className="">{t('statusLabel')}</div>
           <div className="font-semibold">{statusMapped[poll.status]}</div>
 
-          <div className="">Anketu kreirao</div>
+          <div className="">{t('createdBy')}</div>
           <div className="font-semibold">{poll.User.name}</div>
 
-          <div className="">Vrijeme kreiranja</div>
+          <div className="">{t('createdTime')}</div>
           <div className="font-semibold">
             {format(poll.createdAt, 'dd.MM.yyyy. HH:mm')}
           </div>
 
-          <div className="">Vrijeme završetka</div>
+          <div className="">{t('expirationTime')}</div>
           <div className="font-semibold">
             {format(poll.createdAt, 'dd.MM.yyyy. HH:mm')}
           </div>
@@ -63,7 +66,7 @@ export default function Index() {
             </>
           ))}
           <div className="mt-4 px-4 text-right font-semibold">
-            Ukupan broj glasova
+            {t('totalVotesNumber')}
           </div>
           <div className="mt-4 text-right">{poll.Votes.length}</div>
         </div>
