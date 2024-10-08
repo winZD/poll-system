@@ -4,8 +4,6 @@ import { getUserFromRequest } from '~/auth';
 import { roleValues } from '~/components/models';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  // const token = decode
-
   const user = await getUserFromRequest(request);
 
   return redirect(

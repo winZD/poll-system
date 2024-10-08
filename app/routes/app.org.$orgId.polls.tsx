@@ -18,6 +18,8 @@ import { useConfirmDialog } from '~/components/Dialog';
 import { statusClass, statusMapped, statusValues } from '~/components/models';
 import { useAppLoader } from '~/loaders';
 import { useTranslation } from 'react-i18next';
+import i18next from '~/i18n.server';
+import { parse } from 'cookie';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId } = params;
@@ -36,13 +38,23 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const id = formData.get('id')?.toString();
   const orgId = params.orgId;
 
+  const localeFromReq = await i18next.getLocale(request);
+
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  const cookies = parse(cookieHeader);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
+
   await db.$transaction(async (tx) => {
     await tx.votesTable.deleteMany({ where: { pollId: id, orgId } });
     await tx.pollQuestionTable.deleteMany({ where: { pollId: id, orgId } });
     await tx.pollTable.delete({ where: { id, orgId } });
   });
 
-  return jsonWithSuccess({}, 'Uspješno izbrisana anketa');
+  return jsonWithSuccess({}, t('pollDeleted'));
 };
 
 export default function Index() {
@@ -111,9 +123,9 @@ export default function Index() {
                       onClick={() => {
                         if (isDeleteDisabled) return;
                         openDialog({
-                          title: 'Brisanje zapisa',
-                          buttonText: 'Izbriši',
-                          message: 'Potvrdite brisanje zapisa',
+                          title: t('recordDelete'),
+                          buttonText: t('delete'),
+                          message: t('deletionConfirm'),
                           onConfirm: () =>
                             submit(
                               {

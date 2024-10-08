@@ -23,10 +23,6 @@ const Index = () => {
 
   return (
     <div className="flex aspect-video w-[1920px] flex-col justify-end border-2 p-8">
-      {/* <div className="border-b bg-slate-50 p-4 text-center font-extrabold">
-        {tvPoll.name}
-      </div> */}
-
       <div className="flex items-center justify-end gap-16 text-lg">
         <PollChartWithVotes />
         <QRCodeSVG size={128} value={`${baseUrl}/poll/${orgId}/${pollId}`} />

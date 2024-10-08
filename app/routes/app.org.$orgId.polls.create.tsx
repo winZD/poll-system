@@ -13,8 +13,9 @@ import { addDays } from 'date-fns';
 import { FormContent } from '~/components/Form/FormContent';
 import { getUserFromRequest } from '~/auth';
 import { useTranslation } from 'react-i18next';
+import i18next from '~/i18n.server';
+import { parse } from 'cookie';
 
-//TODO: create post method
 const schema = zod.object({
   name: zod.string().min(1),
   status: statusSchema.default('DRAFT'),
@@ -25,12 +26,6 @@ type FormData = zod.infer<typeof schema>;
 const resolver = zodResolver(schema);
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  // const token = decode
-
-  // check if admin is logged in
-
-  // const users = await db.userTable.findMany({ where: { status: "ACTIVE" } });
-
   return json({});
 }
 
@@ -41,9 +36,19 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     receivedValues: defaultValues,
   } = await getValidatedFormData<FormData>(request, resolver);
 
+  const localeFromReq = await i18next.getLocale(request);
+
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  const cookies = parse(cookieHeader);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
+
   if (errors) {
     // The keys "errors" and "defaultValues" are picked up automatically by useRemixForm
-    return jsonWithError({ errors, defaultValues }, 'Neispravni podaci');
+    return jsonWithError({ errors, defaultValues }, t('incorrectData'));
   }
 
   const ctxUser = await getUserFromRequest(request);
@@ -67,7 +72,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       },
     });
     return redirectWithSuccess(`../${id}`, {
-      message: 'Uspješno ste kreirali anketu',
+      message: t('pollCreated'),
     });
   }
 };

@@ -13,10 +13,11 @@ import InputField from '~/components/Form/FormInput';
 import { ulid } from 'ulid';
 import { db } from '~/db';
 import { hashPassword } from '~/auth';
+import { useTranslation } from 'react-i18next';
 
 const schema = zod.object({
   name: zod.string().min(1),
-  email: zod.string().email('Neispravan email').min(1),
+  email: zod.string().email('incorrectEmail').min(1),
   password: zod.string().min(1),
 });
 
@@ -25,12 +26,6 @@ type FormData = zod.infer<typeof schema>;
 const resolver = zodResolver(schema);
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  // const token = decode
-
-  // check if admin is logged in
-
-  // const users = await db.userTable.findMany({ where: { status: "ACTIVE" } });
-
   return json({});
 }
 
@@ -71,28 +66,29 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   return redirect(`../${org.id}`);
 };
 export default function Index() {
+  const { t } = useTranslation();
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     resolver,
   });
 
   return (
-    <Modal title="Nova organizacija">
+    <Modal title={t('newOrganization')}>
       <HookForm
         formMethods={formMethods}
         onSubmit={formMethods.handleSubmit}
         method="POST"
         className="flex w-96 flex-col gap-4 p-4"
       >
-        <InputField label="Email" name="email" />
-        <InputField label="Naziv" name="name" />
-        <InputField label="Inicijalna lozinka" name="password" />
+        <InputField label={t('email')} name="email" />
+        <InputField label={t('name')} name="name" />
+        <InputField label={t('initialPassword')} name="password" />
 
         <button
           type="submit"
           className="rounded bg-slate-200 p-2 hover:bg-slate-300"
         >
-          Registriraj novu organizaciju
+          {t('registerNewOrg')}
         </button>
       </HookForm>
     </Modal>

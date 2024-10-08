@@ -14,6 +14,9 @@ import {
 import { roleValues } from '~/components/models';
 import { FormContent } from '~/components/Form/FormContent';
 import { getUserFromRequest, hashPassword } from '~/auth';
+import i18next from '~/i18n.server';
+import { parse } from 'cookie';
+import { useTranslation } from 'react-i18next';
 
 const schema = zod.object({
   newPassword: zod.string().min(3, 'Obvezan podatak'),
@@ -25,10 +28,20 @@ const resolver = zodResolver(schema);
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId, userId } = params;
 
+  const localeFromReq = await i18next.getLocale(request);
+
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  const cookies = parse(cookieHeader);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
+
   const user = await getUserFromRequest(request);
 
   if (!(user?.role === roleValues.ADMIN || user?.id === userId)) {
-    return redirectWithError('..', 'Nemate ovlasti');
+    return redirectWithError('..', t('noAuthority'));
   }
 
   return json(null);
@@ -41,9 +54,21 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     receivedValues: defaultValues,
   } = await getValidatedFormData<FormData>(request, resolver);
 
+  const localeFromReq = await i18next.getLocale(request);
+
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  const cookies = parse(cookieHeader);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
+
+  const user = await getUserFromRequest(request);
+
   if (errors) {
     // The keys "errors" and "defaultValues" are picked up automatically by useRemixForm
-    return jsonWithError({ errors, defaultValues }, 'Neispravni podaci');
+    return jsonWithError({ errors, defaultValues }, t('incorrectData'));
   }
 
   const { orgId, userId } = params;
@@ -57,10 +82,12 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     },
   });
 
-  return redirectWithSuccess('..', 'Uspješno ste ažurirali lozinku');
+  return redirectWithSuccess('..', t('passwordUpdated'));
 };
 
 export default function Index() {
+  const { t } = useTranslation();
+
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
     defaultValues: {
@@ -69,20 +96,20 @@ export default function Index() {
   });
 
   return (
-    <Modal title="Ažuriraj lozinku">
+    <Modal title={t('updatePassword')}>
       <HookForm
         formMethods={formMethods}
         onSubmit={formMethods.handleSubmit}
         method="PUT"
       >
         <FormContent>
-          <InputField label="Nova lozinka" name="newPassword" />
+          <InputField label={t('newPassword')} name="newPassword" />
 
           <button
             type="submit"
             className="rounded bg-slate-200 p-2 hover:bg-slate-300"
           >
-            Ažuriraj lozinku
+            {t('updatePassword')}
           </button>
         </FormContent>
       </HookForm>

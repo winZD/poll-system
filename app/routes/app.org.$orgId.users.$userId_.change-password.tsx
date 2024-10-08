@@ -15,6 +15,8 @@ import { roleValues } from '~/components/models';
 import { FormContent } from '~/components/Form/FormContent';
 import { getUserFromRequest, hashPassword } from '~/auth';
 import { useTranslation } from 'react-i18next';
+import i18next from '~/i18n.server';
+import { parse } from 'cookie';
 
 const schema = zod.object({
   newPassword: zod.string().min(3, 'Obvezan podatak'),
@@ -26,10 +28,20 @@ const resolver = zodResolver(schema);
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId, userId } = params;
 
+  const localeFromReq = await i18next.getLocale(request);
+
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  const cookies = parse(cookieHeader);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
+
   const user = await getUserFromRequest(request);
 
   if (!(user?.role === roleValues.ADMIN || user?.id === userId)) {
-    return redirectWithError('..', 'Nemate ovlasti');
+    return redirectWithError('..', t('noAuthority'));
   }
 
   return json(null);
