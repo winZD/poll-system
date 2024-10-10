@@ -5,6 +5,7 @@ import { ulid } from 'ulid';
 import bcrypt from 'bcryptjs';
 import { db } from '~/db';
 import { parse } from 'cookie';
+import { redirect } from '@remix-run/node';
 
 type TToken = {
   tokenId: string;
@@ -58,10 +59,14 @@ export const verifyToken = (
 
 export const revokeOldRefreshToken = async (tokenId: string) => {
   console.log('revokeOldRefreshToken');
-  await db.refreshTokenTable.update({
-    where: { id: tokenId },
-    data: { status: 'REVOKED' },
-  });
+  try {
+    await db.refreshTokenTable.update({
+      where: { id: tokenId },
+      data: { status: 'REVOKED' },
+    });
+  } catch (e) {
+    throw redirect('/logout');
+  }
 };
 
 export const createNewTokens = async (userId: string, familyId?: string) => {
