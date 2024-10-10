@@ -10,13 +10,16 @@ import {
 } from '~/auth';
 import { roleValues, statusValues } from '~/components/models';
 import { db } from '~/db';
+import i18next from '~/i18n.server';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  // const token = decode
-
-  // console.log('app.ts', params);
-
   const cookies = parse(request.headers.get('Cookie') ?? '');
+
+  let localeFromReq = await i18next.getLocale(request);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
 
   const at = verifyToken(cookies['at']);
 
@@ -41,7 +44,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
         },
       });
     } else {
-      return redirectWithError('/login', 'Neaktivan korisnik');
+      return redirectWithError('/login', t('inactiveUser'));
     }
   } else {
     const rt = verifyToken(cookies['rt']);
@@ -81,10 +84,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
           { headers },
         );
       } else {
-        return redirectWithError('/login', 'Neaktivan korisnik');
+        return redirectWithError('/login', t('inactiveUser'));
       }
     } else {
-      return redirectWithWarning('/login', 'Niste prijavljeni');
+      return redirectWithWarning('/login', t('notLoggedIn'));
     }
   }
 }

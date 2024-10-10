@@ -22,10 +22,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const cookieHeader = request.headers.get('Cookie');
   const cookies = await parse(cookieHeader || '');
   const lng = cookies.lng || (await i18next.getLocale(request));
+  const t = await i18next.getFixedT(lng);
 
   const user = await getUserFromRequest(request);
   if (user?.Org.role === roleValues.USER) {
-    return redirectWithWarning('/app', 'Nemate ovlasti');
+    return redirectWithWarning('/app', t('noAuthority'));
   }
 
   const orgs = await db.orgTable.findMany({

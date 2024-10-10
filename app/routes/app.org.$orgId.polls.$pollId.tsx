@@ -36,15 +36,15 @@ import { parse } from 'cookie';
 const schema = zod.object({
   name: zod.string().min(1),
   status: statusSchema.default('DRAFT'),
-  defaultIframeSrc: zod.string().min(3, 'Obvezan podatak'),
-  iframeTag: zod.string().min(3, 'Obvezan podatak'),
-  iframeSrc: zod.string().min(3, 'Obvezan podatak'),
-  qrCodeProviderUrl: zod.string().min(3, 'Obvezan podatak'),
+  defaultIframeSrc: zod.string().min(3, ''),
+  iframeTag: zod.string().min(3, ''),
+  iframeSrc: zod.string().min(3, ''),
+  qrCodeProviderUrl: zod.string().min(3, ''),
   PollQuestions: zod.array(
     zod.object({
       id: zod.string(),
       pollId: zod.string(),
-      name: zod.string().min(1, 'Obvezan podatak'),
+      name: zod.string().min(1, ''),
     }),
   ),
   expiresAt: zod.coerce.date().nullish(),
@@ -54,8 +54,6 @@ const schema = zod.object({
 });
 
 type FormData = zod.infer<typeof schema>;
-
-const resolver = zodResolver(schema);
 
 const sidebars = [
   'poll',
@@ -67,28 +65,6 @@ const sidebars = [
 ] as const;
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const { orgId, pollId } = params;
-  const url = new URL(request.url);
-  const baseUrl = `${url.protocol}//${url.host}`;
-
-  const { poll } = await getPollDetails({
-    pollId: pollId as string,
-    orgId: orgId as string,
-  });
-
-  if (!poll) return redirectWithError('..', 'Nepostojeća anketa');
-
-  return json({ poll, baseUrl });
-}
-export type PollLoaderType = typeof loader;
-
-export const action = async ({ request, params }: ActionFunctionArgs) => {
-  const {
-    errors,
-    data,
-    receivedValues: defaultValues,
-  } = await getValidatedFormData<FormData>(request, resolver);
-
   let localeFromReq = await i18next.getLocale(request);
 
   const cookieHeader = request.headers.get('Cookie') || '';
@@ -98,6 +74,59 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
 
   const t = await i18next.getFixedT(locale);
+
+  const { orgId, pollId } = params;
+  const url = new URL(request.url);
+  const baseUrl = `${url.protocol}//${url.host}`;
+
+  const { poll } = await getPollDetails({
+    pollId: pollId as string,
+    orgId: orgId as string,
+  });
+
+  if (!poll) return redirectWithError('..', t('Nepostojeća anketa'));
+
+  return json({ poll, baseUrl });
+}
+export type PollLoaderType = typeof loader;
+
+export const action = async ({ request, params }: ActionFunctionArgs) => {
+  let localeFromReq = await i18next.getLocale(request);
+
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  const cookies = parse(cookieHeader);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
+
+  const schema = zod.object({
+    name: zod.string().min(1),
+    status: statusSchema.default('DRAFT'),
+    defaultIframeSrc: zod.string().min(3, t('requiredData')),
+    iframeTag: zod.string().min(3, t('requiredData')),
+    iframeSrc: zod.string().min(3, t('requiredData')),
+    qrCodeProviderUrl: zod.string().min(3, t('requiredData')),
+    PollQuestions: zod.array(
+      zod.object({
+        id: zod.string(),
+        pollId: zod.string(),
+        name: zod.string().min(1, t('requiredData')),
+      }),
+    ),
+    expiresAt: zod.coerce.date().nullish(),
+    orgPollByIdApi: zod.string(),
+    orgPollsApi: zod.string(),
+    poolFooter: zod.string(),
+  });
+
+  const resolver = zodResolver(schema);
+  const {
+    errors,
+    data,
+    receivedValues: defaultValues,
+  } = await getValidatedFormData<FormData>(request, resolver);
 
   if (errors) {
     console.log({ errors });
@@ -424,7 +453,6 @@ const DetailsTab = (props) => {
           <button
             type="submit"
             className="flex items-center gap-2 self-end rounded bg-slate-200 p-2 px-8 hover:bg-slate-300 disabled:cursor-not-allowed disabled:bg-slate-200"
-            // disabled={poll.status !== statusValues.DRAFT}
           >
             <MdSave />
             {t('updatePoll')}

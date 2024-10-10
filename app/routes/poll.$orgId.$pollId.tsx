@@ -11,6 +11,8 @@ import React from 'react';
 import { serialize } from 'cookie';
 import { addMinutes, addMonths } from 'date-fns';
 import { parse } from 'cookie';
+import i18next from '~/i18n.server';
+import { useTranslation } from 'react-i18next';
 
 const towns = [
   { country: 'hr', name: 'Zagreb', lat: 45.815, lon: 15.9819 },
@@ -87,13 +89,19 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const cookies = parse(request.headers.get('Cookie') ?? '');
   const alreadyVotedQuestionId = cookies[pollId]; //
 
+  let localeFromReq = await i18next.getLocale(request);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
+
   if (alreadyVotedQuestionId && alreadyVotedQuestionId !== 'null') {
     return jsonWithInfo(
       {
         poll,
         existingVote: alreadyVotedQuestionId,
       },
-      'Već ste dali svoj glas',
+      t('voted'),
     );
   }
 
@@ -116,11 +124,20 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       poll,
       existingVote: existingVote?.pollQuestionId,
     },
-    'Već je zabilježen glas s vaše IP adrese. Glasati možete za 5 min ',
+    t('recordedVote'),
   );
 }
 
 export const action = async ({ request }: ActionFunctionArgs) => {
+  let localeFromReq = await i18next.getLocale(request);
+
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  const cookies = parse(cookieHeader);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
   const formData = await request.formData();
 
   const orgId = formData.get('orgId')?.toString();
@@ -129,7 +146,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const loc = formData.get('loc')?.toString();
 
   if (!orgId || !pollId || !pollQuestionId)
-    return jsonWithError(null, 'Greška');
+    return jsonWithError(null, t('error'));
 
   const userAgent = request.headers.get('user-agent'); // Get user agent
   const forwardedFor = request.headers.get('x-forwarded-for'); // Get forwarded IP
@@ -159,7 +176,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         expires: new Date(0),
       }),
     );
-    return jsonWithInfo({}, 'Izbrisan glas', { headers });
+    return jsonWithInfo({}, t('deletedVote'), { headers });
   } else if (request.method === 'POST') {
     //
     const id = ulid();
@@ -216,10 +233,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }),
   );
 
-  return jsonWithSuccess({}, 'Vaš glas je uspješno zabilježen', { headers });
+  return jsonWithSuccess({}, t('successfullyRecordedVote'), { headers });
 };
 
 export default function Index() {
+  const { t } = useTranslation();
   const { poll, existingVote } = useLoaderData<typeof loader>();
 
   const ukupnoGlasova = poll.totalVotes || 0;
@@ -256,7 +274,7 @@ export default function Index() {
 
           {existingVote && (
             <div className="flex flex-col text-center">
-              <div>Već ste dali svoj glas</div>
+              <div>{t('voted')}</div>
               <button
                 onClick={() =>
                   submit(
@@ -303,7 +321,7 @@ export default function Index() {
           )}
 
           <div className="flex gap-8">
-            <div className="">Vrijeme završetka ankete</div>
+            <div className="">{t('pollExpiration')}</div>
             <div className="font-semibold">
               {toHrDateString(poll.createdAt)}
             </div>

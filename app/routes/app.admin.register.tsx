@@ -14,22 +14,39 @@ import { ulid } from 'ulid';
 import { db } from '~/db';
 import { hashPassword } from '~/auth';
 import { useTranslation } from 'react-i18next';
+import i18next from '~/i18n.server';
+import { parse } from 'cookie';
 
 const schema = zod.object({
   name: zod.string().min(1),
-  email: zod.string().email('incorrectEmail').min(1),
+  email: zod.string().email().min(1),
   password: zod.string().min(1),
 });
 
 type FormData = zod.infer<typeof schema>;
-
-const resolver = zodResolver(schema);
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   return json({});
 }
 
 export const action = async ({ request }: ActionFunctionArgs) => {
+  const localeFromReq = await i18next.getLocale(request);
+
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  const cookies = parse(cookieHeader);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
+
+  const schema = zod.object({
+    name: zod.string().min(1, t('requiredData')),
+    email: zod.string().email(t('incorrectEmail')).min(1, t('requiredData')),
+    password: zod.string().min(1, t('requiredData')),
+  });
+  type FormData = zod.infer<typeof schema>;
+  const resolver = zodResolver(schema);
   const {
     errors,
     data,
@@ -69,7 +86,6 @@ export default function Index() {
   const { t } = useTranslation();
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
-    resolver,
   });
 
   return (

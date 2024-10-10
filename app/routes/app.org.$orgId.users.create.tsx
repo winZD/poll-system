@@ -19,8 +19,10 @@ import {
 import { ulid } from 'ulid';
 import { FormContent } from '~/components/Form/FormContent';
 import PermissionsForm from '~/components/Form/PermissionsForm';
+import i18next from '~/i18n.server';
+import { parse } from 'cookie';
+import { useTranslation } from 'react-i18next';
 
-//TODO: create post method
 const schema = zod.object({
   name: zod.string().min(1, 'Obvezan podatak'),
   email: zod.string().email('Obvezan podatak'),
@@ -32,19 +34,31 @@ const schema = zod.object({
 
 type FormData = zod.infer<typeof schema>;
 
-const resolver = zodResolver(schema);
-
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  // const token = decode
-
-  // check if admin is logged in
-
-  // const users = await db.userTable.findMany({ where: { status: "ACTIVE" } });
-
   return json({});
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
+  let localeFromReq = await i18next.getLocale(request);
+
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  const cookies = parse(cookieHeader);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
+
+  const schema = zod.object({
+    name: zod.string().min(1, t('requiredData')),
+    email: zod.string().email(t('incorrectEmail')),
+    password: zod.string().min(1, t('requiredData')),
+    role: roleSchema.default('ADMIN'),
+    status: statusSchema.default('ACTIVE'),
+    permissions: zod.string().default(''),
+  });
+
+  const resolver = zodResolver(schema);
   const {
     errors,
     data,
@@ -53,7 +67,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   if (errors) {
     // The keys "errors" and "defaultValues" are picked up automatically by useRemixForm
-    return jsonWithError({ errors, defaultValues }, 'Neispravni podaci');
+    return jsonWithError({ errors, defaultValues }, t('incorrectData'));
   }
 
   const orgId = params.orgId;
@@ -62,15 +76,16 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       data: { ...data, id: ulid(), orgId },
     });
     return redirectWithSuccess('..', {
-      message: 'Uspješno ste kreirali korisnika',
+      message: t('userCreated'),
     });
   }
 };
 
 const Index = () => {
+  const { t } = useTranslation();
+
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
-    resolver,
     defaultValues: {
       permissions: '',
       role: roleValues.USER,
@@ -79,19 +94,19 @@ const Index = () => {
   });
 
   return (
-    <Modal title="Novi korisnik">
+    <Modal title={t('newUser')}>
       <HookForm
         formMethods={formMethods}
         onSubmit={formMethods.handleSubmit}
         method="POST"
       >
         <FormContent>
-          <InputField label="Email" name="email" autoFocus />
-          <InputField label="Ime korisnika" name="name" />
-          <InputField label="Inicijalna lozinka" name="password" />
-          <SelectField label="Uloga" name="role" data={roleOptions} />
+          <InputField label={t('email')} name="email" autoFocus />
+          <InputField label={t('username')} name="name" />
+          <InputField label={t('initialPassword')} name="password" />
+          <SelectField label={t('role')} name="role" data={roleOptions} />
           <SelectField
-            label="Status"
+            label={t('statusLabel')}
             name="status"
             data={statusOptions.filter((e) => e.value !== statusValues.DRAFT)}
           />
@@ -102,7 +117,7 @@ const Index = () => {
             type="submit"
             className="rounded bg-slate-200 p-2 hover:bg-slate-300"
           >
-            Dodaj korisnika
+            {t('addUser')}
           </button>
         </FormContent>
       </HookForm>

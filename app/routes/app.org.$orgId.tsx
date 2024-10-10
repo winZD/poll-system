@@ -24,14 +24,18 @@ import i18next from '~/i18n.server';
 import i18n from '~/i18n';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const user = await getUserFromRequest(request);
-  if (user?.Org.role === roleValues.ADMIN) {
-    return redirectWithWarning('/app', 'Nemate ovlasti');
-  }
   // Get the 'lng' cookie from the request
   const cookieHeader = request.headers.get('Cookie');
   const cookies = await parse(cookieHeader || '');
   const lng = cookies.lng || (await i18next.getLocale(request));
+
+  const t = await i18next.getFixedT(lng);
+
+  const user = await getUserFromRequest(request);
+  if (user?.Org.role === roleValues.ADMIN) {
+    return redirectWithWarning('/app', t('noAuthority'));
+  }
+
   return json({ lng });
 }
 

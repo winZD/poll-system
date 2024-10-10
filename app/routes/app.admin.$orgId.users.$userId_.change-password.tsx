@@ -19,11 +19,9 @@ import { parse } from 'cookie';
 import { useTranslation } from 'react-i18next';
 
 const schema = zod.object({
-  newPassword: zod.string().min(3, 'Obvezan podatak'),
+  newPassword: zod.string().min(3),
 });
 type FormData = zod.infer<typeof schema>;
-
-const resolver = zodResolver(schema);
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const { orgId, userId } = params;
@@ -48,12 +46,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
-  const {
-    errors,
-    data,
-    receivedValues: defaultValues,
-  } = await getValidatedFormData<FormData>(request, resolver);
-
   const localeFromReq = await i18next.getLocale(request);
 
   const cookieHeader = request.headers.get('Cookie') || '';
@@ -63,6 +55,19 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
 
   const t = await i18next.getFixedT(locale);
+
+  const schema = zod.object({
+    newPassword: zod.string().min(3, t('requiredData')),
+  });
+  type FormData = zod.infer<typeof schema>;
+
+  const resolver = zodResolver(schema);
+
+  const {
+    errors,
+    data,
+    receivedValues: defaultValues,
+  } = await getValidatedFormData<FormData>(request, resolver);
 
   const user = await getUserFromRequest(request);
 

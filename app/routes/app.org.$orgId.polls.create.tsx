@@ -23,19 +23,11 @@ const schema = zod.object({
 
 type FormData = zod.infer<typeof schema>;
 
-const resolver = zodResolver(schema);
-
 export async function loader({ request, params }: LoaderFunctionArgs) {
   return json({});
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
-  const {
-    errors,
-    data,
-    receivedValues: defaultValues,
-  } = await getValidatedFormData<FormData>(request, resolver);
-
   const localeFromReq = await i18next.getLocale(request);
 
   const cookieHeader = request.headers.get('Cookie') || '';
@@ -45,6 +37,19 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
 
   const t = await i18next.getFixedT(locale);
+
+  const schema = zod.object({
+    name: zod.string().min(1, t('requiredData')),
+    status: statusSchema.default('DRAFT'),
+  });
+
+  const resolver = zodResolver(schema);
+
+  const {
+    errors,
+    data,
+    receivedValues: defaultValues,
+  } = await getValidatedFormData<FormData>(request, resolver);
 
   if (errors) {
     // The keys "errors" and "defaultValues" are picked up automatically by useRemixForm
@@ -81,7 +86,6 @@ export default function Index() {
   const { t } = useTranslation();
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
-    // resolver,
     defaultValues: { name: '', status: statusValues.DRAFT },
   });
 

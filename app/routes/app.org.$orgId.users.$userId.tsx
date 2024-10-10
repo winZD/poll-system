@@ -28,18 +28,28 @@ import { getUserFromRequest } from '~/auth';
 import { useAppLoader } from '~/loaders';
 import { useTranslation } from 'react-i18next';
 import { getRoleOptions, getStatusOptions } from '~/utils';
+import i18next from '~/i18n.server';
+import { parse } from 'cookie';
 
 const schema = zod.object({
-  name: zod.string().min(1, 'Obvezan podatak'),
+  name: zod.string().min(1, ''),
   role: roleSchema.default('ADMIN'),
   status: statusSchema.default('ACTIVE'),
   permissions: zod.string().default(''),
 });
 type FormData = zod.infer<typeof schema>;
 
-const resolver = zodResolver(schema);
-
 export async function loader({ request, params }: LoaderFunctionArgs) {
+  let localeFromReq = await i18next.getLocale(request);
+
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  const cookies = parse(cookieHeader);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
+
   const { orgId, userId } = params;
 
   const ctxUser = await getUserFromRequest(request);
@@ -48,16 +58,34 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     where: { orgId: orgId, id: userId },
   });
 
-  if (!user) return redirectWithError('..', 'Nepostojeći korisnik');
+  if (!user) return redirectWithError('..', t('noUser'));
 
   if (ctxUser?.role === roleValues.ADMIN || ctxUser?.id === userId) {
     return json(user);
   } else {
-    return redirectWithError('..', 'Nemate ovlasti');
+    return redirectWithError('..', t('noAuthority'));
   }
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
+  let localeFromReq = await i18next.getLocale(request);
+
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  const cookies = parse(cookieHeader);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
+
+  const schema = zod.object({
+    name: zod.string().min(1, t('requiredData')),
+    role: roleSchema.default('ADMIN'),
+    status: statusSchema.default('ACTIVE'),
+    permissions: zod.string().default(''),
+  });
+  const resolver = zodResolver(schema);
+
   const {
     errors,
     data,
@@ -66,7 +94,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   if (errors) {
     // The keys "errors" and "defaultValues" are picked up automatically by useRemixForm
-    return jsonWithError({ errors, defaultValues }, 'Neispravni podaci');
+    return jsonWithError({ errors, defaultValues }, t('incorrectData'));
   }
 
   const { orgId, userId } = params;
@@ -77,7 +105,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     },
   });
 
-  return redirectWithSuccess('..', 'Uspješno ste ažurirali korisnika');
+  return redirectWithSuccess('..', t('userUpdated'));
 };
 
 export default function Index() {
@@ -91,7 +119,6 @@ export default function Index() {
 
   const formMethods = useRemixForm<FormData>({
     mode: 'onSubmit',
-    resolver,
     defaultValues: {
       ...user,
       status: user?.status as any,

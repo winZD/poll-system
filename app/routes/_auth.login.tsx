@@ -10,16 +10,34 @@ import InputField from '~/components/Form/FormInput';
 import { HookForm } from '~/components/Form/Form';
 import { statusValues } from '~/components/models';
 import { createHeaderCookies, createNewTokens } from '~/auth';
+import i18next from '~/i18n.server';
+import { parse } from 'cookie';
 
 const schema = zod.object({
-  email: zod.string().min(1, 'Upišite ispravno korisničko ime'),
-  password: zod.string().min(1, 'Upišite ispravno lozinku'),
+  email: zod.string().min(1),
+  password: zod.string().min(1),
 });
 
-const resolver = zodResolver(schema);
 type FormData = zod.infer<typeof schema>;
 
 export const action = async ({ request }: ActionFunctionArgs) => {
+  const localeFromReq = await i18next.getLocale(request);
+
+  const cookieHeader = request.headers.get('Cookie') || '';
+
+  const cookies = parse(cookieHeader);
+
+  const locale = cookies['lng'] ? cookies['lng'] : localeFromReq;
+
+  const t = await i18next.getFixedT(locale);
+
+  const schema = zod.object({
+    email: zod.string().min(1, t('validUsername')),
+    password: zod.string().min(1, t('validPassword')),
+  });
+  type FormData = zod.infer<typeof schema>;
+
+  const resolver = zodResolver(schema);
   const {
     errors,
     data,
@@ -28,11 +46,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (errors) {
     // The keys "errors" and "defaultValues" are picked up automatically by useRemixForm
-    return jsonWithError({ errors, defaultValues }, 'Neispravni podaci');
+    return jsonWithError({ errors, defaultValues }, t('incorrectData'));
   }
 
   if (!data) {
-    return jsonWithError(null, 'Neispravni podaci', {
+    return jsonWithError(null, t('incorrectData'), {
       status: 401,
     });
   }
@@ -44,12 +62,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     include: { Org: true },
   });
   if (!user) {
-    return jsonWithError(null, 'Nepostojeći korisnik', {
+    return jsonWithError(null, t('noUser'), {
       status: 401,
     });
   }
   if (user.status !== statusValues.ACTIVE) {
-    return jsonWithError(null, 'Neaktivan korisnik', {
+    return jsonWithError(null, t('inactiveUser'), {
       status: 401,
     });
   }
@@ -57,7 +75,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const isValid = true;
   // const isValid = await bcrypt.compare(data.password, user.password);
   if (!isValid) {
-    return jsonWithError(null, 'Neispravna lozinka', { status: 401 });
+    return jsonWithError(null, t('incorrectPassword'), { status: 401 });
   }
 
   const { accessToken, refreshToken } = await createNewTokens(user.id);
@@ -66,7 +84,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   return redirectWithSuccess(
     user.Org.role === 'ADMIN' ? '/app/admin' : `/app/org/${user.orgId}/polls`,
-    'Uspješna prijava',
+    t('successfulLogin'),
     {
       headers,
     },
@@ -78,7 +96,6 @@ export default function Login() {
     defaultValues: { email: '', password: '' },
     mode: 'onSubmit',
     stringifyAllValues: true,
-    resolver: resolver,
   });
   const { handleSubmit } = formMethods;
 
