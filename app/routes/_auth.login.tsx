@@ -12,6 +12,7 @@ import { statusValues } from '~/components/models';
 import { createHeaderCookies, createNewTokens } from '~/auth';
 import i18next from '~/i18n.server';
 import { parse } from 'cookie';
+import { useTranslation } from 'react-i18next';
 
 const schema = zod.object({
   email: zod.string().min(1),
@@ -92,6 +93,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function Login() {
+  const { t } = useTranslation();
   const formMethods = useRemixForm<FormData>({
     defaultValues: { email: '', password: '' },
     mode: 'onSubmit',
@@ -111,7 +113,7 @@ export default function Login() {
         <InputField label="Lozinka" name="password" />
 
         <button type="submit" className="rounded bg-slate-200 p-4">
-          Prijavi se
+          {t('login')}
         </button>
       </HookForm>
     </div>

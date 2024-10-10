@@ -78,6 +78,7 @@
   "deletedVote":"Izbrisan glas",
   "successfullyRecordedVote":"Vaš glas je uspješno zabilježen",
   "pollExpiration":"Vrijeme završetka ankete",
+  "login":"Prijavi se",
   "perms": {
     "C": "Kreiranje",
     "U": "Ažuriranje",

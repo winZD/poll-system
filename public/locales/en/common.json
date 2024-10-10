@@ -78,6 +78,7 @@
   "deletedVote":"Deleted vote",
   "successfullyRecordedVote":"Your vote has been successfully recorded",
   "pollExpiration":"Poll expiration",
+  "login":"Log in",
   "perms": {
     "C": "Creating",
     "U": "Updating",
